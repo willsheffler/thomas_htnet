@@ -33,7 +33,9 @@
 #include <protocols/hbnet/monte_carlo/util.hh>
 
 // Utility headers
+#include <ObjexxFCL/Fstring.hh>
 #include <numeric/random/random.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/numbers.hh>
 #include <utility/string_util.hh>
@@ -45,6 +47,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jackmag.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -5897,7 +5900,7 @@ void load_SAT_conformation(const std::string& filename, core::Size n_mres,
             nb_res++;
             rotamer_assignment.push_back(rotid);
           }
-          //					std::cout << "True: " << rotid
+          //          std::cout << "True: " << rotid
           //<<
           // std::endl;
         }
@@ -5908,8 +5911,9 @@ void load_SAT_conformation(const std::string& filename, core::Size n_mres,
   return;
 }
 
-void load_CFN_conformation(const std::string& filename, core::Size n_mres,
-			   utility::vector1<utility::vector1<core::Size>>& rotamer_assignments) {
+void load_CFN_conformation(
+    const std::string& filename, core::Size n_mres,
+    utility::vector1<utility::vector1<core::Size>>& rotamer_assignments) {
   std::ifstream inmain;
   inmain.open(filename);
   core::Size rotid;
@@ -5981,9 +5985,6 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
     auto const& rotamer_assignment = rotamer_assignments[irotassign];
     auto pose = get_orig_pose();
 
-    std::cout << "making pose for " << irotassign << " "
-              << rotamer_assignment.size() << std::endl;
-
     if (rotamer_assignment.size() != rotamer_sets_->nmoltenres()) {
       std::cout
           << " => Conformation file has not the expected number of rotamer "
@@ -5992,10 +5993,12 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
       return;
     }
 
-    std::ostringstream hbfname;
-    hbfname << "Conformation_" << irotassign << ".hb";
-    std::ofstream out;
-    out.open(hbfname.str());
+    std::ostringstream out;  // whs: comment this out and the below back in to
+                             // restore Conformation.hb output
+    // std::ostringstream hbfname;
+    // hbfname << "Conformation_" << irotassign << ".hb";
+    // std::ofstream out;
+    // out.open(hbfname.str());
 
     // Analyze rotamer assignment: for each molten residue, and for each
     // of its heavy atoms, give the hbonds.
@@ -6112,7 +6115,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
               auto this_hbond =
                   std::make_tuple(acc_mres, acc, don_mres, 0, hbond->energy());
               all_hbonds.push_back(this_hbond);
-              //						out << "M" <<
+              //            out << "M" <<
               // acc_mres << acc_AA << ":" << acc
               //<<
               //"
@@ -6123,7 +6126,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
               auto this_hbond = std::make_tuple(acc_mres, 0, don_mres, H_parent,
                                                 hbond->energy());
               all_hbonds.push_back(this_hbond);
-              //						out << "BB - "
+              //            out << "BB - "
               //<< "M" << don_mres << don_AA
               //<<
               //":"
@@ -6134,7 +6137,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
               auto this_hbond = std::make_tuple(acc_mres, acc, don_mres,
                                                 H_parent, hbond->energy());
               all_hbonds.push_back(this_hbond);
-              //						out << "M" <<
+              //            out << "M" <<
               // acc_mres << acc_AA << ":" << acc
               //<<
               //"
@@ -6202,7 +6205,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
     out << "Total of " << total_number_polar << ":" << total_number_2polar
         << " polar AAs, " << total_number_Hatoms << " heavy atoms, "
         << total_number_HBonds << " half hbonds." << std::endl;
-    out.close();
+    // out.close();  // whs: add this back for Conformation.hb output!!
 
     // assume packer, same rotamer_sets, ig are there
     for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres();
@@ -6213,9 +6216,26 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
                            false);
       pose.pdb_info()->add_reslabel(rot->seqpos(), "HBSAT");
     }
+
+    ///////////// dump file ////////////////
+    std::string basefname = "HBSAT_";
+    auto const& opt_s =
+        basic::options::option[basic::options::OptionKeys::in::file::s]();
+    if (opt_s.size() == 1) {
+      // the following is a real beauty...
+      //     utility::file_basename strips the directory path
+      //     utility::file::file_basename strips the file extension
+      basefname +=
+          utility::file::file_basename(utility::file_basename(filename)) + "_";
+      basefname +=
+          utility::file::file_basename(utility::file_basename(opt_s[1])) + "_";
+    }
     std::ostringstream fname;
-    fname << "HBSAT_pose_" << irotassign << ".pdb";
+    fname << basefname << ObjexxFCL::lead_zero_Fstring_of(irotassign, 4)
+          << ".pdb";
+    std::cout << "dumping pose: " << fname.str() << std::endl;
     pose.dump_pdb(fname.str());
+
   }  // end irtoassign
 }
 
@@ -7598,3 +7618,4 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
 
 }  // hbnet
 }  // protocols
+
