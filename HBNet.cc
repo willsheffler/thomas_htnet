@@ -655,33 +655,39 @@ void HBNet::traverse_IG(Real const hb_threshold) {
   }
 
   switch (basic::options::option[basic::options::OptionKeys::out::
-                                     hbnet_print_interaction_graph_to_file]()) {
-    case 0:
-      break;
-    case 1:
-      print_interaction_graph_to_file("interaction_graph.txt");
-      return;
-    case 2:
-      print_SAT_model_to_file("SAT_model.txt", false, false);
-      return;
-    case 3:
-      print_SAT_model_to_file("PWMaxSAT_modelP.txt", true, false);
-      return;
-    case 4:
-      print_SAT_model_to_file("PWMaxSAT_model2P.txt", false, true);
-      return;
-    case 5:
-      print_SAT_model_to_file("PWMaxSAT_modelP2P.txt", true, true);
-      return;
-    case 6:
-      print_ILP_model_to_file("ILP_model.lp");
-      return;
-    case 7:
-      print_CFN_model_to_file("CFN_model.wcsp");
-      return;
-    default:
-      std::cerr << "Unimplemented model\n";
-      return;
+				 hbnet_print_interaction_graph_to_file]()) {
+  case 0:
+    break;
+  case 1:
+    print_interaction_graph_to_file("interaction_graph.txt");
+    return;
+  case 2:
+    print_SAT_model_to_file("SAT_model.txt", false, false);
+    return;
+  case 3:
+    print_SAT_model_to_file("PWMaxSAT_modelP.txt", true, false);
+    return;
+  case 4:
+    print_SAT_model_to_file("PWMaxSAT_model2P.txt", false, true);
+    return;
+  case 5:
+    print_SAT_model_to_file("PWMaxSAT_modelP2P.txt", true, true);
+    return;
+  case 6:
+    print_ILP_model_to_file("ILP_model.lp");
+    return;
+  case 7:
+    print_CFN_model_to_file("CFN_modelP.wcsp", true, false);
+    return;
+  case 8:
+    print_CFN_model_to_file("CFN_model2P.wcsp", false, true);
+    return;
+  case 9:
+    print_CFN_model_to_file("CFN_modelP2P.wcsp", true, true);
+    return;
+  default:
+    std::cerr << "Unimplemented model\n";
+    return;
   }
 
   // Start the IG traversal at pre-determined starting residues (e.g. interface
@@ -5902,9 +5908,8 @@ void load_SAT_conformation(const std::string& filename, core::Size n_mres,
   return;
 }
 
-void load_CFN_conformation(
-    const std::string& filename, core::Size n_mres,
-    utility::vector1<utility::vector1<core::Size>>& rotamer_assignments) {
+void load_CFN_conformation(const std::string& filename, core::Size n_mres,
+			   utility::vector1<utility::vector1<core::Size>>& rotamer_assignments) {
   std::ifstream inmain;
   inmain.open(filename);
   core::Size rotid;
@@ -7095,263 +7100,232 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
   out.close();
 }
 
-void HBNet::print_CFN_model_to_file(std::string filename) {
+void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
+                                    bool pref2polar) {
   std::ofstream out;
-  out.open(filename);
-
-  // Second version. The "all polar atoms must be satisfied
-  // constraint" can be translated into an automata with manually
-  // decomposed ternary regular like constraints that take care of
-  // each atom (independently for now. TODO). The automata will have
-  // one accepting state that is reached as soon as the atom is
-  // satisfied and one non accepting state (one automata per
-  // rotamer). When a given rotamer is used, if a suitable rotamer is
-  // used in the first position of the regular, we accept else we
-  // shift to the non accepting state of the rotamer and next
-  // position.  Problem: there will up to n²d boolean state variables
-  // (but probably far less).
-
+  out.open( filename );
+  
+  // Second version.
+  
+  // The "all polar atoms must be satisfied constraint" can be
+  // translated into an automata with manually decomposed ternary
+  // regular like constraints that take care of each atom
+  // (independently for now. TODO). The automata will have one
+  // accepting state that is reached as soon as the atom is satisfied
+  // and one non accepting state (one automata per rotamer). When a
+  // given rotamer is used, if a suitable rotamer is used in the first
+  // position of the regular, we accept else we shift to the non
+  // accepting state of the rotamer and next position.  Problem: there
+  // will up to n²d boolean state variables (but probably far less).
+  
   // Another possibility is to use the clause constraint in tb2.
   // Directly, this requires to channel the domains to nd booleans
-  // (and constraints). Also, lower propagation in case of multiple
-  // values remaining in a single variable. The clause constraint is
-  // built tutomatically from table constraints with non zero cost one
+  // (and constraints). Binary constraints (AA level) are encoded as
+  // binary CFs and the channel is left unused. When channeling, there
+  // is lower propagation in case of multiple values remaining in a
+  // single variable (binary case Ok). The clause constraint is built
+  // automatically from table constraints with non zero cost on one
   // tuple.
-
-  // The last one is to define a new anti-Horn clause constraint that
-  // will work directly on non necessarily boolean variables. The code
-  // needs to be defined and a new syntax defined.
-
-  const core::Size top =
-      1000000000;  // TODO: adjust to something less lousy (as in PWMaxSAT).
-  const core::Size apolar_penalty = rotamer_sets_->nmoltenres() + 1;
-  const core::Size polar1_penalty = 1;
-  const core::Size polar2_penalty = 0;
-
+  
+  // Another one is to define a new anti-Horn (or direct encoding)
+  // clause constraint that will work directly on non necessarily
+  // boolean variables. The code needs to be defined and a new syntax
+  // too.
+  
+  // Yet another would be to better handle non binary CF. With the
+  // huge domains, having a ternary with a table would be impractical
+  // at this point.
+  
+  // Trying option 2 for now.
+  
+  const core::Size top = 1000000000;// TODO: adjust to something less lousy (as in PWMaxSAT).
+  core::Size polar2_penalty = 0;
+  const core::Size polar1_penalty = (pref2polar ? rotamer_sets_->nmoltenres() : 0);
+  const core::Size apolar_penalty = (prefpolar ? polar1_penalty + 1 : polar1_penalty);
+  
   // Initialize Hbond data structure
-  std::vector<std::map<core::Size, std::set<core::Size>>> rot_atom2rotidset;
-
+  std::vector< std::map< core::Size, std::set<core::Size >>> rot_atom2rotidset;
+  
   // Fill the vector with maps
-  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
+  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
     std::map<core::Size, std::set<core::Size>> init_map;
     rot_atom2rotidset.push_back(init_map);
   }
-
-  // File the maps with sets
-  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
+  
+  // Fill the maps with sets
+  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ) {
     // For each global rotamer and each polar atom of the AA, it will
     // hold a set of rotids that satisfy the atom (rotid 0 is the
     // backbone).
-    auto rot_set_for_mres =
-        rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-
-    for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
-         ++rotid) {
-      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
-      core::Size global_rotamer =
-          rotamer_sets_->nrotamer_offset_for_moltenres(mresid) + rotid;
-
+    auto rot_set_for_mres = rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
+    
+    for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers(); ++rotid ) {
+      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer( rotid );
+      core::Size global_rotamer = rotamer_sets_->nrotamer_offset_for_moltenres( mresid ) + rotid;
+      
       // For each rotamer, we have a set of acceptor and donor atoms
-      for (core::Size sc_acc : rotamer->accpt_pos_sc()) {
-        std::set<core::Size> myemptyset;
-        rot_atom2rotidset[global_rotamer - 1][sc_acc] = myemptyset;
+      for( core::Size sc_acc : rotamer->accpt_pos_sc() ){
+	std::set<core::Size> myemptyset;
+	rot_atom2rotidset[global_rotamer-1][sc_acc] = myemptyset;
       }
-
-      for (core::Size polar_H : rotamer->Hpos_polar_sc()) {
-        core::Size H_parent = rotamer->atom_base(polar_H);
-        std::set<core::Size> myemptyset;
-        rot_atom2rotidset[global_rotamer - 1][H_parent] = myemptyset;
+      
+      for( core::Size polar_H : rotamer->Hpos_polar_sc() ){
+	core::Size H_parent = rotamer->atom_base( polar_H );
+	std::set<core::Size> myemptyset;
+	rot_atom2rotidset[global_rotamer-1][H_parent] = myemptyset;
       }
     }
   }
-
+  
   // Extracting hbond info.
-  const core::scoring::hbonds::HBondDatabaseCOP hb_database =
-      core::scoring::hbonds::HBondDatabase::get_database();
-  const core::scoring::TenANeighborGraph& tenA_neighbor_graph(
-      orig_pose_->energies().tenA_neighbor_graph());
+  const core::scoring::hbonds::HBondDatabaseCOP hb_database = core::scoring::hbonds::HBondDatabase::get_database();
+  const core::scoring::TenANeighborGraph& tenA_neighbor_graph( orig_pose_->energies().tenA_neighbor_graph() );
 
-  for (std::list<EdgeBase*>::const_iterator iter = ig_->get_edge_list_begin();
-       iter != ig_->get_edge_list_end(); ++iter) {
-    PDEdge* pdedge = static_cast<PDEdge*>(*iter);
-
+  for( std::list< EdgeBase* >::const_iterator iter = ig_->get_edge_list_begin(); iter != ig_->get_edge_list_end(); ++iter ){
+    
+    PDEdge * pdedge =  static_cast< PDEdge * >( *iter );
+    
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
-
-    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid(mres_1);
-    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid(mres_2);
-
-    const core::Size si = rotamer_sets_->nrotamers_for_moltenres(mres_1);
-    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres(mres_2);
-
-    const core::Size nbrs_1 = tenA_neighbor_graph.get_node(resid_1)
-                                  ->num_neighbors_counting_self_static();
-    const core::Size nbrs_2 = tenA_neighbor_graph.get_node(resid_2)
-                                  ->num_neighbors_counting_self_static();
-
-    for (core::Size ii = 1; ii <= si; ++ii) {
-      for (core::Size jj = 1; jj <= sj; ++jj) {
-        core::Real const score = pdedge->get_two_body_energy(ii, jj);
-        core::Size const global_rotamer_ii =
-            rotamer_sets_->nrotamer_offset_for_moltenres(mres_1) + ii;
-        core::Size const global_rotamer_jj =
-            rotamer_sets_->nrotamer_offset_for_moltenres(mres_2) + jj;
-
-        if (score < 0) {
-          core::conformation::ResidueCOP rotamer_ii =
-              rotamer_sets_->rotamer(global_rotamer_ii);
-          core::conformation::ResidueCOP rotamer_jj =
-              rotamer_sets_->rotamer(global_rotamer_jj);
-
-          core::scoring::hbonds::HBondSet hbond_set;
-
-          core::scoring::hbonds::identify_hbonds_1way(
-              *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
-              // output
-              hbond_set);
-
-          core::scoring::hbonds::identify_hbonds_1way(
-              *hb_database, *rotamer_jj, *rotamer_ii, nbrs_2, nbrs_1,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
-              // output
-              hbond_set);
-
-          for (core::Size hbond_id = 1; hbond_id <= hbond_set.nhbonds();
-               ++hbond_id) {
-            core::scoring::hbonds::HBondCOP hbond =
-                hbond_set.hbond_cop(hbond_id);
-            bool is_don_bb = hbond->don_hatm_is_backbone();
-            bool is_acc_bb = hbond->acc_atm_is_backbone();
-
-            if ((is_acc_bb && is_don_bb) ||
-                (hbond->energy() > hydrogen_bond_threshold_)) {
-              continue;  // not interested in weak or BB to BB hbonds
-            }
-
-            // core::Size const H = hbond->don_hatm();
-            core::Size const acc = hbond->acc_atm();
-            core::Size H_parent;
-
-            core::Size don_rotamer;
-            core::Size acc_rotamer;
-
-            if (hbond->don_res() == resid_1) {
-              don_rotamer = global_rotamer_ii;
-              H_parent = rotamer_ii->atom_base(hbond->don_hatm());
-              acc_rotamer = global_rotamer_jj;
-            } else {
-              don_rotamer = global_rotamer_jj;
-              H_parent = rotamer_jj->atom_base(hbond->don_hatm());
-              acc_rotamer = global_rotamer_ii;
-            }
-
-            // char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
-            // char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
-
-            if (is_don_bb) {  // We have a self sat acceptor atom for the
-                              // rotamer here
-              rot_atom2rotidset[acc_rotamer - 1][acc].clear();
-              rot_atom2rotidset[acc_rotamer - 1][acc].insert(0);
-            }
-            if (is_acc_bb) {  // We have a self sat donor atom for the rotamer
-                              // here
-              rot_atom2rotidset[don_rotamer - 1][H_parent].clear();
-              rot_atom2rotidset[don_rotamer - 1][H_parent].insert(0);
-            }
-            if (!is_acc_bb &&
-                !is_don_bb) {  // the polar partners both come from side-chains
-              if (rot_atom2rotidset[acc_rotamer - 1][acc].count(0) == 0)
-                rot_atom2rotidset[acc_rotamer - 1][acc].insert(don_rotamer);
-              if (rot_atom2rotidset[don_rotamer - 1][H_parent].count(0) == 0)
-                rot_atom2rotidset[don_rotamer - 1][H_parent].insert(
-                    acc_rotamer);
-            }
-          }
-        }
+    
+    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid( mres_1 );
+    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid( mres_2 );
+    
+    const core::Size si = rotamer_sets_->nrotamers_for_moltenres( mres_1 );
+    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres( mres_2 );
+    
+    const core::Size nbrs_1 = tenA_neighbor_graph.get_node( resid_1 )->num_neighbors_counting_self_static();
+    const core::Size nbrs_2 = tenA_neighbor_graph.get_node( resid_2 )->num_neighbors_counting_self_static();
+    
+    for( core::Size ii = 1; ii <= si; ++ii ){
+      for( core::Size jj = 1; jj <= sj; ++jj ){
+	core::Real const score = pdedge->get_two_body_energy(ii, jj);
+	core::Size const global_rotamer_ii = rotamer_sets_->nrotamer_offset_for_moltenres( mres_1 ) + ii;
+	core::Size const global_rotamer_jj = rotamer_sets_->nrotamer_offset_for_moltenres( mres_2 ) + jj;
+	
+	if( score < 0 ) {
+	  core::conformation::ResidueCOP rotamer_ii = rotamer_sets_->rotamer( global_rotamer_ii );
+	  core::conformation::ResidueCOP rotamer_jj = rotamer_sets_->rotamer( global_rotamer_jj );
+	  
+	  core::scoring::hbonds::HBondSet hbond_set;
+	  
+	  core::scoring::hbonds::identify_hbonds_1way(
+						      * hb_database,
+						      * rotamer_ii,
+						      * rotamer_jj,
+						      nbrs_1,
+						      nbrs_2,
+						      false, //bool const evaluate_derivative,
+						      false, //bool const exclude_don_bb,
+						      false, //bool const exclude_don_bsc,
+						      false, //bool const exclude_acc_scb,
+						      false, //bool const exclude_acc_sc,
+						      // output
+						      hbond_set
+						      );
+	  
+	  core::scoring::hbonds::identify_hbonds_1way(
+						      * hb_database,
+						      * rotamer_jj,
+						      * rotamer_ii,
+						      nbrs_2,
+						      nbrs_1,
+						      false, //bool const evaluate_derivative,
+						      false, //bool const exclude_don_bb,
+						      false, //bool const exclude_don_bsc,
+						      false, //bool const exclude_acc_scb,
+						      false, //bool const exclude_acc_sc,
+						      // output
+						      hbond_set
+						      );
+	  
+	  for( core::Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); ++hbond_id ){
+	    core::scoring::hbonds::HBondCOP hbond = hbond_set.hbond_cop( hbond_id );
+	    bool is_don_bb = hbond->don_hatm_is_backbone();
+	    bool is_acc_bb = hbond->acc_atm_is_backbone();
+	    
+	    if( (is_acc_bb && is_don_bb) || (hbond->energy() > hydrogen_bond_threshold_)) {
+	      continue; // not interested in weak or BB to BB hbonds
+	    }
+	    
+	    core::Size const H = hbond->don_hatm();
+	    core::Size const acc = hbond->acc_atm();
+	    core::Size H_parent;
+	    
+	    core::Size don_rotamer;
+	    core::Size acc_rotamer;
+	    
+	    if( hbond->don_res() == resid_1 ){
+	      don_rotamer = global_rotamer_ii;
+	      H_parent = rotamer_ii->atom_base( hbond->don_hatm() );
+	      acc_rotamer = global_rotamer_jj;
+	    } else {
+	      don_rotamer = global_rotamer_jj;
+	      H_parent = rotamer_jj->atom_base( hbond->don_hatm() );
+	      acc_rotamer = global_rotamer_ii;
+	    }
+	    
+	    char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
+	    char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
+	    
+	    if (is_don_bb) { // We have a self sat acceptor atom for the rotamer here
+	      rot_atom2rotidset[acc_rotamer-1][acc].clear();
+	      rot_atom2rotidset[acc_rotamer-1][acc].insert(0);
+	    }
+	    if (is_acc_bb) { // We have a self sat donor atom for the rotamer here
+	      rot_atom2rotidset[don_rotamer-1][H_parent].clear();
+	      rot_atom2rotidset[don_rotamer-1][H_parent].insert(0);
+	    }
+	    if (!is_acc_bb && !is_don_bb) { // the polar partners both come from side-chains
+	      if (rot_atom2rotidset[acc_rotamer-1][acc].count(0) == 0)
+		rot_atom2rotidset[acc_rotamer-1][acc].insert(don_rotamer);
+	      if (rot_atom2rotidset[don_rotamer-1][H_parent].count(0) == 0)
+		rot_atom2rotidset[don_rotamer-1][H_parent].insert(acc_rotamer);
+	    }
+	  }
+	}
       }
     }
   }
-
-  // UP Stage: enforce unit propagation on the anti-horn clauses. This
-  // will lower the number of non unit/binary clauses and channeling.
-  // For the moment, this is done naively, using an AC1 like loop.
-  std::map<core::Size, bool> deletedrot;
-
+  
+  //UP Stage: enforce unit propagation on the anti-horn clauses. This
+  // will lower the number of non unit/binary clauses and channeling
+  // clauses and vars.  For the moment, this is done naively, using an
+  // AC1 like loop even if linear time.
+  std::map< core::Size, bool > deletedrot;
+  
   // look for unit anti-horn clauses (rotamers to delete)
-  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
-    for (const auto& a_set_pair : rot_atom2rotidset[rotid - 1]) {
-      if (a_set_pair.second.empty()) {
-        deletedrot[rotid] = true;
-        TR << "Deleting rotamer " << rotid << std::endl;
-        break;
+  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
+    for( const auto& a_set_pair : rot_atom2rotidset[rotid-1] ){
+      if (a_set_pair.second.empty()){
+	deletedrot[rotid] = true;
+	break;
       }
     }
   }
-
+  
   bool new_unit;
   do {
     new_unit = false;
-    for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
-      for (auto& a_set_pair : rot_atom2rotidset[rotid - 1]) {
-        if (!a_set_pair.second.empty() &&
-            a_set_pair.second.count(0) == 0) {  // no BB support, not empty
-          for (auto it_rot = a_set_pair.second.begin();
-               it_rot != a_set_pair.second.end();) {
-            if (deletedrot[*it_rot]) {
-              TR << "deleted " << *it_rot << " in " << *it_rot << ", erasing"
-                 << std::endl;
-              it_rot = a_set_pair.second.erase(it_rot);
-            } else {
-              ++it_rot;
-            }
-          }
-          if (a_set_pair.second.empty()) {
-            new_unit = true;
-            TR << "Deleting rotamer " << rotid << std::endl;
-            deletedrot[rotid] = true;
-          }
-        }
+    for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
+      for( auto& a_set_pair : rot_atom2rotidset[rotid-1] ) {
+	if (!a_set_pair.second.empty() && a_set_pair.second.count(0) == 0){// no BB support, not empty
+	  for( auto it_rot = a_set_pair.second.begin(); it_rot != a_set_pair.second.end(); ){
+	    if (deletedrot[*it_rot]){
+	      it_rot = a_set_pair.second.erase(it_rot);
+	    }
+	    else { ++it_rot;  }
+	  }
+	  if ( a_set_pair.second.empty()) {
+	    new_unit = true;
+	    deletedrot[rotid] = true;
+	  }
+	}
       }
     }
-  } while (new_unit);
-
-  // dumping function for( core::Size mresid = 1; mresid <=
-  // rotamer_sets_->nmoltenres(); ++mresid ) { auto rot_set_for_mres =
-  // rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-
-  // 	for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
-  // ++rotid ) {
-  // 		core::conformation::ResidueCOP rotamer =
-  // rot_set_for_mres->rotamer(
-  // rotid );
-  // 		core::Size global_rotamer =
-  // rotamer_sets_->nrotamer_offset_for_moltenres( mresid ) + rotid;
-
-  // 		for( core::Size sc_acc : rotamer->accpt_pos_sc() ){
-  // 			out << "r" << global_rotamer << " A" << sc_acc << " " ;
-  // 			out << rot_atom2rotidset[global_rotamer-1][sc_acc] <<
-  // std::endl;
-  // 		}
-
-  // 		for( core::Size polar_H : rotamer->Hpos_polar_sc() ){
-  // 			core::Size H_parent = rotamer->atom_base( polar_H );
-  // 			out << "r" << global_rotamer << " A" << H_parent << " "
-  // ;
-  // 			out << rot_atom2rotidset[global_rotamer-1][H_parent] <<
-  // std::endl;
-  // 		}
-  // 	}
-  // }
-
+  }
+  while (new_unit);
+  
   // Generate the CFN
   // Header - assumes one CF per IG-edge. Suboptimal as some may be
   // empty but toulbar2 will remove Additional variables needed for
@@ -7363,187 +7337,207 @@ void HBNet::print_CFN_model_to_file(std::string filename) {
   core::Size ndeletions = 0;
   core::Size nclauses = 0;
   core::Size chan_var_idx = rotamer_sets_->nmoltenres();
-  std::map<core::Size, core::Size> rot2chanvaridx;
-
+  std::map< core::Size, core::Size > rot2chanvaridx;
+  
   // We need to channel only the rotamer that appear in clauses and
   // are not deleted
-  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
-    // bool needs_chan = false;
-
-    if (deletedrot[rotid]) {
+  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
+    bool needs_chan = false;
+    
+    if (deletedrot[rotid]){
       ndeletions++;
-    } else {
-      for (const auto& a_set_pair : rot_atom2rotidset[rotid - 1]) {
-        if (a_set_pair.second.count(0) == 0) {
-          nclauses++;  // a clause
-        }
+    }
+    else {
+      for( const auto& a_set_pair : rot_atom2rotidset[rotid-1] ){
+	if ( a_set_pair.second.count(0) == 0 ) {
+	  nclauses++;  // a clause
+	}
       }
       rot2chanvaridx[rotid] = chan_var_idx++;
       nchancf++;
       nchanvar++;
     }
   }
-
-  out << "Max_HB_stable"
-      << " " << rotamer_sets_->nmoltenres() + nchanvar << " ";
+  
+  out << "Max_HB_stable" << " " << rotamer_sets_->nmoltenres() + nchanvar << " ";
   core::Size max_domain_size = 2;
-  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
-    max_domain_size = std::max(max_domain_size,
-                               rotamer_sets_->nrotamers_for_moltenres(mresid));
+  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ){
+    max_domain_size = std::max(max_domain_size, rotamer_sets_->nrotamers_for_moltenres(mresid));
   }
-  // we need one channeling constraint per channeled variable + deletion of
-  // rotamers with no support.
-  out << max_domain_size << " "
-      << ig_->get_num_edges() + ig_->get_num_nodes() + nchancf + nclauses +
-             ndeletions
-      << " " << top << std::endl;
-
+  // we need one channeling constraint per channeled variable + deletion of rotamers with no support.
+  out << max_domain_size << " " << ig_->get_num_edges() + ig_->get_num_nodes()
+    + nchancf + nclauses + ndeletions << " " << top << std::endl;
+  
   // Domain sizes
-  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
+  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ){
     out << rotamer_sets_->nrotamers_for_moltenres(mresid) << " ";
   }
   // Channeling variables domains
-  for (core::Size vidx = 1; vidx <= nchanvar; vidx++) {
+  for( core::Size vidx = 1; vidx <= nchanvar; vidx++){
     out << "2 ";
   }
   out << std::endl;
-
+  
   // Unary cost functions that favor heavy polar atoms
-  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
-    auto rot_set_for_mres =
-        rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-    out << "1 " << mresid - 1 << " 0 " << rot_set_for_mres->num_rotamers()
-        << std::endl;
-
+  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ) {
+    auto rot_set_for_mres = rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
+    out << "1 " << mresid-1 << " 0 " << rot_set_for_mres->num_rotamers() << std::endl;
+    
     // could be optimized by counting just once par amino-acid type
-    for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
-         ++rotid) {
-      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
-      bool is_polar = ((rotamer->Hpos_polar_sc().size() != 0) ||
-                       (rotamer->accpt_pos_sc().size() != 0));
+    for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers(); ++rotid ) {
+      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer( rotid );
+      bool is_polar = ((rotamer->Hpos_polar_sc().size() != 0 ) || (rotamer->accpt_pos_sc().size() != 0));
       bool is_2polar = (rotamer->accpt_pos_sc().size() > 1);
-
-      out << rotid - 1 << " ";
+      
+      out << rotid - 1 << " " ;
       if (!is_polar)
-        out << apolar_penalty;
+	out << apolar_penalty;
       else if (!is_2polar)
-        out << polar1_penalty;
+	out << polar1_penalty;
       else
-        out << polar2_penalty;
+	out << polar2_penalty;
       out << std::endl;
     }
   }
-
+  
   // Channeling constraints.
-  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
+  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
     core::Size mresid = rotamer_sets_->moltenres_for_rotamer(rotid);
     core::Size l_rot = rotamer_sets_->rotid_on_moltenresidue(rotid);
-
+    
     if (deletedrot[rotid]) {
-      out << "1 " << mresid - 1 << " 0 1" << std::endl;
-      out << l_rot - 1 << " " << top << std::endl;
-    } else {
-      out << "2 " << rot2chanvaridx[rotid] << " " << mresid - 1 << " " << top
-          << " ";
+      out << "1 " << mresid-1 << " 0 1" << std::endl;
+      out << l_rot-1 << " " << top << std::endl;
+    }
+    else {
+      out << "2 " << rot2chanvaridx[rotid] << " " << mresid - 1 << " " << top << " ";
       out << rotamer_sets_->nrotamers_for_moltenres(mresid) << std::endl;
       out << "1 " << l_rot - 1 << " 0" << std::endl;
-      for (core::Size false_rot = 1;
-           false_rot <= rotamer_sets_->nrotamers_for_moltenres(mresid);
-           false_rot++) {
-        if (false_rot != l_rot) {
-          out << "0 " << false_rot - 1 << " 0" << std::endl;
-        }
+      for( core::Size false_rot = 1; false_rot <= rotamer_sets_->nrotamers_for_moltenres(mresid); false_rot++ ){
+	if (false_rot !=  l_rot){
+	  out << "0 " << false_rot - 1 << " 0" << std::endl;
+	}
       }
     }
   }
-
+  
   // Binary cost functions (clashes)
-  for (std::list<EdgeBase*>::const_iterator iter = ig_->get_edge_list_begin();
-       iter != ig_->get_edge_list_end(); ++iter) {
-    PDEdge* pdedge = static_cast<PDEdge*>(*iter);
-
+  for( std::list< EdgeBase* >::const_iterator iter = ig_->get_edge_list_begin(); iter != ig_->get_edge_list_end(); ++iter ){
+    
+    PDEdge * pdedge =  static_cast< PDEdge * >( *iter );
+    
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
-
-    // core::Size const resid_1 = rotamer_sets_->moltenres_2_resid(mres_1);
-    // core::Size const resid_2 = rotamer_sets_->moltenres_2_resid(mres_2);
-
-    const core::Size si = rotamer_sets_->nrotamers_for_moltenres(mres_1);
-    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres(mres_2);
-
+    
+    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid( mres_1 );
+    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid( mres_2 );
+    
+    const core::Size si = rotamer_sets_->nrotamers_for_moltenres( mres_1 );
+    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres( mres_2 );
+    
     // Filling in hbond creation info
-    // const core::Size nbrs_1 = tenA_neighbor_graph.get_node(resid_1)
-    // ->num_neighbors_counting_self_static();
-    // const core::Size nbrs_2 = tenA_neighbor_graph.get_node(resid_2)
-    // ->num_neighbors_counting_self_static();
-
+    const core::Size nbrs_1 = tenA_neighbor_graph.get_node( resid_1 )->num_neighbors_counting_self_static();
+    const core::Size nbrs_2 = tenA_neighbor_graph.get_node( resid_2 )->num_neighbors_counting_self_static();
+    
     std::vector<std::vector<int>> pairs;
     core::Size nb_non_zero = 0;
-
-    for (core::Size ii = 1; ii <= si; ++ii) {
+    
+    for( core::Size ii = 1; ii <= si; ++ii ){
       std::vector<int> row;
-      for (core::Size jj = 1; jj <= sj; ++jj) {
-        core::Real const score = pdedge->get_two_body_energy(ii, jj);
-        // core::Size const global_rotamer_ii =
-        // rotamer_sets_->nrotamer_offset_for_moltenres(mres_1) + ii;
-        // core::Size const global_rotamer_jj =
-        // rotamer_sets_->nrotamer_offset_for_moltenres(mres_2) + jj;
-        if (score > clash_threshold_) {
-          row.push_back(top);
-          nb_non_zero++;
-        } else {
-          row.push_back(0);
-        }
+      for( core::Size jj = 1; jj <= sj; ++jj ){
+	core::Real const score = pdedge->get_two_body_energy(ii, jj);
+	core::Size const global_rotamer_ii = rotamer_sets_->nrotamer_offset_for_moltenres( mres_1 ) + ii;
+	core::Size const global_rotamer_jj = rotamer_sets_->nrotamer_offset_for_moltenres( mres_2 ) + jj;
+	if( score > clash_threshold_ ){
+	  row.push_back(top);
+	  nb_non_zero++;
+	}
+	else {
+	  row.push_back(0);
+	}
       }
       pairs.push_back(row);
     }
-
+    
     const core::Size default_cost = 0;
-    out << "2 " << mres_1 - 1 << " " << mres_2 - 1 << " " << default_cost << " "
-        << nb_non_zero << std::endl;
-    for (core::Size i = 0; i < pairs.size(); i++) {
-      for (core::Size j = 0; j < pairs[i].size(); j++) {
-        core::Size cost = pairs[i][j];
-        if (cost != default_cost) {
-          out << i << " " << j << " " << cost << std::endl;
-        }
+    out << "2 " << mres_1 - 1 << " " << mres_2 - 1 << " " << default_cost << " " << nb_non_zero << std::endl;
+    for ( core::Size i = 0; i < pairs.size(); i++ ){
+      for ( core::Size j = 0; j < pairs[i].size(); j++ ){
+	core::Size cost = pairs[i][j];
+	if ( cost != default_cost) {
+	  out << i << " " << j << " " << cost << std::endl;
+	}
       }
     }
   }
-
-  // Now, the clauses. They are described by a single tuple over the boolean
-  // channeling variables.
-  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
-    // core::Size mresid = rotamer_sets_->moltenres_for_rotamer(rotid);
-    // core::Size l_rot = rotamer_sets_->rotid_on_moltenresidue(rotid);
-
+  
+  // Now, the clauses. They are described by a single tuple over the boolean channeling variables.
+  // Binary clauses are represented as binary cost functions.
+  std::map<core::Size, core::Size> histo;
+  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++ ){
+    core::Size mresid = rotamer_sets_->moltenres_for_rotamer(rotid);
+    core::Size l_rot = rotamer_sets_->rotid_on_moltenresidue(rotid);
+    
     if (!deletedrot[rotid]) {
-      for (const auto& a_set_pair : rot_atom2rotidset[rotid - 1]) {
-        if (a_set_pair.second.count(0) == 0) {
-          // Arity, scope, def cost, tuples
-          out << a_set_pair.second.size() + 1 << " " << rot2chanvaridx[rotid]
-              << " ";
-          for (const auto& rot_hb : a_set_pair.second) {
-            if (rot2chanvaridx.find(rot_hb) != rot2chanvaridx.end()) {
-              out << rot2chanvaridx[rot_hb] << " ";
-            } else {
-              TR << "----------- ERROR: no channeling var for " << rot_hb
-                 << "deletion status " << deletedrot[rot_hb] << std::endl;
-            }
-          }
-          out << "0 1" << std::endl;
-
-          // The forbidden tuple (negation of the litterals in the clause)
-          out << "1";
-          for (size_t i = 0; i < a_set_pair.second.size(); ++i) {
-            out << " 0";
-          }
-          out << " " << top << std::endl;
-        }
+      for( const auto& a_set_pair : rot_atom2rotidset[rotid-1] ){
+	if (a_set_pair.second.count(0) == 0){
+	  std::set<core::Size> vars;
+	  for(const auto &rot_hb : a_set_pair.second){
+	    vars.insert(rotamer_sets_->moltenres_for_rotamer(rot_hb));
+	  }
+	  histo[vars.size()+1]++;
+	  if (vars.size() == 1){// binary constraint
+	    core::Size other_res = *vars.begin();
+	    core::Size nrot =  rotamer_sets_->nrotamers_for_moltenres(other_res);
+	    out << "2 " << mresid-1 << " " << other_res-1 << " 0 " << nrot - a_set_pair.second.size() << std::endl;
+	    for (core::Size tup = 0; tup < nrot; tup++){
+	      core::Size gtup = rotamer_sets_->nrotamer_offset_for_moltenres(other_res)+1+tup;
+	      if (a_set_pair.second.count(gtup) == 0)
+		out << l_rot - 1 << " " <<  tup << " " << top << std::endl;
+	    }
+	  }
+	  else {
+	    // Arity, scope, def cost, tuples
+	    out << a_set_pair.second.size()+1 << " " << rot2chanvaridx[rotid] << " ";
+	    for(const auto &rot_hb : a_set_pair.second){
+	      if (rot2chanvaridx.find(rot_hb) != rot2chanvaridx.end()){
+		out << rot2chanvaridx[rot_hb] << " ";
+	      }
+	      else
+		{
+		  TR << "----------- ERROR: no channeling var for " <<  rot_hb << "deletion status " << deletedrot[rot_hb] << std::endl;
+		}
+	      vars.insert(rotamer_sets_->res_for_rotamer(rot_hb));
+	    }
+	    out << "0 1" << std::endl;
+	    
+	    // The forbidden tuple (negation of the litterals in the clause)
+	    out << "1";
+	    for(const auto &rot_hb : a_set_pair.second){
+	      out << " 0";
+	    }
+	    out << " " << top << std::endl;
+	  }
+	}
       }
     }
   }
-
+  for (const auto& fp : histo)
+    TR << "Arity " << fp.first << " occurrences " << fp.second << std::endl;
+  // Write the corresponding amino acids for printing sequences in
+  // toulbar2 directly For true rotamer variables, we print he AA
+  // name. For the channeling variables, let's use 'A'
+  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ){
+    auto rot_set_for_mres = rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
+    for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers(); ++rotid ) {
+      out << rot_set_for_mres->rotamer(rotid)->name1() << " ";
+    }
+    out << std::endl;
+  }
+  
+  for( core::Size cv = 1; cv <= nchanvar; ++cv ){
+    out << "A A" << std::endl;
+  }
   out.close();
 }
 
