@@ -6514,7 +6514,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
           buffer << "c non-polar rotamer for M" << mresid << " undesirable!"
                  << std::endl;
         if (pwmax_sat) {
-          buffer << nresid << " ";
+          buffer << 1 << " ";
         }
         buffer << "-" << rotamer_sets_->moltenres_rotid_2_rotid(mresid, rotid)
                << " 0" << std::endl;
@@ -6526,7 +6526,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
           buffer << "c non-2polar rotamer for M" << mresid << " undesirable!"
                  << std::endl;
         if (pwmax_sat) {
-          buffer << "1 ";
+          buffer << nresid << " ";
         }
         buffer << "-" << rotamer_sets_->moltenres_rotid_2_rotid(mresid, rotid)
                << " 0" << std::endl;
