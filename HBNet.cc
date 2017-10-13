@@ -159,71 +159,38 @@ namespace hbnet {
 static THREAD_LOCAL basic::Tracer TR("protocols.hbnet.HBNet");
 
 HBNet::HBNet()
-    : protocols::moves::Mover("HBNet"),
-      write_network_pdbs_(0),
-      jack_store_networks_(0),
-      write_cst_files_(1),
-      output_poly_ala_background_(0),
-      find_native_(0),
-      only_native_(0),
-      keep_existing_networks_(0),
-      extend_existing_networks_(0),
-      only_extend_existing_(0),
-      verbose_(0),
-      symmetric_(0),
-      multi_component_(0),
-      show_task_(0),
-      minimize_(1),
+    : protocols::moves::Mover("HBNet"), write_network_pdbs_(0),
+      jack_store_networks_(0), write_cst_files_(1),
+      output_poly_ala_background_(0), find_native_(0), only_native_(0),
+      keep_existing_networks_(0), extend_existing_networks_(0),
+      only_extend_existing_(0), verbose_(0), symmetric_(0), multi_component_(0),
+      show_task_(0), minimize_(1),
       // bridging_waters_(0),
-      start_from_csts_(0),
-      tyr_hydroxyls_must_donate_(0),
-      hydroxyls_must_donate_(0),
-      use_pdb_numbering_(1),
-      no_heavy_unsats_allowed_(1),
-      keep_start_selector_rotamers_fixed_(0),
-      min_network_size_(3),
-      max_network_size_(15),
-      min_unique_networks_(1),
-      min_core_res_(0),
-      min_boundary_res_(0),
-      max_unsat_(5),
-      max_lig_unsat_(15),
-      max_rep_(1),
-      max_replicates_before_branch_(0),
+      start_from_csts_(0), tyr_hydroxyls_must_donate_(0),
+      hydroxyls_must_donate_(0), use_pdb_numbering_(1),
+      no_heavy_unsats_allowed_(1), keep_start_selector_rotamers_fixed_(0),
+      min_network_size_(3), max_network_size_(15), min_unique_networks_(1),
+      min_core_res_(0), min_boundary_res_(0), max_unsat_(5), max_lig_unsat_(15),
+      max_rep_(1), max_replicates_before_branch_(0),
       max_replicates_before_unsat_check_(1),
       // bridging_water_search_depth_(1),
-      des_residues_("STRKHYWNQDE"),
-      start_res_vec_(/* NULL */),
-      network_vector_(/* NULL */),
-      native_networks_(/* NULL */),
-      merged_vecs_(/* NULL */),
-      output_vector_(/* NULL */),
-      hydrogen_bond_threshold_(-0.5),
-      onebody_hb_threshold_(-0.4),
-      charge_charge_rep_cutoff_(1.0),
-      clash_threshold_(1.0),
-      upper_score_limit_(15.0),
-      min_connectivity_(0.5),
+      des_residues_("STRKHYWNQDE"), start_res_vec_(/* NULL */),
+      network_vector_(/* NULL */), native_networks_(/* NULL */),
+      merged_vecs_(/* NULL */), output_vector_(/* NULL */),
+      hydrogen_bond_threshold_(-0.5), onebody_hb_threshold_(-0.4),
+      charge_charge_rep_cutoff_(1.0), clash_threshold_(1.0),
+      upper_score_limit_(15.0), min_connectivity_(0.5),
       task_factory_(/* NULL */),
       init_scorefxn_(
           core::scoring::ScoreFunctionFactory::create_score_function("HBNet")),
-      scorefxn_(/* NULL */),
-      rotamer_sets_(/* NULL */),
-      ig_(/* NULL */),
-      rotamer_links_(0),
-      store_subnetworks_(0),
-      secondary_search_(0),
-      secondary_threshold_(-0.25),
-      upweight_twobody_(1.0),
-      start_selector_(/* NULL */),
-      core_selector_(/* NULL */),
-      boundary_selector_(/* NULL */),
-      core_residues_(0),
-      boundary_residues_(0),
+      scorefxn_(/* NULL */), rotamer_sets_(/* NULL */), ig_(/* NULL */),
+      rotamer_links_(0), store_subnetworks_(0), secondary_search_(0),
+      secondary_threshold_(-0.25), upweight_twobody_(1.0),
+      start_selector_(/* NULL */), core_selector_(/* NULL */),
+      boundary_selector_(/* NULL */), core_residues_(0), boundary_residues_(0),
       input_hbnet_info_residues_(0),
       // hbnet_info_residues_(0),
-      run_offrot_(0),
-      please_do_not_change_the_task_(0),
+      run_offrot_(0), please_do_not_change_the_task_(0),
       init_rotset_from_monte_carlo_offrot_(0),
       init_rotset_from_monte_carlo_packrot_(0)
 
@@ -247,69 +214,36 @@ HBNet::HBNet()
 }
 
 HBNet::HBNet(std::string const name)
-    : protocols::moves::Mover(name),
-      write_network_pdbs_(0),
-      jack_store_networks_(0),
-      write_cst_files_(1),
-      output_poly_ala_background_(0),
-      find_native_(0),
-      only_native_(0),
-      keep_existing_networks_(0),
-      extend_existing_networks_(0),
-      only_extend_existing_(0),
-      verbose_(0),
-      symmetric_(0),
-      multi_component_(0),
-      show_task_(0),
-      minimize_(1),
+    : protocols::moves::Mover(name), write_network_pdbs_(0),
+      jack_store_networks_(0), write_cst_files_(1),
+      output_poly_ala_background_(0), find_native_(0), only_native_(0),
+      keep_existing_networks_(0), extend_existing_networks_(0),
+      only_extend_existing_(0), verbose_(0), symmetric_(0), multi_component_(0),
+      show_task_(0), minimize_(1),
       // bridging_waters_(0),
-      start_from_csts_(0),
-      tyr_hydroxyls_must_donate_(0),
-      hydroxyls_must_donate_(0),
-      use_pdb_numbering_(1),
-      no_heavy_unsats_allowed_(1),
-      keep_start_selector_rotamers_fixed_(0),
-      min_network_size_(3),
-      max_network_size_(15),
-      min_unique_networks_(1),
-      min_core_res_(0),
-      min_boundary_res_(0),
-      max_unsat_(5),
-      max_lig_unsat_(15),
-      max_rep_(1),
-      max_replicates_before_branch_(0),
+      start_from_csts_(0), tyr_hydroxyls_must_donate_(0),
+      hydroxyls_must_donate_(0), use_pdb_numbering_(1),
+      no_heavy_unsats_allowed_(1), keep_start_selector_rotamers_fixed_(0),
+      min_network_size_(3), max_network_size_(15), min_unique_networks_(1),
+      min_core_res_(0), min_boundary_res_(0), max_unsat_(5), max_lig_unsat_(15),
+      max_rep_(1), max_replicates_before_branch_(0),
       max_replicates_before_unsat_check_(1),
       // bridging_water_search_depth_(1),
-      des_residues_("STRKHYWNQDE"),
-      start_res_vec_(/* NULL */),
-      network_vector_(/* NULL */),
-      native_networks_(/* NULL */),
-      merged_vecs_(/* NULL */),
-      output_vector_(/* NULL */),
-      hydrogen_bond_threshold_(-0.5),
-      onebody_hb_threshold_(-0.4),
-      charge_charge_rep_cutoff_(1.0),
-      clash_threshold_(1.0),
-      upper_score_limit_(15.0),
-      min_connectivity_(0.5),
+      des_residues_("STRKHYWNQDE"), start_res_vec_(/* NULL */),
+      network_vector_(/* NULL */), native_networks_(/* NULL */),
+      merged_vecs_(/* NULL */), output_vector_(/* NULL */),
+      hydrogen_bond_threshold_(-0.5), onebody_hb_threshold_(-0.4),
+      charge_charge_rep_cutoff_(1.0), clash_threshold_(1.0),
+      upper_score_limit_(15.0), min_connectivity_(0.5),
       task_factory_(/* NULL */),
       init_scorefxn_(
           core::scoring::ScoreFunctionFactory::create_score_function("HBNet")),
-      scorefxn_(/* NULL */),
-      rotamer_sets_(/* NULL */),
-      ig_(/* NULL */),
-      rotamer_links_(0),
-      store_subnetworks_(0),
-      secondary_search_(0),
-      secondary_threshold_(-0.25),
-      upweight_twobody_(1.0),
-      start_selector_(/* NULL */),
-      core_selector_(/* NULL */),
-      boundary_selector_(/* NULL */),
-      core_residues_(0),
-      boundary_residues_(0),
-      input_hbnet_info_residues_(0),
-      run_offrot_(0),
+      scorefxn_(/* NULL */), rotamer_sets_(/* NULL */), ig_(/* NULL */),
+      rotamer_links_(0), store_subnetworks_(0), secondary_search_(0),
+      secondary_threshold_(-0.25), upweight_twobody_(1.0),
+      start_selector_(/* NULL */), core_selector_(/* NULL */),
+      boundary_selector_(/* NULL */), core_residues_(0), boundary_residues_(0),
+      input_hbnet_info_residues_(0), run_offrot_(0),
       please_do_not_change_the_task_(0),
       init_rotset_from_monte_carlo_offrot_(0),
       init_rotset_from_monte_carlo_packrot_(0) {
@@ -345,69 +279,37 @@ HBNet::HBNet(core::scoring::ScoreFunctionCOP scorefxn, Size max_unsat,
                                        // bool bridging_waters, /*false*/
              // bool minimize /*false*/
              )
-    : protocols::moves::Mover("HBNet"),
-      write_network_pdbs_(0),
-      jack_store_networks_(0),
-      write_cst_files_(1),
-      output_poly_ala_background_(0),
-      find_native_(find_native),
-      only_native_(only_native),
-      keep_existing_networks_(keep_existing),
+    : protocols::moves::Mover("HBNet"), write_network_pdbs_(0),
+      jack_store_networks_(0), write_cst_files_(1),
+      output_poly_ala_background_(0), find_native_(find_native),
+      only_native_(only_native), keep_existing_networks_(keep_existing),
       extend_existing_networks_(extend_existing),
-      only_extend_existing_(only_extend),
-      verbose_(0),
-      symmetric_(0),
-      multi_component_(0),
-      show_task_(0),
-      minimize_(1),
+      only_extend_existing_(only_extend), verbose_(0), symmetric_(0),
+      multi_component_(0), show_task_(0), minimize_(1),
       // bridging_waters_(0),
-      start_from_csts_(0),
-      tyr_hydroxyls_must_donate_(0),
-      hydroxyls_must_donate_(0),
-      use_pdb_numbering_(1),
-      no_heavy_unsats_allowed_(1),
-      keep_start_selector_rotamers_fixed_(0),
-      min_network_size_(min_network_size),
-      max_network_size_(max_network_size),
-      min_unique_networks_(1),
-      min_core_res_(0),
-      min_boundary_res_(0),
-      max_unsat_(max_unsat),
-      max_lig_unsat_(15),
-      max_rep_(1),
-      max_replicates_before_branch_(0),
-      max_replicates_before_unsat_check_(1),
+      start_from_csts_(0), tyr_hydroxyls_must_donate_(0),
+      hydroxyls_must_donate_(0), use_pdb_numbering_(1),
+      no_heavy_unsats_allowed_(1), keep_start_selector_rotamers_fixed_(0),
+      min_network_size_(min_network_size), max_network_size_(max_network_size),
+      min_unique_networks_(1), min_core_res_(0), min_boundary_res_(0),
+      max_unsat_(max_unsat), max_lig_unsat_(15), max_rep_(1),
+      max_replicates_before_branch_(0), max_replicates_before_unsat_check_(1),
       // bridging_water_search_depth_(1),
-      des_residues_(des_residues),
-      start_res_vec_(/* NULL */),
-      network_vector_(/* NULL */),
-      native_networks_(/* NULL */),
-      merged_vecs_(/* NULL */),
-      output_vector_(/* NULL */),
-      hydrogen_bond_threshold_(hb_threshold),
-      onebody_hb_threshold_(-0.4),
-      charge_charge_rep_cutoff_(1.0),
-      clash_threshold_(1.0),
-      upper_score_limit_(15.0),
-      min_connectivity_(0.5),
+      des_residues_(des_residues), start_res_vec_(/* NULL */),
+      network_vector_(/* NULL */), native_networks_(/* NULL */),
+      merged_vecs_(/* NULL */), output_vector_(/* NULL */),
+      hydrogen_bond_threshold_(hb_threshold), onebody_hb_threshold_(-0.4),
+      charge_charge_rep_cutoff_(1.0), clash_threshold_(1.0),
+      upper_score_limit_(15.0), min_connectivity_(0.5),
       task_factory_(/* NULL */),
       init_scorefxn_(
           core::scoring::ScoreFunctionFactory::create_score_function("HBNet")),
-      scorefxn_(scorefxn->clone()),
-      rotamer_sets_(/* NULL */),
-      ig_(/* NULL */),
-      rotamer_links_(0),
-      store_subnetworks_(0),
-      secondary_search_(0),
-      secondary_threshold_(-0.25),
-      upweight_twobody_(1.0),
-      start_selector_(/* NULL */),
-      core_selector_(/* NULL */),
-      boundary_selector_(/* NULL */),
-      core_residues_(0),
-      boundary_residues_(0),
-      input_hbnet_info_residues_(0),
-      run_offrot_(0),
+      scorefxn_(scorefxn->clone()), rotamer_sets_(/* NULL */), ig_(/* NULL */),
+      rotamer_links_(0), store_subnetworks_(0), secondary_search_(0),
+      secondary_threshold_(-0.25), upweight_twobody_(1.0),
+      start_selector_(/* NULL */), core_selector_(/* NULL */),
+      boundary_selector_(/* NULL */), core_residues_(0), boundary_residues_(0),
+      input_hbnet_info_residues_(0), run_offrot_(0),
       please_do_not_change_the_task_(0),
       init_rotset_from_monte_carlo_offrot_(0),
       init_rotset_from_monte_carlo_packrot_(0) {
@@ -430,8 +332,10 @@ HBNet::HBNet(core::scoring::ScoreFunctionCOP scorefxn, Size max_unsat,
   // lkb_ = new
   // core::scoring::lkball::LK_BallEnergy(init_scorefxn_->energy_method_options());
   // lkb_(init_scorefxn_->energy_method_options());
-  if (only_native_) find_native_ = true;
-  if (only_extend_existing_) extend_existing_networks_ = true;
+  if (only_native_)
+    find_native_ = true;
+  if (only_extend_existing_)
+    extend_existing_networks_ = true;
 }
 
 //// TODO NEED: Copy constructor to only copy over key settings and parameters;
@@ -456,10 +360,10 @@ void HBNet::task_factory(core::pack::task::TaskFactoryOP task_factory) {
 }
 
 void HBNet::parse_my_tag(utility::tag::TagCOP tag,
-                         basic::datacache::DataMap& data,
-                         protocols::filters::Filters_map const&,
-                         protocols::moves::Movers_map const&,
-                         core::pose::Pose const& pose) {
+                         basic::datacache::DataMap &data,
+                         protocols::filters::Filters_map const &,
+                         protocols::moves::Movers_map const &,
+                         core::pose::Pose const &pose) {
   hydrogen_bond_threshold_ = tag->getOption<core::Real>("hb_threshold", -0.5);
   // bw_cutoff_ = tag->getOption<core::PackerEnergy>("bw_cutoff",-0.5);
   onebody_hb_threshold_ =
@@ -492,10 +396,10 @@ void HBNet::parse_my_tag(utility::tag::TagCOP tag,
   //    "bridging_water_search_depth", 1 );
   tyr_hydroxyls_must_donate_ =
       tag->getOption<bool>("tyr_hydroxyls_must_donate",
-                           0);  // only for unsat check -- should move to filter
+                           0); // only for unsat check -- should move to filter
   hydroxyls_must_donate_ =
       tag->getOption<bool>("hydroxyls_must_donate",
-                           0);  // only for unsat check -- should move to filter
+                           0); // only for unsat check -- should move to filter
   use_pdb_numbering_ = tag->getOption<bool>("use_pdb_numbering", 1);
   no_heavy_unsats_allowed_ = tag->getOption<bool>("no_heavy_unsats_allowed", 1);
   keep_start_selector_rotamers_fixed_ =
@@ -511,8 +415,10 @@ void HBNet::parse_my_tag(utility::tag::TagCOP tag,
   start_from_csts_ = tag->getOption<bool>("start_from_csts", 0);
   // use_enzdes_cst_ = tag->getOption< bool >( "use_enzdes_cst", 0 );
 
-  if (only_native_) find_native_ = true;
-  if (only_extend_existing_) extend_existing_networks_ = true;
+  if (only_native_)
+    find_native_ = true;
+  if (only_extend_existing_)
+    extend_existing_networks_ = true;
   // if ( start_from_csts_ ) {
   //  use_enzdes_cst_ = true;
   // }
@@ -556,7 +462,7 @@ void HBNet::parse_my_tag(utility::tag::TagCOP tag,
       selector =
           data.get_ptr<core::select::residue_selector::ResidueSelector const>(
               "ResidueSelector", selector_name);
-    } catch (utility::excn::EXCN_Msg_Exception& e) {
+    } catch (utility::excn::EXCN_Msg_Exception &e) {
       std::string error_message =
           "Failed to find ResidueSelector named '" + selector_name +
           "' from the Datamap from "
@@ -577,7 +483,7 @@ void HBNet::parse_my_tag(utility::tag::TagCOP tag,
       selector =
           data.get_ptr<core::select::residue_selector::ResidueSelector const>(
               "ResidueSelector", selector_name);
-    } catch (utility::excn::EXCN_Msg_Exception& e) {
+    } catch (utility::excn::EXCN_Msg_Exception &e) {
       std::string error_message =
           "Failed to find ResidueSelector named '" + selector_name +
           "' from the Datamap from "
@@ -600,7 +506,7 @@ void HBNet::parse_my_tag(utility::tag::TagCOP tag,
       selector =
           data.get_ptr<core::select::residue_selector::ResidueSelector const>(
               "ResidueSelector", selector_name);
-    } catch (utility::excn::EXCN_Msg_Exception& e) {
+    } catch (utility::excn::EXCN_Msg_Exception &e) {
       std::string error_message =
           "Failed to find ResidueSelector named '" + selector_name +
           "' from the Datamap from "
@@ -619,7 +525,8 @@ void HBNet::parse_my_tag(utility::tag::TagCOP tag,
 
   core::scoring::ScoreFunctionOP new_score_function(
       protocols::rosetta_scripts::parse_score_function(tag, data));
-  if (new_score_function == nullptr) return;
+  if (new_score_function == nullptr)
+    return;
   set_score_function(new_score_function);
 }
 
@@ -658,7 +565,7 @@ void HBNet::traverse_IG(Real const hb_threshold) {
   }
 
   switch (basic::options::option[basic::options::OptionKeys::out::
-				 hbnet_print_interaction_graph_to_file]()) {
+                                     hbnet_print_interaction_graph_to_file]()) {
   case 0:
     break;
   case 1:
@@ -708,15 +615,16 @@ void HBNet::traverse_IG(Real const hb_threshold) {
 
   for (core::Size res1 : start_res_vec_) {
     platform::uint const first_ni = rotamer_sets_->resid_2_moltenres(
-        res1);  // returns 0 if res1 not molten (not design/repack-able)
-    if (first_ni == 0) continue;
+        res1); // returns 0 if res1 not molten (not design/repack-able)
+    if (first_ni == 0)
+      continue;
     int const first_node_ind = (int)(first_ni);
 
     // Loop over all edges in IG for each starting residue
     for (ig_->reset_edge_list_iterator_for_node(first_node_ind);
          !ig_->edge_list_iterator_at_end();
          ig_->increment_edge_list_iterator()) {
-      EdgeBase const& edge(ig_->get_edge());
+      EdgeBase const &edge(ig_->get_edge());
       int const second_node_ind = edge.get_other_ind(first_node_ind);
       platform::uint const second_ni = edge.get_other_ind(first_node_ind);
       Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
@@ -737,7 +645,8 @@ void HBNet::traverse_IG(Real const hb_threshold) {
       for (int ii = 1; ii <= ig_->get_num_states_for_node(first_node_ind);
            ++ii) {
         // allows derived classes to apply their own logic for starting criteria
-        if (!(this->state_is_starting_aa_type(res1_ind, ii))) continue;
+        if (!(this->state_is_starting_aa_type(res1_ind, ii)))
+          continue;
 
         // if symmetric_ need to check one-body energy to make sure rotamer
         // doesn't clash with itself accross the interface
@@ -762,7 +671,7 @@ void HBNet::traverse_IG(Real const hb_threshold) {
                      ->name1()),
                 orig_pose_->pdb_info()->chain(res1_ind), 1, 0, 0)));
             store_network(residues, one_body_i, true, true, false,
-                          false);  // network complete, store it
+                          false); // network complete, store it
           }
         }
         for (int jj = 1; jj <= ig_->get_num_states_for_node(second_node_ind);
@@ -785,20 +694,19 @@ void HBNet::traverse_IG(Real const hb_threshold) {
                        ->name1()),
                   orig_pose_->pdb_info()->chain(res2_ind), 1, 0, 0)));
               store_network(residues, one_body_j, true, true, false,
-                            false);  // network complete, store it
+                            false); // network complete, store it
             }
           }
-          PDEdge const& pdedge = static_cast<PDEdge const&>(edge);
+          PDEdge const &pdedge = static_cast<PDEdge const &>(edge);
           Real twobody((first_node_ind < second_node_ind)
                            ? (pdedge.get_two_body_energy(ii, jj)) / scmult_2b
                            : (pdedge.get_two_body_energy(jj, ii)) / scmult_2b);
           twobody = twobody * (this->upweight_starting_twobody_energy());
           if (twobody < 0.0) {
             twobody = this->scale_twobody_energy(
-                twobody,
-                rotamer_sets_->rotamer_set_for_moltenresidue(first_ni)
-                    ->rotamer(ii)
-                    ->name1(),
+                twobody, rotamer_sets_->rotamer_set_for_moltenresidue(first_ni)
+                             ->rotamer(ii)
+                             ->name1(),
                 rotamer_sets_->rotamer_set_for_moltenresidue(second_ni)
                     ->rotamer(jj)
                     ->name1());
@@ -821,7 +729,7 @@ void HBNet::traverse_IG(Real const hb_threshold) {
             } else {
               recursive_traverse(second_node_ind, jj, res2_ind, res1_ind,
                                  residues, 1, init_sc,
-                                 hb_threshold);  // recursive traverse of IG
+                                 hb_threshold); // recursive traverse of IG
             }
           }
         }
@@ -848,18 +756,18 @@ void HBNet::recursive_traverse(int const new_node_ind, int const newstate,
         orig_pose_->pdb_info()->chain(newres), 1, 0, 0)));
   }
   Size prev_resnum = prevres;
-  network_rec_count++;  // numer of recursive calls; network_rec_count = #
-                        // rotamers in the current h-bond network
+  network_rec_count++; // numer of recursive calls; network_rec_count = #
+                       // rotamers in the current h-bond network
 
-  if (network_rec_count >= max_network_size_) {  // arbitrary limit for size of
-                                                 // h-bond network to prevent
-                                                 // explosion
+  if (network_rec_count >= max_network_size_) { // arbitrary limit for size of
+                                                // h-bond network to prevent
+                                                // explosion
     store_network(residues, init_sc, false, false, false, false);
     return;
   }
-  Size instance_rec_call_cnt(0);  // Keep track of how many times this
-                                  // particular instance makes new recursive
-                                  // calls
+  Size instance_rec_call_cnt(0); // Keep track of how many times this
+                                 // particular instance makes new recursive
+                                 // calls
 
   // Continue depth-first traversal of IG starting from new_node_ind
   for (auto edge_iter = ig_->get_node(new_node_ind)->edge_list_begin();
@@ -869,9 +777,9 @@ void HBNet::recursive_traverse(int const new_node_ind, int const newstate,
     platform::uint const second_ni = (*edge_iter)->get_other_ind(new_node_ind);
     Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
 
-    if (res2 == prev_resnum) {  // check for case where immediately return to
-                                // previous residue (e.g. res_x -> res_y ->
-                                // res_x)
+    if (res2 == prev_resnum) { // check for case where immediately return to
+                               // previous residue (e.g. res_x -> res_y ->
+                               // res_x)
       continue;
     }
     Size scmult_2b((symmetric_) ? symm_info_->score_multiply(newres, res2) : 1);
@@ -889,17 +797,16 @@ void HBNet::recursive_traverse(int const new_node_ind, int const newstate,
       if (symmetric_ && one_body_j > clash_threshold_) {
         continue;
       }
-      PDEdge* pdedge = static_cast<PDEdge*>(*edge_iter);
+      PDEdge *pdedge = static_cast<PDEdge *>(*edge_iter);
       Real twobody((new_node_ind < second_node_ind)
                        ? (pdedge->get_two_body_energy(newstate, jj)) / scmult_2b
                        : (pdedge->get_two_body_energy(jj, newstate)) /
                              scmult_2b);
       if (twobody < 0.0) {
         twobody = this->scale_twobody_energy(
-            twobody,
-            rotamer_sets_->rotamer_set_for_moltenresidue(new_node_ind)
-                ->rotamer(newstate)
-                ->name1(),
+            twobody, rotamer_sets_->rotamer_set_for_moltenresidue(new_node_ind)
+                         ->rotamer(newstate)
+                         ->name1(),
             rotamer_sets_->rotamer_set_for_moltenresidue(second_node_ind)
                 ->rotamer(jj)
                 ->name1());
@@ -912,24 +819,24 @@ void HBNet::recursive_traverse(int const new_node_ind, int const newstate,
         //  many duplicates and subnetworks through rec explosion
         // if ( start_res_vec_.find( res2 ) == start_res_vec_.end() ) {
         if (start_res_vec_.find(res2) == start_res_vec_.end() ||
-            network_rec_count < 3) {  // otherwise we could just cycle back and
-                                      // forth between 2 starting reisdues and
-                                      // never go deeper
+            network_rec_count < 3) { // otherwise we could just cycle back and
+                                     // forth between 2 starting reisdues and
+                                     // never go deeper
           // If new res does not clash with residues already in the network...
           if (!(check_clash(residues, second_ni, jj, res2, init_sc, cycle))) {
-            if (cycle) {  // If found a cycle, store network
+            if (cycle) { // If found a cycle, store network
               store_network(residues, init_sc, false, true, false, false);
-            } else {  // Else, add it to the network and keep going!  Recursive
-                      // call to rec_trav
+            } else { // Else, add it to the network and keep going!  Recursive
+                     // call to rec_trav
               // init_sc += one_body_j;
               recursive_traverse(second_node_ind, jj, res2, newres, residues,
                                  network_rec_count, init_sc,
-                                 hb_threshold);  // recursive call
+                                 hb_threshold); // recursive call
               instance_rec_call_cnt++;
             }
           }
-        } else {  // if we are back to original starting rotamer, don't need
-                  // check_clash else check_clash
+        } else { // if we are back to original starting rotamer, don't need
+                 // check_clash else check_clash
           int const start_state = static_cast<int>(residues.front()->rot_index);
           if (residues.front()->resnum == res2 && start_state == jj &&
               residues.size() > 2) {
@@ -945,7 +852,7 @@ void HBNet::recursive_traverse(int const new_node_ind, int const newstate,
         }
       }
     }
-  }  // edge_iter
+  } // edge_iter
   // If this instance of rec_trav doesn't make any recursive calls or store a
   // network, then store the current network.
   //   In other words, this node of this h-bond network isn't able to form any
@@ -964,28 +871,29 @@ void HBNet::recursive_traverse(int const new_node_ind, int const newstate,
               ->rotamer(newstate)
               ->name1() == 'Y') {
     store_network(residues, init_sc, false, false, false,
-                  false);  // network complete, store it
+                  false); // network complete, store it
   }
   if (secondary_search_ && instance_rec_call_cnt == 0 && !second_search) {
     recursive_traverse(
         new_node_ind, newstate, newres, prevres, residues, network_rec_count,
         init_sc, secondary_threshold_,
-        true);  // call this same recursive instance again with lower threshold
+        true); // call this same recursive instance again with lower threshold
     instance_rec_call_cnt++;
   }
-}  // rec_trav
+} // rec_trav
 
 void HBNet::traverse_IG_for_3mers_find_third_rotamer(
     core::Size resA, core::Size moltenresA, core::Size rotA,
     core::Size resA_ind, core::Size resB, core::Size moltenresB,
     core::Size rotB, core::Size resB_ind, core::Real const hb_threshold,
-    core::Real init_sc, utility::vector1<HBondResStructCOP>& residues) {
+    core::Real init_sc, utility::vector1<HBondResStructCOP> &residues) {
   // Step 1, find partners with resB ( resC > resA )
   for (auto edge_iter = ig_->get_node(moltenresB)->edge_list_begin();
        edge_iter != ig_->get_node(moltenresB)->edge_list_end(); ++edge_iter) {
     Size const moltenresC = (*edge_iter)->get_other_ind(moltenresB);
     Size const resC = rotamer_sets_->moltenres_2_resid(moltenresC);
-    if (resC <= resA) continue;
+    if (resC <= resA)
+      continue;
 
     Size const scmult_2b_k =
         (symmetric_ ? symm_info_->score_multiply(resB_ind, resC) : 1);
@@ -1004,17 +912,16 @@ void HBNet::traverse_IG_for_3mers_find_third_rotamer(
       if (symmetric_ && one_body > clash_threshold_) {
         continue;
       }
-      PDEdge* pdedge = static_cast<PDEdge*>(*edge_iter);
+      PDEdge *pdedge = static_cast<PDEdge *>(*edge_iter);
       Real twobody((moltenresB < moltenresC)
                        ? (pdedge->get_two_body_energy(rotB, rotC)) / scmult_2b_k
                        : (pdedge->get_two_body_energy(rotC, rotB)) /
                              scmult_2b_k);
       if (twobody < 0.0) {
         twobody = scale_twobody_energy(
-            twobody,
-            rotamer_sets_->rotamer_set_for_moltenresidue(moltenresB)
-                ->rotamer(rotB)
-                ->name1(),
+            twobody, rotamer_sets_->rotamer_set_for_moltenresidue(moltenresB)
+                         ->rotamer(rotB)
+                         ->name1(),
             rotamer_sets_->rotamer_set_for_moltenresidue(moltenresC)
                 ->rotamer(rotC)
                 ->name1());
@@ -1034,14 +941,15 @@ void HBNet::traverse_IG_for_3mers_find_third_rotamer(
         }
       }
     }
-  }  // edge_iter
+  } // edge_iter
 
   // Step 2, find partners with resA ( resC > resB )
   for (auto edge_iter = ig_->get_node(moltenresA)->edge_list_begin();
        edge_iter != ig_->get_node(moltenresA)->edge_list_end(); ++edge_iter) {
     Size const moltenresC = (*edge_iter)->get_other_ind(moltenresA);
     Size const resC = rotamer_sets_->moltenres_2_resid(moltenresC);
-    if (resC <= resB) continue;
+    if (resC <= resB)
+      continue;
 
     Size const scmult_2b_k =
         (symmetric_ ? symm_info_->score_multiply(resA_ind, resC) : 1);
@@ -1060,17 +968,16 @@ void HBNet::traverse_IG_for_3mers_find_third_rotamer(
       if (symmetric_ && one_body > clash_threshold_) {
         continue;
       }
-      PDEdge* pdedge = static_cast<PDEdge*>(*edge_iter);
+      PDEdge *pdedge = static_cast<PDEdge *>(*edge_iter);
       Real twobody((moltenresA < moltenresC)
                        ? (pdedge->get_two_body_energy(rotA, rotC)) / scmult_2b_k
                        : (pdedge->get_two_body_energy(rotC, rotA)) /
                              scmult_2b_k);
       if (twobody < 0.0) {
         twobody = this->scale_twobody_energy(
-            twobody,
-            rotamer_sets_->rotamer_set_for_moltenresidue(moltenresA)
-                ->rotamer(rotA)
-                ->name1(),
+            twobody, rotamer_sets_->rotamer_set_for_moltenresidue(moltenresA)
+                         ->rotamer(rotA)
+                         ->name1(),
             rotamer_sets_->rotamer_set_for_moltenresidue(moltenresC)
                 ->rotamer(rotC)
                 ->name1());
@@ -1090,11 +997,11 @@ void HBNet::traverse_IG_for_3mers_find_third_rotamer(
         }
       }
     }
-  }  // edge_iter
+  } // edge_iter
 }
 
-bool compare_hbond_candidates(const hbond_candidate& a,
-                              const hbond_candidate& b) {
+bool compare_hbond_candidates(const hbond_candidate &a,
+                              const hbond_candidate &b) {
   return a.score < b.score;
 }
 
@@ -1105,14 +1012,15 @@ void HBNet::greedy_traverse_IG(Real const hb_threshold) {
   // interface residues)
   for (core::Size res1 : start_res_vec_) {
     platform::uint const first_ni = rotamer_sets_->resid_2_moltenres(
-        res1);  // returns 0 if res1 not molten (not design/repack-able)
-    if (first_ni == 0) continue;
+        res1); // returns 0 if res1 not molten (not design/repack-able)
+    if (first_ni == 0)
+      continue;
     int const first_node_ind = (int)(first_ni);
 
     for (ig_->reset_edge_list_iterator_for_node(first_node_ind);
          !ig_->edge_list_iterator_at_end();
          ig_->increment_edge_list_iterator()) {
-      EdgeBase const& edge(ig_->get_edge());
+      EdgeBase const &edge(ig_->get_edge());
       int const second_node_ind = edge.get_other_ind(first_node_ind);
       platform::uint const second_ni = edge.get_other_ind(first_node_ind);
       Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
@@ -1172,7 +1080,7 @@ void HBNet::greedy_traverse_IG(Real const hb_threshold) {
               // ); //network complete, store it
             }
           }
-          PDEdge const& pdedge = static_cast<PDEdge const&>(edge);
+          PDEdge const &pdedge = static_cast<PDEdge const &>(edge);
           Real twobody((first_node_ind < second_node_ind)
                            ? (pdedge.get_two_body_energy(ii, jj)) / scmult_2b
                            : (pdedge.get_two_body_energy(jj, ii)) / scmult_2b);
@@ -1194,8 +1102,8 @@ void HBNet::greedy_traverse_IG(Real const hb_threshold) {
           }
         }
       }
-    }  // for edge
-  }    // for res1
+    } // for edge
+  }   // for res1
 
   candidates.sort(compare_hbond_candidates);
   for (hbond_candidate candidate_hbond : candidates) {
@@ -1281,8 +1189,8 @@ void HBNet::greedy_traverse_IG(Real const hb_threshold) {
 
       if (passes_filters_in_select_best_networks) {
         store_network(residues, 0, false, false, false,
-                      false);  // network complete, store it
-        return;                // only create one network for now
+                      false); // network complete, store it
+        return;               // only create one network for now
       }
     }
   }
@@ -1292,8 +1200,8 @@ void HBNet::greedy_traverse_IG(Real const hb_threshold) {
 
 bool HBNet::greedy_recursive_traverse(
     core::Real const hb_threshold, Size moltenres,
-    utility::vector1<core::Size>& state_for_moltenres,
-    core::pose::PoseOP& network_pose) {
+    utility::vector1<core::Size> &state_for_moltenres,
+    core::pose::PoseOP &network_pose) {
   const Size resid = rotamer_sets_->moltenres_2_resid(moltenres);
 
   std::list<hbond_candidate> candidates;
@@ -1304,7 +1212,8 @@ bool HBNet::greedy_recursive_traverse(
     platform::uint const second_ni = (*edge_iter)->get_other_ind(moltenres);
     Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
 
-    if (state_for_moltenres[second_ni] != 0) continue;
+    if (state_for_moltenres[second_ni] != 0)
+      continue;
 
     Size scmult_2b((symmetric_) ? symm_info_->score_multiply(moltenres, res2)
                                 : 1);
@@ -1326,7 +1235,7 @@ bool HBNet::greedy_recursive_traverse(
       if (symmetric_ && one_body_j > clash_threshold_) {
         continue;
       }
-      PDEdge* pdedge = static_cast<PDEdge*>(*edge_iter);
+      PDEdge *pdedge = static_cast<PDEdge *>(*edge_iter);
       Real twobody((int(moltenres) < second_node_ind)
                        ? (pdedge->get_two_body_energy(
                              state_for_moltenres[moltenres], jj)) /
@@ -1339,8 +1248,8 @@ bool HBNet::greedy_recursive_traverse(
                                            state_for_moltenres[moltenres],
                                            Size(second_node_ind), jj, twobody));
 
-    }  // for state jj
-  }    // for edge
+    } // for state jj
+  }   // for edge
 
   utility::vector1<core::Size> state_for_moltenres_clone = state_for_moltenres;
   // core::pose::PoseOP network_pose_clone = network_pose->clone();
@@ -1348,7 +1257,8 @@ bool HBNet::greedy_recursive_traverse(
   // assign all of the hbonds you can, in a greedy fashion
   candidates.sort(compare_hbond_candidates);
   for (hbond_candidate candidate_hbond : candidates) {
-    if (state_for_moltenres_clone[candidate_hbond.moltenres2] != 0) continue;
+    if (state_for_moltenres_clone[candidate_hbond.moltenres2] != 0)
+      continue;
 
     // make sure there are no clashes
     bool clash = false;
@@ -1359,7 +1269,7 @@ bool HBNet::greedy_recursive_traverse(
       }
 
       if (ig_->get_edge_exists(candidate_hbond.moltenres2, mres)) {
-        core::pack::interaction_graph::PDEdge* edge = static_cast<PDEdge*>(
+        core::pack::interaction_graph::PDEdge *edge = static_cast<PDEdge *>(
             ig_->get_node(int(candidate_hbond.moltenres2))->find_edge(mres));
         const Real temp_2body =
             (candidate_hbond.moltenres2 < mres
@@ -1373,12 +1283,14 @@ bool HBNet::greedy_recursive_traverse(
         }
       }
     }
-    if (clash) continue;
+    if (clash)
+      continue;
 
 #ifdef JACK_DEBUG_GREEDY
     core::Size num_assigned = 0;
     for (core::Size state : state_for_moltenres_clone) {
-      if (state != 0) ++num_assigned;
+      if (state != 0)
+        ++num_assigned;
     }
 #endif
 
@@ -1405,7 +1317,8 @@ bool HBNet::greedy_recursive_traverse(
           false);
 #ifdef JACK_DEBUG_GREEDY
       for (core::Size state : state_for_moltenres_clone) {
-        if (state != 0) --num_assigned;
+        if (state != 0)
+          --num_assigned;
       }
       if (num_assigned != 0) {
         TR << "NOT ALL DATA IS ERASED" << std::endl;
@@ -1445,20 +1358,20 @@ bool HBNet::greedy_recursive_traverse(
 }
 
 ///@details traverse EnergyGraph of static pose to find all native networks
-void HBNet::traverse_native(Pose const& pose, Real const hb_threshold) {
+void HBNet::traverse_native(Pose const &pose, Real const hb_threshold) {
   // only way to get here is if pose has already been scored
   // pose.update_residue_neighbors();
   //( *scorefxn_ )( pose ); //score pose so we can get EnergyGraph (EG)
 
   for (core::Size res : start_res_vec_) {
-    utility::graph::Node const* node =
+    utility::graph::Node const *node =
         pose.energies().energy_graph().get_node(res);
 
     for (utility::graph::EdgeListConstIterator egraph_it =
              node->const_edge_list_begin();
          egraph_it != node->const_edge_list_end(); ++egraph_it) {
-      core::scoring::EnergyEdge const* eedge =
-          static_cast<core::scoring::EnergyEdge const*>(*egraph_it);
+      core::scoring::EnergyEdge const *eedge =
+          static_cast<core::scoring::EnergyEdge const *>(*egraph_it);
       Size other_res =
           eedge->get_other_node(node->get_node_index())->get_node_index();
 
@@ -1483,13 +1396,13 @@ void HBNet::traverse_native(Pose const& pose, Real const hb_threshold) {
                                  pose.residue(res1_ind).is_ligand())));
 
         rec_trav_native(pose, res2_ind, res1_ind, residues,
-                        hydrogen_bond_threshold_);  // recursive call
+                        hydrogen_bond_threshold_); // recursive call
       }
     }
   }
 }
 
-void HBNet::rec_trav_native(Pose const& pose, Size new_res, Size prev_res,
+void HBNet::rec_trav_native(Pose const &pose, Size new_res, Size prev_res,
                             utility::vector1<HBondResStructCOP> residues,
                             Real const hb_threshold) {
   bool found_new_res_in_net = false;
@@ -1511,13 +1424,13 @@ void HBNet::rec_trav_native(Pose const& pose, Size new_res, Size prev_res,
       pose.residue(new_res).name1() == 'w',
       pose.residue(new_res).is_ligand())));
 
-  utility::graph::Node const* node =
+  utility::graph::Node const *node =
       pose.energies().energy_graph().get_node(new_res);
   for (utility::graph::EdgeListConstIterator egraph_it =
            node->const_edge_list_begin();
        egraph_it != node->const_edge_list_end(); ++egraph_it) {
-    core::scoring::EnergyEdge const* eedge =
-        static_cast<core::scoring::EnergyEdge const*>(*egraph_it);
+    core::scoring::EnergyEdge const *eedge =
+        static_cast<core::scoring::EnergyEdge const *>(*egraph_it);
     Size other_res =
         eedge->get_other_node(node->get_node_index())->get_node_index();
 
@@ -1534,12 +1447,12 @@ void HBNet::rec_trav_native(Pose const& pose, Size new_res, Size prev_res,
           found_new_res_in_net = true;
         } else {
           rec_trav_native(pose, other_res, new_res, residues,
-                          hydrogen_bond_threshold_);  // recursive call
+                          hydrogen_bond_threshold_); // recursive call
         }
       } else {
         rec_trav_native(pose, other_res, new_res, residues,
                         hydrogen_bond_threshold_);
-        found_new_res_in_net = true;  // recursive call
+        found_new_res_in_net = true; // recursive call
       }
     }
   }
@@ -1550,13 +1463,13 @@ void HBNet::rec_trav_native(Pose const& pose, Size new_res, Size prev_res,
 
 bool HBNet::no_clash(Size moltenres1, Size state1, Size moltenres2,
                      Size state2) {
-  pack::interaction_graph::EdgeBase* edge =
+  pack::interaction_graph::EdgeBase *edge =
       ig_->find_edge(moltenres1, moltenres2);
   if (!edge) {
     return true;
   }
 
-  pack::interaction_graph::PDEdge* pdedge = static_cast<PDEdge*>(edge);
+  pack::interaction_graph::PDEdge *pdedge = static_cast<PDEdge *>(edge);
   Real const twobody =
       (moltenres1 < moltenres2 ? pdedge->get_two_body_energy(state1, state2)
                                : pdedge->get_two_body_energy(state2, state1));
@@ -1566,14 +1479,14 @@ bool HBNet::no_clash(Size moltenres1, Size state1, Size moltenres2,
 ///@details Check if a new rotamer state clashes with any rotamer states already
 /// in a given h-bond network
 ///    return of true = it clashes, false = no clashes
-bool HBNet::check_clash(utility::vector1<HBondResStructCOP> const& residues,
+bool HBNet::check_clash(utility::vector1<HBondResStructCOP> const &residues,
                         platform::uint new_node_ind, Size newstate, Size newres,
-                        Real& init_score, bool& cycle) {
+                        Real &init_score, bool &cycle) {
   cycle = false;
   bool clash = false;
   core::PackerEnergy twobody(0.0);
 
-  for (const auto& residue : residues) {
+  for (const auto &residue : residues) {
     platform::uint otherstate(residue->rot_index);
     platform::uint other_node_ind(
         rotamer_sets_->resid_2_moltenres(residue->resnum));
@@ -1584,8 +1497,8 @@ bool HBNet::check_clash(utility::vector1<HBondResStructCOP> const& residues,
     int const other_st = static_cast<int>(otherstate);
 
     if (newres == residue->resnum) {
-      if (newstate == otherstate) {  // If rotamer state already in network, we
-                                     // found a cycle, no need to clash check
+      if (newstate == otherstate) { // If rotamer state already in network, we
+                                    // found a cycle, no need to clash check
         cycle = true;
         clash = false;
         return clash;
@@ -1595,29 +1508,29 @@ bool HBNet::check_clash(utility::vector1<HBondResStructCOP> const& residues,
         return clash;
       }
     } else if (ig_->find_edge(new_ind, other_ind) !=
-               0) {  // this function is order-independent; returns the same
-                     // Edge regardless of order
-      core::pack::interaction_graph::EdgeBase* temp_edge =
+               0) { // this function is order-independent; returns the same
+                    // Edge regardless of order
+      core::pack::interaction_graph::EdgeBase *temp_edge =
           ig_->find_edge(new_ind, other_ind);
-      core::pack::interaction_graph::PDEdge* temp_pdedge =
-          static_cast<PDEdge*>(temp_edge);
+      core::pack::interaction_graph::PDEdge *temp_pdedge =
+          static_cast<PDEdge *>(temp_edge);
       int first_node_ind =
-          temp_pdedge->get_first_node_ind();  // need to get the first node of
-                                              // the Edge (lower-index node)
-                                              // (we're getting this from the
-                                              // IG)
+          temp_pdedge->get_first_node_ind(); // need to get the first node of
+                                             // the Edge (lower-index node)
+                                             // (we're getting this from the
+                                             // IG)
       platform::uint first_ni = first_node_ind;
       Size res1 =
-          rotamer_sets_->moltenres_2_resid(first_ni);  // get residue number
-                                                       // that corresopnds to
-                                                       // the first node of Edge
+          rotamer_sets_->moltenres_2_resid(first_ni); // get residue number
+                                                      // that corresopnds to
+                                                      // the first node of Edge
 
       // temp_pdedge->get_two_body_energy() is order-DEPENDENT; lower index
       // (first index) must always be first)
       //    so we need to determine does first_ni correspond to new_node_ind?
       if (first_ni == new_node_ind &&
-          res1 == newres) {  // second half of if is sanity check; shouldn't be
-                             // necessary but best to be safe
+          res1 == newres) { // second half of if is sanity check; shouldn't be
+                            // necessary but best to be safe
         twobody = temp_pdedge->get_two_body_energy(new_st, other_st);
       } else if (first_ni == other_node_ind && res1 == residue->resnum) {
         // or other_node_ind?
@@ -1636,37 +1549,37 @@ bool HBNet::check_clash(utility::vector1<HBondResStructCOP> const& residues,
         clash = true;
         return clash;
       } else if (twobody >=
-                 hydrogen_bond_threshold_) {  // include fa_rep values for
-                                              // residues that may contact;
-                                              // h-bonding residues ( <
-                                              // hydrogen_bond_threshold)
-                                              // already included
+                 hydrogen_bond_threshold_) { // include fa_rep values for
+                                             // residues that may contact;
+                                             // h-bonding residues ( <
+                                             // hydrogen_bond_threshold)
+                                             // already included
         init_score += twobody;
       }
     }
   }
   return clash;
-}  // check_clash
+} // check_clash
 
 ///@details Function to check whether two h-bond networks clash with eachother
 ///    return of true = they clash, false = no clashes (networks i and j are
 ///    compatible)
-bool HBNet::net_clash(hbond_net_struct const& i, hbond_net_struct const& j) {
+bool HBNet::net_clash(hbond_net_struct const &i, hbond_net_struct const &j) {
   return net_clash(i.residues, j.residues);
 }
 
 ///@details Function to check whether two h-bond networks clash with eachother
 ///    return of true = they clash, false = no clashes (networks i and j are
 ///    compatible)
-bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const& residues_i,
-                      utility::vector1<HBondResStructCOP> const& residues_j) {
+bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const &residues_i,
+                      utility::vector1<HBondResStructCOP> const &residues_j) {
   core::PackerEnergy twobody(0.0);
 
-  for (const auto& res_i : residues_i) {
+  for (const auto &res_i : residues_i) {
     int const state_i = static_cast<int const>(res_i->rot_index);
     int const node_i =
         static_cast<int const>(rotamer_sets_->resid_2_moltenres(res_i->resnum));
-    for (const auto& res_j : residues_j) {
+    for (const auto &res_j : residues_j) {
       int const state_j = static_cast<int const>(res_j->rot_index);
       int const node_j = static_cast<int const>(
           rotamer_sets_->resid_2_moltenres(res_j->resnum));
@@ -1702,14 +1615,14 @@ bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const& residues_i,
         }
       }
 
-      if (ig_ != nullptr) {  // if IG still exists, use 2-body for faster lookup
-        if (ig_->find_edge(node_i, node_j) != 0) {  // If edge exist s, look up
-                                                    // 2-body energy for rotamer
-                                                    // state_i and state_j
-          core::pack::interaction_graph::EdgeBase* temp_edge =
+      if (ig_ != nullptr) { // if IG still exists, use 2-body for faster lookup
+        if (ig_->find_edge(node_i, node_j) != 0) { // If edge exist s, look up
+                                                   // 2-body energy for rotamer
+                                                   // state_i and state_j
+          core::pack::interaction_graph::EdgeBase *temp_edge =
               ig_->find_edge(node_i, node_j);
-          core::pack::interaction_graph::PDEdge* temp_pdedge =
-              static_cast<PDEdge*>(temp_edge);
+          core::pack::interaction_graph::PDEdge *temp_pdedge =
+              static_cast<PDEdge *>(temp_edge);
           int first_node_ind = temp_pdedge->get_first_node_ind();
 
           if (first_node_ind == node_i) {
@@ -1728,8 +1641,8 @@ bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const& residues_i,
             return true;
           }
         }
-      } else {  // safeguard: if IG has been cleared or reset to null, we can
-                // still check clash
+      } else { // safeguard: if IG has been cleared or reset to null, we can
+               // still check clash
         Pose ala_copy = *ala_pose_;
         core::conformation::ResidueCOP rot_i =
             rotamer_sets_->rotamer_set_for_moltenresidue(node_i)->rotamer(
@@ -1741,7 +1654,7 @@ bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const& residues_i,
         ala_copy.replace_residue(res_i->resnum, *rot_i, false);
         ala_copy.replace_residue(res_j->resnum, *rot_j, false);
         (*scorefxn_)(
-            ala_copy);  // sfxn->eval methods ASSUME THE POSE HAS BEEN SCORED?
+            ala_copy); // sfxn->eval methods ASSUME THE POSE HAS BEEN SCORED?
         core::scoring::EnergyMap new_emap;
         init_scorefxn_->eval_cd_2b_sc_sc(*rot_i, *rot_j, ala_copy, new_emap);
         Real farep_val = new_emap.get(core::scoring::fa_rep);
@@ -1752,11 +1665,11 @@ bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const& residues_i,
     }
   }
   return false;
-}  // net_clash
+} // net_clash
 
 bool HBNet::network_already_stored(
-    utility::vector1<HBondResStructCOP>& residues,
-    utility::vector1<HBondResStructCOP>& i_residues) {
+    utility::vector1<HBondResStructCOP> &residues,
+    utility::vector1<HBondResStructCOP> &i_residues) {
   bool already_stored(false);
   if (residues.size() == i_residues.size()) {
     std::sort(residues.begin(), residues.end(), compare_hbond_residues());
@@ -1767,7 +1680,8 @@ bool HBNet::network_already_stored(
     for (std::vector<HBondResStructCOP>::const_iterator k = residues.begin();
          k != residues.end(); ++k) {
       if (((*j)->resnum == (*k)->resnum) && ((*j)->aa == (*k)->aa)) {
-        if (rotamer_sets_ == nullptr) continue;
+        if (rotamer_sets_ == nullptr)
+          continue;
         core::conformation::ResidueCOP rot1(
             rotamer_sets_
                 ->rotamer_set_for_moltenresidue(
@@ -1799,7 +1713,7 @@ void HBNet::store_network(utility::vector1<HBondResStructCOP> residues,
                           Real init_score, bool term_w_start, bool term_w_cycle,
                           bool score_now, bool native) {
   bool already_stored(false);
-  for (auto& i : network_vector_) {
+  for (auto &i : network_vector_) {
     already_stored = network_already_stored(residues, i->residues);
 
     if (already_stored) {
@@ -1814,9 +1728,9 @@ void HBNet::store_network(utility::vector1<HBondResStructCOP> residues,
               (*(find_hbond_res_struct(i->residues, this->ligand())))
                   ->rot_index);
         }
-        i->score = init_score;  // don't need to adjust for symmetric_ because
-                                // did that when tracking IG energies to
-                                // generate init_score
+        i->score = init_score; // don't need to adjust for symmetric_ because
+                               // did that when tracking IG energies to
+                               // generate init_score
         // if (normalize_)
         //    (*i)->score = (*i)->score/(residues.size());
       } else if (this->ligand()) {
@@ -1841,15 +1755,15 @@ void HBNet::store_network(utility::vector1<HBondResStructCOP> residues,
     if (score_now) {
       Pose copy = *ala_pose_;
     } else {
-      new_net->score = init_score;  // don't need to adjust for symmetric_
-                                    // because did that when tracking IG
-                                    // energies to generate init_score
+      new_net->score = init_score; // don't need to adjust for symmetric_
+                                   // because did that when tracking IG
+                                   // energies to generate init_score
       network_vector_.push_back(new_net);
     }
   }
-}  // store_network
+} // store_network
 
-void HBNet::minimize_network(Pose& pose, hbond_net_struct& network,
+void HBNet::minimize_network(Pose &pose, hbond_net_struct &network,
                              bool residues_already_placed /* true */) {
   if (!residues_already_placed) {
     place_rots_on_pose(pose, network, network.is_native);
@@ -1902,8 +1816,9 @@ void HBNet::minimize_network(Pose& pose, hbond_net_struct& network,
   }
 }
 
-void HBNet::score_network_on_pose(Pose& pose, hbond_net_struct& i) {
-  if (i.scored) return;
+void HBNet::score_network_on_pose(Pose &pose, hbond_net_struct &i) {
+  if (i.scored)
+    return;
 
   // Pose ala_copy = *ala_pose_; // TODO does scoring get copied too? looks like
   // it does, but NEED TO CHECK THIS
@@ -1911,7 +1826,7 @@ void HBNet::score_network_on_pose(Pose& pose, hbond_net_struct& i) {
   //(*scorefxn_)(ala_copy); //already scored
 
   // set baseline energies from background pose
-  core::scoring::EnergyMap& baseline_emap =
+  core::scoring::EnergyMap &baseline_emap =
       ala_pose_->energies().total_energies();
   core::Real total_baseline = baseline_emap.get(core::scoring::total_score);
   core::Real hbond_bb_sc_baseline =
@@ -1922,7 +1837,7 @@ void HBNet::score_network_on_pose(Pose& pose, hbond_net_struct& i) {
   // ala_copy.update_residue_neighbors();
 
   (*scorefxn_)(pose);
-  core::scoring::EnergyMap& new_emap = pose.energies().total_energies();
+  core::scoring::EnergyMap &new_emap = pose.energies().total_energies();
   Real pose_total = new_emap.get(core::scoring::total_score) - total_baseline;
   Real e(pose_total);
   if ((new_emap.get(core::scoring::hbond_bb_sc) - hbond_bb_sc_baseline) <=
@@ -1933,9 +1848,11 @@ void HBNet::score_network_on_pose(Pose& pose, hbond_net_struct& i) {
   }
   // NEED TO FIX
   core::Real cycle_bonus = -2.0;
-  if (i.term_w_cycle) e = e + cycle_bonus;
+  if (i.term_w_cycle)
+    e = e + cycle_bonus;
   // if ( (this->ligand()) && i.term_w_start ) e = e + ret2lig_bonus_;
-  if (symmetric_) e = e / (symm_info_->num_bb_clones() + 1.0);
+  if (symmetric_)
+    e = e / (symm_info_->num_bb_clones() + 1.0);
   // normalize
   e = e / ((Real)i.residues.size());
   i.score = e;
@@ -1943,10 +1860,10 @@ void HBNet::score_network_on_pose(Pose& pose, hbond_net_struct& i) {
 }
 
 void HBNet::merge_2_branched_networks(
-    utility::vector1<HBondResStructCOP> const& residues1,
-    utility::vector1<HBondResStructCOP> const& residues2,
-    utility::vector1<HBondResStructCOP>& new_residues) {
-  for (const auto& res1 : residues1) {
+    utility::vector1<HBondResStructCOP> const &residues1,
+    utility::vector1<HBondResStructCOP> const &residues2,
+    utility::vector1<HBondResStructCOP> &new_residues) {
+  for (const auto &res1 : residues1) {
     bool found(false);
     for (utility::vector1<HBondResStructCOP>::const_iterator n =
              new_residues.begin();
@@ -1960,7 +1877,7 @@ void HBNet::merge_2_branched_networks(
       new_residues.push_back(res1);
     }
   }
-  for (const auto& res2 : residues2) {
+  for (const auto &res2 : residues2) {
     bool found(false);
     for (utility::vector1<HBondResStructCOP>::const_iterator n =
              new_residues.begin();
@@ -1976,8 +1893,8 @@ void HBNet::merge_2_branched_networks(
   }
 }
 
-void HBNet::merge_2_branched_networks(hbond_net_struct const& i,
-                                      hbond_net_struct const& j,
+void HBNet::merge_2_branched_networks(hbond_net_struct const &i,
+                                      hbond_net_struct const &j,
                                       HBondNetStructOP new_network) {
   if ((this->ligand()) &&
       (i.lig_state_list.empty() || j.lig_state_list.empty())) {
@@ -2029,7 +1946,7 @@ void HBNet::merge_2_branched_networks(hbond_net_struct const& i,
 
 void HBNet::merge_branched_networks(core::Size merged_vec_index,
                                     HBondNetStructOP new_network) {
-  std::vector<core::Size> const& network_vec_indices =
+  std::vector<core::Size> const &network_vec_indices =
       merged_vecs_[merged_vec_index];
 
   if (this->ligand()) {
@@ -2060,13 +1977,17 @@ void HBNet::merge_branched_networks(core::Size merged_vec_index,
     } else {
       new_network->is_native = false;
     }
-    if (net->is_extended) any_are_extended = true;
-    if (net->term_w_bb) new_network->term_w_bb = true;
-    if (net->term_w_cycle) new_network->term_w_cycle = true;
-    if (net->term_w_start) new_network->term_w_start = true;
+    if (net->is_extended)
+      any_are_extended = true;
+    if (net->term_w_bb)
+      new_network->term_w_bb = true;
+    if (net->term_w_cycle)
+      new_network->term_w_cycle = true;
+    if (net->term_w_start)
+      new_network->term_w_start = true;
 
     // residues
-    for (const auto& res : net->residues) {
+    for (const auto &res : net->residues) {
       if (!resid_added[res->resnum]) {
         new_residues.push_back(res);
         resid_added[res->resnum] = true;
@@ -2139,11 +2060,11 @@ void HBNet::merge_branched_networks(core::Size merged_vec_index,
 }
 
 // consider Ser and Thr idential for benchmarking purposes
-bool HBNet::networks_identical_aa_sequence(hbond_net_struct const& i,
-                                           hbond_net_struct const& j) {
+bool HBNet::networks_identical_aa_sequence(hbond_net_struct const &i,
+                                           hbond_net_struct const &j) {
   if (i.residues.size() == j.residues.size()) {
     std::vector<char> i_aa(0);
-    for (const auto& residue : i.residues) {
+    for (const auto &residue : i.residues) {
       if (residue->aa == 'T' || residue->aa == 'S') {
         i_aa.push_back('S');
       } else {
@@ -2151,7 +2072,7 @@ bool HBNet::networks_identical_aa_sequence(hbond_net_struct const& i,
       }
     }
     std::vector<char> j_aa(0);
-    for (const auto& residue : j.residues) {
+    for (const auto &residue : j.residues) {
       if (residue->aa == 'T' || residue->aa == 'S') {
         j_aa.push_back('S');
       } else {
@@ -2173,8 +2094,8 @@ bool HBNet::networks_identical_aa_sequence(hbond_net_struct const& i,
   return false;
 }
 
-bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP>& residues1,
-                            utility::vector1<HBondResStructCOP>& residues2) {
+bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
+                            utility::vector1<HBondResStructCOP> &residues2) {
   bool branch(false);
   return is_sub_residues(residues1, residues2, branch);
 }
@@ -2182,9 +2103,9 @@ bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP>& residues1,
 ///@details identical networks are considered subsets of each other here by
 /// default unless specified by true_if_identical=false
 ///  std::includes() returns false if 2 vectors are identical
-bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP>& residues1,
-                            utility::vector1<HBondResStructCOP>& residues2,
-                            bool& branch, bool true_if_identical /* true */) {
+bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
+                            utility::vector1<HBondResStructCOP> &residues2,
+                            bool &branch, bool true_if_identical /* true */) {
   if (residues1.empty() || residues2.empty()) {
     return false;
   }
@@ -2221,10 +2142,10 @@ bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP>& residues1,
                               compare_hbond_residues()))) {
       return true;
     }
-    if (symm_diff.size() >= 2) {  // only branches if at least 1 diff is unique
-                                  // to each list, !subreslist (e.g. if list1 =
-                                  // {1,2} and list2 = {1,2,3,4}, v2 = 2 but
-                                  // list2 includes list1)
+    if (symm_diff.size() >= 2) { // only branches if at least 1 diff is unique
+                                 // to each list, !subreslist (e.g. if list1 =
+                                 // {1,2} and list2 = {1,2,3,4}, v2 = 2 but
+                                 // list2 includes list1)
       branch = true;
     }
   }
@@ -2243,17 +2164,18 @@ void HBNet::branch_overlapping_networks() {
     }
     return;
   }
-  merged_vecs_.clear();  // unnecessary if function only used internally
+  merged_vecs_.clear(); // unnecessary if function only used internally
 
   if (monte_carlo_branch_) {
     branch_overlapping_networks_monte_carlo();
     return;
   }
 
-  for (auto& i : network_vector_) {
+  for (auto &i : network_vector_) {
     i->net_indices.clear();
   }
-  if (TR.visible()) TR << "recording net_indices " << std::endl;
+  if (TR.visible())
+    TR << "recording net_indices " << std::endl;
   for (auto i = network_vector_.begin(); i != network_vector_.end(); ++i) {
     // Compare network i with all j, and store best-scoring j that doesn't clash
     // with i
@@ -2272,7 +2194,8 @@ void HBNet::branch_overlapping_networks() {
       }
     }
   }
-  if (TR.visible()) TR << "starting recursion " << std::endl;
+  if (TR.visible())
+    TR << "starting recursion " << std::endl;
   for (auto i = network_vector_.begin(); i != network_vector_.end(); ++i) {
     Size i_pos = i - network_vector_.begin();
     std::vector<Size> add_index_vec;
@@ -2288,7 +2211,7 @@ void HBNet::branch_overlapping_networks() {
       if (store_subnetworks_) {
         bool found(false);
         std::sort(add_index_vec.begin(), add_index_vec.end());
-        for (auto& merged_vec : merged_vecs_) {
+        for (auto &merged_vec : merged_vecs_) {
           // std::sort(merged_vec.begin(), merged_vec.end()); // SHOULD ALWAYS
           // ALEADY BE SORTED!
           std::vector<int> v2(100);
@@ -2321,7 +2244,7 @@ void HBNet::branch_overlapping_networks() {
         if (!store_subnetworks_) {
           bool found(false);
           std::sort(add_index_vec.begin(), add_index_vec.end());
-          for (auto& merged_vec : merged_vecs_) {
+          for (auto &merged_vec : merged_vecs_) {
             // std::sort(merged_vec.begin(), merged_vec.end()); // SHOULD ALWAYS
             // ALEADY BE SORTED!
             std::vector<int> v2(100);
@@ -2345,7 +2268,7 @@ void HBNet::branch_overlapping_networks() {
         add_index_vec.push_back(v.front());
         bool found(false);
         std::sort(add_index_vec.begin(), add_index_vec.end());
-        for (auto& merged_vec : merged_vecs_) {
+        for (auto &merged_vec : merged_vecs_) {
           // std::sort(merged_vec.begin(), merged_vec.end()); // SHOULD ALWAYS
           // ALEADY BE SORTED!
           std::vector<int> v2(100);
@@ -2369,7 +2292,8 @@ void HBNet::branch_overlapping_networks() {
       add_index_vec.pop_back();
     }
   }
-  if (TR.visible()) TR << "finished recursion " << std::endl;
+  if (TR.visible())
+    TR << "finished recursion " << std::endl;
   if (TR.visible())
     TR << "merged_vecs_.size() =  " << merged_vecs_.size() << std::endl;
   // std::vector< std::vector< Size > > temp_merge_vec(0);
@@ -2402,14 +2326,14 @@ void HBNet::branch_overlapping_networks() {
 
   finalize_branching();
 
-}  // branch_overlapping networks
+} // branch_overlapping networks
 
 void HBNet::finalize_branching() {
   if (TR.visible())
     TR << "finished temp_merge_vec, actually merging networks " << std::endl;
   Size mcount(1);
   std::vector<HBondNetStructOP> temp_net_vec(0);
-  for (auto& merged_vec : merged_vecs_) {
+  for (auto &merged_vec : merged_vecs_) {
     if (merged_vec.size() > 1) {
       auto m1 = merged_vec.begin();
       HBondNetStructOP temp_hbond_net_struct = network_vector_[*m1];
@@ -2475,8 +2399,8 @@ inline unsigned long combine_indices(core::Size const i, core::Size const j) {
   return (static_cast<unsigned long>(i) << 32) & (j & 0xFFFFFFFF);
 }
 
-inline std::pair<core::Size, core::Size> split_indices(
-    unsigned long const combined) {
+inline std::pair<core::Size, core::Size>
+split_indices(unsigned long const combined) {
   core::Size const i = (combined >> 32) & 0xFFFFFFFF;
   core::Size const j = combined & 0xFFFFFFFF;
   return std::make_pair(i, j);
@@ -2485,7 +2409,7 @@ inline std::pair<core::Size, core::Size> split_indices(
 void HBNet::branch_overlapping_networks_monte_carlo() {
   runtime_assert(
       network_vector_.size() <=
-      0xFFFFFFFF);  // network_vector_.size() can be expressed as 32 bit int
+      0xFFFFFFFF); // network_vector_.size() can be expressed as 32 bit int
   branch_seed_network_vector_.clear();
 
   std::set<unsigned long> clashes;
@@ -2551,8 +2475,8 @@ void HBNet::branch_overlapping_networks_monte_carlo() {
 }
 
 void HBNet::monte_carlo_branching_trajectory(
-    core::Size seed_index, std::set<unsigned long>& clashes,
-    std::vector<utility::vector1<core::Size>>& overlapping_nets) {
+    core::Size seed_index, std::set<unsigned long> &clashes,
+    std::vector<utility::vector1<core::Size>> &overlapping_nets) {
   utility::vector1<core::Size> current_rotamers;
   for (HBondResStructCOP res : network_vector_[seed_index]->residues) {
     core::Size const moltenres = rotamer_sets_->resid_2_moltenres(res->resnum);
@@ -2582,9 +2506,9 @@ void HBNet::monte_carlo_branching_trajectory(
   temps.push_back(0.1);
   temps.push_back(0);
 
-  core::Size const loops_per_temp = 10;  // 50 total turns
+  core::Size const loops_per_temp = 10; // 50 total turns
   core::Size const candidates_per_loop =
-      10;  // 500 total proposed changes, max of 50 accepted
+      10; // 500 total proposed changes, max of 50 accepted
 
   for (core::Real temp : temps) {
     for (core::Size inner_loop = 1; inner_loop <= loops_per_temp;
@@ -2616,7 +2540,8 @@ void HBNet::monte_carlo_branching_trajectory(
       for (core::Size index : current_net_ids) {
         core::Size const num_nbrs = overlapping_nets[index].size();
         for (core::Size ii = 1; ii <= candidates_per_loop; ++ii) {
-          if (random_draws[ii] == 0xFFFFFFFFFFFFFFFF) continue;
+          if (random_draws[ii] == 0xFFFFFFFFFFFFFFFF)
+            continue;
           if (random_draws[ii] <= num_nbrs) {
             core::Size ii_net_vec_index =
                 overlapping_nets[index][random_draws[ii]];
@@ -2686,8 +2611,8 @@ void HBNet::monte_carlo_branching_trajectory(
 
       core::Real random_draw = 0;
       if (partition_function < 1) {
-        random_draw = numeric::random::rg().uniform();  // partition_function =
-                                                        // 1
+        random_draw = numeric::random::rg().uniform(); // partition_function =
+                                                       // 1
         if (random_draw > partition_function) {
           // don't accept anything
           continue;
@@ -2734,11 +2659,12 @@ core::Real HBNet::get_twobody(HBondResStructCOP i, HBondResStructCOP j) {
     }
   }
 
-  NodeBase const* node = ig_->get_node(moltenres_i);
-  EdgeBase const* edge = node->find_edge(int(moltenres_j));
-  if (!edge) return 0;
+  NodeBase const *node = ig_->get_node(moltenres_i);
+  EdgeBase const *edge = node->find_edge(int(moltenres_j));
+  if (!edge)
+    return 0;
 
-  PDEdge const* pdedge = static_cast<PDEdge const*>(edge);
+  PDEdge const *pdedge = static_cast<PDEdge const *>(edge);
   TR << moltenres_i << " " << i->rot_index << " " << moltenres_j << " "
      << j->rot_index << std::endl;
   TR << node << " " << edge << " " << pdedge << std::endl;
@@ -2813,7 +2739,7 @@ void HBNet::rec_set_intersection(std::vector<Size> add_index_vec,
     if (store_subnetworks_) {
       bool found(false);
       std::sort(add_index_vec.begin(), add_index_vec.end());
-      for (auto& merged_vec : merged_vecs_) {
+      for (auto &merged_vec : merged_vecs_) {
         // std::sort(merged_vec.begin(), merged_vec.end()); // SHOULD ALWAYS
         // ALEADY BE SORTED!
         std::vector<int> v2(100);
@@ -2845,7 +2771,7 @@ void HBNet::rec_set_intersection(std::vector<Size> add_index_vec,
       if (!store_subnetworks_) {
         bool found(false);
         std::sort(add_index_vec.begin(), add_index_vec.end());
-        for (auto& merged_vec : merged_vecs_) {
+        for (auto &merged_vec : merged_vecs_) {
           // std::sort(merged_vec.begin(), merged_vec.end()); // SHOULD ALWAYS
           // ALEADY BE SORTED!
           std::vector<int> v2(100);
@@ -2869,7 +2795,7 @@ void HBNet::rec_set_intersection(std::vector<Size> add_index_vec,
       add_index_vec.push_back(v.front());
       bool found(false);
       std::sort(add_index_vec.begin(), add_index_vec.end());
-      for (auto& merged_vec : merged_vecs_) {
+      for (auto &merged_vec : merged_vecs_) {
         // std::sort(merged_vec.begin(), merged_vec.end()); // SHOULD ALWAYS
         // ALEADY BE SORTED!
         std::vector<int> v2(100);
@@ -2894,7 +2820,7 @@ void HBNet::rec_set_intersection(std::vector<Size> add_index_vec,
   }
 }
 
-void HBNet::place_rots_on_pose(pose::Pose& pose, hbond_net_struct& i,
+void HBNet::place_rots_on_pose(pose::Pose &pose, hbond_net_struct &i,
                                bool use_pose) {
   if (!(pose.pdb_info())) {
     pose.pdb_info(core::pose::PDBInfoOP(new core::pose::PDBInfo(pose, true)));
@@ -2905,13 +2831,13 @@ void HBNet::place_rots_on_pose(pose::Pose& pose, hbond_net_struct& i,
       pose.pdb_info()->add_reslabel(r->seqpos(), "HBNet");
     }
   } else if (use_pose) {
-    for (const auto& residue : i.residues) {
+    for (const auto &residue : i.residues) {
       pose.replace_residue(residue->resnum,
                            orig_pose_->residue(residue->resnum), false);
       pose.pdb_info()->add_reslabel(residue->resnum, "HBNet");
     }
   } else if (rotamer_sets_ != nullptr) {
-    for (const auto& residue : i.residues) {
+    for (const auto &residue : i.residues) {
       ResidueCOP copy_rot(rotamer_sets_->rotamer_for_moltenres(
           rotamer_sets_->resid_2_moltenres((platform::uint)(residue->resnum)),
           residue->rot_index));
@@ -2932,10 +2858,10 @@ void HBNet::place_rots_on_pose(pose::Pose& pose, hbond_net_struct& i,
 // to very quickly eliminate networks with 1 or more unsatisfied heavy-atom
 // donors or acceptors
 bool HBNet::quick_and_dirty_network_has_heavy_atom_unsat(
-    Pose const& pose, hbond_net_struct const& network) {
-  for (const auto& res : network.residues) {
+    Pose const &pose, hbond_net_struct const &network) {
+  for (const auto &res : network.residues) {
     if (res_is_core(res->resnum)) {
-      for (const auto& acc_pos : pose.residue(res->resnum).accpt_pos_sc()) {
+      for (const auto &acc_pos : pose.residue(res->resnum).accpt_pos_sc()) {
         // Size base( pose.residue(res->resnum) );
         if (quick_and_dirty_heavy_atom_is_unsat(
                 pose, id::AtomID(acc_pos, res->resnum))) {
@@ -2945,9 +2871,10 @@ bool HBNet::quick_and_dirty_network_has_heavy_atom_unsat(
       // for ( const auto & chemical::AtomIndices :
       // pose.residue(res->resnum).Hpos_polar_sc() ){
       Size prev_base(0);
-      for (const auto& hpol : pose.residue(res->resnum).Hpos_polar_sc()) {
+      for (const auto &hpol : pose.residue(res->resnum).Hpos_polar_sc()) {
         Size base(pose.residue(res->resnum).atom_base(hpol));
-        if (prev_base == base) continue;
+        if (prev_base == base)
+          continue;
         if (quick_and_dirty_heavy_atom_is_unsat(
                 pose, id::AtomID(base, res->resnum))) {
           return true;
@@ -2961,19 +2888,21 @@ bool HBNet::quick_and_dirty_network_has_heavy_atom_unsat(
 
 // to very quickly eliminate networks with 1 or more unsatisfied heavy-atom
 // donors or acceptors
-bool HBNet::quick_and_dirty_heavy_atom_is_unsat(Pose const& pose,
+bool HBNet::quick_and_dirty_heavy_atom_is_unsat(Pose const &pose,
                                                 id::AtomID const at_id) {
   Real const heavy_atom_don_acc_cutoff(3.5);
   Real const dist_2(heavy_atom_don_acc_cutoff * heavy_atom_don_acc_cutoff);
   for (Size res = 1; res <= pose.total_residue(); ++res) {
-    if (res == at_id.rsd()) continue;
+    if (res == at_id.rsd())
+      continue;
     if (pose.xyz(at_id).distance_squared(pose.residue(res).nbr_atom_xyz()) <
-        100.0) {  // 10^2
+        100.0) { // 10^2
       if (pose.residue(at_id.rsd()).atom_type(at_id.atomno()).is_acceptor()) {
         Size prev_base(0);
-        for (const auto& hpol : pose.residue(res).Hpos_polar()) {
+        for (const auto &hpol : pose.residue(res).Hpos_polar()) {
           Size base(pose.residue(res).atom_base(hpol));
-          if (prev_base == base) continue;
+          if (prev_base == base)
+            continue;
           if (pose.xyz(at_id).distance_squared(pose.residue(res).xyz(base)) <
               dist_2) {
             return false;
@@ -2982,7 +2911,7 @@ bool HBNet::quick_and_dirty_heavy_atom_is_unsat(Pose const& pose,
         }
       }
       if (pose.residue(at_id.rsd()).atom_type(at_id.atomno()).is_donor()) {
-        for (const auto& acc : pose.residue(res).accpt_pos()) {
+        for (const auto &acc : pose.residue(res).accpt_pos()) {
           if (pose.xyz(at_id).distance_squared(pose.residue(res).xyz(acc)) <
               dist_2) {
             return false;
@@ -2996,14 +2925,14 @@ bool HBNet::quick_and_dirty_heavy_atom_is_unsat(Pose const& pose,
 
 // hacky check based on distance for cases where we only have water O (not
 // explicit H's)
-bool HBNet::atom_hbonds_to_bridging_water(Pose const& pose,
+bool HBNet::atom_hbonds_to_bridging_water(Pose const &pose,
                                           id::AtomID const at_id) {
   // TR << "checking atom_hbonds_to_bridging_water" << std::endl;
-  Real const hpol_dist(2.2);  // water O (acc) to Hpol dist: generous, error on
-                              // side of satisfaction
-  Real const hpol_dist_sq(hpol_dist * hpol_dist);
-  Real const acc_dist(3.4);  // water O (don) to Acc dist: generous, error on
+  Real const hpol_dist(2.2); // water O (acc) to Hpol dist: generous, error on
                              // side of satisfaction
+  Real const hpol_dist_sq(hpol_dist * hpol_dist);
+  Real const acc_dist(3.4); // water O (don) to Acc dist: generous, error on
+                            // side of satisfaction
   Real const acc_dist_2(acc_dist * acc_dist);
   for (Size res = 1; res <= pose.total_residue(); ++res) {
     // if ( pose.residue(res).is_water() && pose.xyz( at_id ).distance_squared(
@@ -3011,10 +2940,10 @@ bool HBNet::atom_hbonds_to_bridging_water(Pose const& pose,
     // have neighbor radius < 4
     if (pose.residue(res).name1() == 'w' &&
         pose.xyz(at_id).distance_squared(pose.residue(res).nbr_atom_xyz()) <
-            16.0) {  // 4^2; all water types have neighbor radius < 4
+            16.0) { // 4^2; all water types have neighbor radius < 4
       // TR << "we found a water! " << std::endl;
       Vector waterO(
-          pose.residue(res).xyz(1));  // water O should always be first;
+          pose.residue(res).xyz(1)); // water O should always be first;
       // Vector waterO( pose.residue(res).xyz("O") );
       if (pose.residue(at_id.rsd()).atom_type(at_id.atomno()).is_acceptor() &&
           pose.xyz(at_id).distance_squared(waterO) < acc_dist_2) {
@@ -3032,7 +2961,7 @@ bool HBNet::atom_hbonds_to_bridging_water(Pose const& pose,
   return false;
 }
 
-void HBNet::update_core_and_boundary_residues(core::pose::Pose const& pose) {
+void HBNet::update_core_and_boundary_residues(core::pose::Pose const &pose) {
   if (core_selector_) {
     core_residues_ = core_selector_->apply(pose);
   } else {
@@ -3041,15 +2970,15 @@ void HBNet::update_core_and_boundary_residues(core::pose::Pose const& pose) {
     core_layer->set_layers(true, false, false);
     // core_layer->set_use_sc_neighbors( true ); // now true by default
     core_layer->set_cutoffs(4.4 /* core */,
-                            2.0 /* surface */);  // default core is 5.2, here we
-                                                 // use 4.4 to be overly
-                                                 // cautious with unsats
+                            2.0 /* surface */); // default core is 5.2, here we
+                                                // use 4.4 to be overly
+                                                // cautious with unsats
     runtime_assert(core_layer->use_sc_neighbors());
     core_residues_ = core_layer->apply(pose);
   }
 }
 
-void HBNet::find_unsats(Pose const& pose, hbond_net_struct& network) {
+void HBNet::find_unsats(Pose const &pose, hbond_net_struct &network) {
   Size num_unsatisfied(0);
   Size num_heavy_unsat(0);
 
@@ -3064,7 +2993,8 @@ void HBNet::find_unsats(Pose const& pose, hbond_net_struct& network) {
 
   runtime_assert(!(network.hbond_vec.empty()));
 
-  if (verbose_ && TR.visible()) network.hbond_set->show(TR);
+  if (verbose_ && TR.visible())
+    network.hbond_set->show(TR);
 
   // TODO NEED TO ADD option to use own bunsat calc here
 
@@ -3099,7 +3029,7 @@ void HBNet::find_unsats(Pose const& pose, hbond_net_struct& network) {
   //        }
   //    }
 
-  for (const auto& resnum : resnums) {
+  for (const auto &resnum : resnums) {
     if (verbose_ && TR.visible())
       network.hbond_set->show(pose, resnum, true, TR);
 
@@ -3163,7 +3093,7 @@ void HBNet::find_unsats(Pose const& pose, hbond_net_struct& network) {
           }
         } else if (pose.residue(resnum).atom_type(a_index).is_acceptor() &&
                    pose.residue(resnum).atomic_charge(a_index) !=
-                       0.0) {  // important for ligand case
+                       0.0) { // important for ligand case
           polar_atom_count++;
           id::AtomID const at_id(a_index, resnum);
 
@@ -3191,7 +3121,7 @@ void HBNet::find_unsats(Pose const& pose, hbond_net_struct& network) {
             // based on water O
             if (res_is_core(resnum)) {
               if (pose.residue(resnum).atom_type(a_index).name() ==
-                  "OH") {  // do not want to double penalize hydroxyls
+                  "OH") { // do not want to double penalize hydroxyls
                 polar_atom_count++;
                 core::Size hatm =
                     pose.residue(resnum).attached_H_begin(a_index);
@@ -3358,19 +3288,19 @@ void HBNet::find_unsats(Pose const& pose, hbond_net_struct& network) {
   network.num_unsat = num_unsatisfied;
   network.num_heavy_unsat = num_heavy_unsat;
   network.connectivity = (Real)polar_atms_making_hbonds /
-                         (Real)polar_atom_count;  // NOW UPDATED FOR BRIDGING
-                                                  // WATERS (CODE ADDED ABOVE)
+                         (Real)polar_atom_count; // NOW UPDATED FOR BRIDGING
+                                                 // WATERS (CODE ADDED ABOVE)
 
   // if ( bridging_waters_ ){
   //    set_core_residues( temp_core_residues );
   //    set_boundary_residues( temp_boundary_residues );
   //}
-}  // find_unsats
+} // find_unsats
 
 // checks resnum and aa but not rotamer
 // consider Ser and Thr identical
-bool HBNet::residues_identical(utility::vector1<HBondResStructCOP>& residues1,
-                               utility::vector1<HBondResStructCOP>& residues2) {
+bool HBNet::residues_identical(utility::vector1<HBondResStructCOP> &residues1,
+                               utility::vector1<HBondResStructCOP> &residues2) {
   if (residues1.size() != residues2.size()) {
     return false;
   }
@@ -3402,9 +3332,9 @@ bool HBNet::residues_identical(utility::vector1<HBondResStructCOP>& residues1,
 }
 
 bool HBNet::all_residue_chis_are_close(
-    utility::vector1<HBondResStructCOP>& residues1,
-    utility::vector1<HBondResStructCOP>& residues2) {
-  const core::Size window = 20;  // degress
+    utility::vector1<HBondResStructCOP> &residues1,
+    utility::vector1<HBondResStructCOP> &residues2) {
+  const core::Size window = 20; // degress
 
   if (residues1.size() != residues2.size()) {
     return false;
@@ -3422,23 +3352,27 @@ bool HBNet::all_residue_chis_are_close(
     core::conformation::ResidueCOP res2_cop =
         rotamer_sets_->rotamer_set_for_residue((*res2)->resnum)
             ->rotamer((*res2)->rot_index);
-    if (res1_cop->nchi() != res2_cop->nchi()) return false;
+    if (res1_cop->nchi() != res2_cop->nchi())
+      return false;
 
     for (core::Size chi = 1; chi <= res1_cop->nchi(); ++chi) {
       core::Real difference = std::abs(res1_cop->chi(chi) - res2_cop->chi(chi));
 
-      while (difference > 360) difference -= 360;
-      if (difference > 180) difference = 360 - difference;
+      while (difference > 360)
+        difference -= 360;
+      if (difference > 180)
+        difference = 360 - difference;
 
-      if (difference > window) return false;
+      if (difference > window)
+        return false;
     }
   }
   return true;
 }
 
 bool HBNet::residues_not_unique(
-    utility::vector1<HBondResStructCOP>& residues1,
-    utility::vector1<HBondResStructCOP>& residues2) {
+    utility::vector1<HBondResStructCOP> &residues1,
+    utility::vector1<HBondResStructCOP> &residues2) {
   if (residues1.size() != residues2.size()) {
     return false;
   }
@@ -3470,19 +3404,19 @@ bool HBNet::residues_not_unique(
   return true;
 }
 
-bool HBNet::networks_unique(hbond_net_struct const& i,
-                            hbond_net_struct const& j,
+bool HBNet::networks_unique(hbond_net_struct const &i,
+                            hbond_net_struct const &j,
                             bool no_surface /* true */) {
   utility::vector1<HBondResStructCOP> residues_i(0);
   utility::vector1<HBondResStructCOP> residues_j(0);
 
   if (no_surface) {
-    for (const auto& residue : i.residues) {
+    for (const auto &residue : i.residues) {
       if (res_is_core(residue->resnum) || res_is_boundary(residue->resnum)) {
         residues_i.push_back(residue);
       }
     }
-    for (const auto& residue : j.residues) {
+    for (const auto &residue : j.residues) {
       if (res_is_core(residue->resnum) || res_is_boundary(residue->resnum)) {
         residues_j.push_back(residue);
       }
@@ -3499,7 +3433,7 @@ bool HBNet::networks_unique(hbond_net_struct const& i,
 // considered through final scoring
 void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
   std::sort(network_vector_.begin(), network_vector_.end(),
-            compare_net_vec());  // sort all networks by score
+            compare_net_vec()); // sort all networks by score
   if (basic::options::option
           [basic::options::OptionKeys::jackmag::bypass_remove_rep]()) {
     return;
@@ -3511,7 +3445,7 @@ void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
     TR << "         DELETING REPLICATE NETWORKS THAT HAVE IDENTIAL RESNUM AND "
           "AA SEQ; ONLY KEEPING BEST SCORING ONE"
        << std::endl;
-  for (auto& i : network_vector_) {
+  for (auto &i : network_vector_) {
     bool only_water(true);
     Size num_protein_res(0);
     for (utility::vector1<HBondResStructCOP>::const_iterator k =
@@ -3534,7 +3468,7 @@ void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
     Size temp_net_count = 1;
     for (auto vit = temp_net_vec.begin(); vit != temp_net_vec.end(); ++vit) {
       if (residues_identical(i->residues,
-                             (*vit)->residues)) {  //&& ( !bridging_waters_ || (
+                             (*vit)->residues)) { //&& ( !bridging_waters_ || (
         // i->bridging_water_oxygens.size() ==
         //(*vit)->bridging_water_oxygens.size() ) )
         //){
@@ -3548,7 +3482,7 @@ void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
       } else if (only_native_ &&
                  is_sub_residues(
                      i->residues,
-                     (*vit)->residues)) {  // checks subsets both ways
+                     (*vit)->residues)) { // checks subsets both ways
         // for native case, ensure that we don't store subnetworks
         if (i->residues.size() > (*vit)->residues.size()) {
           **vit = *i;
@@ -3575,7 +3509,7 @@ void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
   // clear network_vector_ then push back all of the ones that passed the cutoff
   // (from temp_net_vec)
   network_vector_.clear();
-  for (auto& k : temp_net_vec) {
+  for (auto &k : temp_net_vec) {
     network_vector_.push_back(k);
   }
   if (verbose_ && TR.visible()) {
@@ -3584,16 +3518,16 @@ void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
     TR << " ========================================================"
        << std::endl;
   }
-}  // remove_replicate_networks
+} // remove_replicate_networks
 
 Size HBNet::get_num_native_rot(
-    Pose& pose, utility::vector1<HBondResStructCOP> const& residues,
+    Pose &pose, utility::vector1<HBondResStructCOP> const &residues,
     Real sc_rmsd_cut, bool super) {
   Size num_native(0);
-  for (const auto& residue : residues) {
+  for (const auto &residue : residues) {
     if (((this->ligand()) && residue->resnum == (this->ligand())) ||
         residue->resnum > orig_pose_->total_residue()) {
-      continue;  // does not count ligand in order to be fair
+      continue; // does not count ligand in order to be fair
     }
     if (!(pose.residue(residue->resnum).name1() ==
           orig_pose_->residue(residue->resnum).name1())) {
@@ -3603,7 +3537,7 @@ Size HBNet::get_num_native_rot(
            orig_pose_->residue(residue->resnum).name1() != 'T')) {
         continue;
       } else {
-        num_native++;  // for benchmarking purposes, treat S/T same
+        num_native++; // for benchmarking purposes, treat S/T same
       }
       continue;
     }
@@ -3622,13 +3556,13 @@ Size HBNet::get_num_native_rot(
 }
 
 Size HBNet::get_num_native_seq(
-    core::pose::Pose& pose,
-    utility::vector1<HBondResStructCOP> const& residues) {
+    core::pose::Pose &pose,
+    utility::vector1<HBondResStructCOP> const &residues) {
   Size num_native(0);
-  for (const auto& residue : residues) {
+  for (const auto &residue : residues) {
     if (((this->ligand()) && residue->resnum == (this->ligand())) ||
         residue->resnum >= orig_pose_->total_residue()) {
-      continue;  // does not count ligand in ligand() case
+      continue; // does not count ligand in ligand() case
     }
     bool aa_same = false;
     if (pose.residue(residue->resnum).name1() ==
@@ -3662,19 +3596,19 @@ void HBNet::output_networks(bool finalize) {
     network_residues_.resize(network_vector_.size() + native_networks_.size());
   }
   std::sort(network_vector_.begin(), network_vector_.end(),
-            compare_net_vec());  // sort all new networks
+            compare_net_vec()); // sort all new networks
   Size count(1);
   // for ( auto i = network_vector_.begin(); i != network_vector_.end(); ++i ) {
   // // outer loop
   auto i = network_vector_.begin();
-  for (; i != network_vector_.end();) {  // outer loop
+  for (; i != network_vector_.end();) { // outer loop
     // for this options case, need to check if existing (native) networks have
     // been extended
     //  if they have, choose either native or extended, whichever is better
     if (extend_existing_networks_) {
       bool erase_this_network = false;
       auto nit(native_networks_.begin());
-      for (; nit != native_networks_.end();) {  // inner loop
+      for (; nit != native_networks_.end();) { // inner loop
         // bool dummy(false);
         // if the native network is a subset of network i, then i is extended;
         // if ( is_sub_residues( (*nit)->residues, (*i)->residues, dummy, true
@@ -3692,15 +3626,14 @@ void HBNet::output_networks(bool finalize) {
                             : (*nit)->residues.size());
           if (i_size > nit_size ||
               (i_size == nit_size && (*i)->num_unsat < (*nit)->num_unsat)) {
-            (*i)->is_extended =
-                true;  // record that this is an extended network
+            (*i)->is_extended = true; // record that this is an extended network
             nit = native_networks_.erase(nit);
           } else {
             // keep native and don't keep new network; we won't add it to
             // output_net_vec_
             // skip this network (it won't get returned)
             erase_this_network = true;
-            break;  // because we found a native that's better, exit inner loop
+            break; // because we found a native that's better, exit inner loop
           }
         } else {
           ++nit;
@@ -3711,7 +3644,7 @@ void HBNet::output_networks(bool finalize) {
       if (erase_this_network) {
         i = network_vector_.erase(i);
         continue;
-      }  // move on to the next new network, continue outer loop
+      } // move on to the next new network, continue outer loop
 
       // 17/02/15 shouldn't need this anymore
       //            Size hbnet_label_count(0);
@@ -3728,12 +3661,12 @@ void HBNet::output_networks(bool finalize) {
       //                (*i)->is_extended = true;
     }
 
-    Pose ala_copy = *ala_pose_;  // deep copy
+    Pose ala_copy = *ala_pose_; // deep copy
     // place_rots_on_pose( ala_copy, **i, (*i)->is_native, bridging_waters_,
     // (*i)->waterrots.empty() );
     place_rots_on_pose(ala_copy, **i, (*i)->is_native);
     if ((*i)->hbond_vec.empty()) {
-      (*scorefxn_)(ala_copy);  // NEED TO SCORE BEFORE get_hbond_atom_pairs()
+      (*scorefxn_)(ala_copy); // NEED TO SCORE BEFORE get_hbond_atom_pairs()
       get_hbond_atom_pairs(**i, ala_copy);
       (*i)->total_hbonds = (*i)->hbond_vec.size();
     }
@@ -3744,10 +3677,13 @@ void HBNet::output_networks(bool finalize) {
     outstring = outstring + this->print_additional_info_for_net(**i, ala_copy);
     (*i)->outstring = outstring;
 
-    if (write_network_pdbs_) write_network_pdb(*i);
-    if (jack_store_networks_) jack_store_network(*i, false);
+    if (write_network_pdbs_)
+      write_network_pdb(*i);
+    if (jack_store_networks_)
+      jack_store_network(*i, false);
 
-    if (TR.visible()) TR << "\t" << outstring << std::endl;
+    if (TR.visible())
+      TR << "\t" << outstring << std::endl;
     if (finalize) {
       // std::vector< Size > net_ids(0);
       // net_ids.push_back( (*i)->id );
@@ -3759,32 +3695,34 @@ void HBNet::output_networks(bool finalize) {
           for (auto j = i; ++j != network_vector_.end();) {
             if ((*j)->is_extended) {
               bool compatible(true);
-              for (auto& net_id : net_ids) {
+              for (auto &net_id : net_ids) {
                 if (net_clash(*(get_network_by_id(net_id)), **j)) {
                   compatible = false;
                   break;
                 }
               }
-              if (compatible) net_ids.insert((*j)->id);
+              if (compatible)
+                net_ids.insert((*j)->id);
             }
           }
         } else {
-          for (auto& k : network_vector_) {
+          for (auto &k : network_vector_) {
             if (k->is_extended) {
               bool compatible(true);
-              for (const auto& net_id : net_ids) {
+              for (const auto &net_id : net_ids) {
                 if (net_clash(*(get_network_by_id(net_id)), *k)) {
                   compatible = false;
                   break;
                 }
               }
-              if (compatible) net_ids.insert(k->id);
+              if (compatible)
+                net_ids.insert(k->id);
             }
           }
         }
       }
       bool already_stored(false);
-      for (const auto& output_vec : output_vector_) {
+      for (const auto &output_vec : output_vector_) {
         if (output_vec == net_ids) {
           already_stored = true;
         }
@@ -3806,12 +3744,12 @@ void HBNet::output_networks(bool finalize) {
          << "\t" << print_headers() << print_additional_headers() << std::endl;
     }
     std::sort(native_networks_.begin(), native_networks_.end(),
-              compare_net_vec());  // sort native networks
+              compare_net_vec()); // sort native networks
     Size count(1);
     std::string comment_str(print_headers() + this->print_additional_headers());
-    Pose& out_pose((output_poly_ala_background_) ? *ala_pose_
+    Pose &out_pose((output_poly_ala_background_) ? *ala_pose_
                                                  : nonconst_get_orig_pose());
-    for (auto& native_network : native_networks_) {
+    for (auto &native_network : native_networks_) {
       native_network->id = count;
 
       if (jack_store_networks_) {
@@ -3831,8 +3769,7 @@ void HBNet::output_networks(bool finalize) {
         place_rots_on_pose(out_pose, *native_network,
                            native_network->is_native);
         if (native_network->hbond_vec.empty()) {
-          (*scorefxn_)(
-              out_pose);  // NEED TO SCORE BEFORE get_hbond_atom_pairs()
+          (*scorefxn_)(out_pose); // NEED TO SCORE BEFORE get_hbond_atom_pairs()
           get_hbond_atom_pairs(*native_network, out_pose);
           find_unsats(out_pose, *native_network);
           native_network->total_hbonds = native_network->hbond_vec.size();
@@ -3842,11 +3779,11 @@ void HBNet::output_networks(bool finalize) {
         }
         core::scoring::constraints::ConstraintSetOP cst_op(
             out_pose.constraint_set()
-                ->clone());  // get existing csts and add to them
+                ->clone()); // get existing csts and add to them
         // set_constraints( out_pose, *cst_op, native_network, write_cst_files_
         // && !bridging_waters_ );
         set_constraints(out_pose, *cst_op, native_network, write_cst_files_);
-        out_pose.constraint_set(cst_op);  // add constraints to the pose
+        out_pose.constraint_set(cst_op); // add constraints to the pose
       }
       std::string outstring(
           (pdb_numbering())
@@ -3856,25 +3793,28 @@ void HBNet::output_networks(bool finalize) {
           outstring +
           this->print_additional_info_for_net(*native_network, out_pose);
       native_network->outstring = outstring;
-      if (TR.visible()) TR << "\t" << outstring << std::endl;
+      if (TR.visible())
+        TR << "\t" << outstring << std::endl;
       comment_str = comment_str + "\n" + native_network->outstring;
 
-      if (write_network_pdbs_) write_network_pdb(native_network);
+      if (write_network_pdbs_)
+        write_network_pdb(native_network);
 
       count++;
     }
     if (keep_existing_networks_ || only_native_) {
-      core::pose::add_comment(
-          out_pose, "HBNet native networks: ", "\n" + comment_str + "\n");
+      core::pose::add_comment(out_pose, "HBNet native networks: ",
+                              "\n" + comment_str + "\n");
     }
     if (TR.visible()) {
       TR << std::endl;
     }
   }
-}  // output_networks
+} // output_networks
 
-core::pack::task::PackerTaskOP HBNet::create_ptask(
-    core::pose::Pose const& pose, bool initialize_from_commandline /*=false*/) {
+core::pack::task::PackerTaskOP
+HBNet::create_ptask(core::pose::Pose const &pose,
+                    bool initialize_from_commandline /*=false*/) {
   using namespace core::pack::task;
   TR << " Creating packer task based on specified task operations..."
      << std::endl;
@@ -3887,16 +3827,18 @@ core::pack::task::PackerTaskOP HBNet::create_ptask(
   return task;
 }
 
-bool HBNet::task_is_valid(Pose const& pose) const {
-  if (task_->total_residue() != pose.total_residue()) return false;
+bool HBNet::task_is_valid(Pose const &pose) const {
+  if (task_->total_residue() != pose.total_residue())
+    return false;
   for (Size i(1); i <= pose.total_residue(); ++i) {
     chemical::ResidueTypeCOP r = pose.residue_type_ptr(i);
-    if (!task_->residue_task(i).is_original_type(r)) return false;
+    if (!task_->residue_task(i).is_original_type(r))
+      return false;
   }
   return true;
 }
 
-void HBNet::set_symmetry(Pose& pose) {
+void HBNet::set_symmetry(Pose &pose) {
   // add_background_energies_ = 0; //we do not want to store background and
   // intrares energies at 1-body for symmetry
   // because 2-body energies of symm clones with themselves stored here
@@ -3908,10 +3850,11 @@ void HBNet::set_symmetry(Pose& pose) {
   if (!core::pose::symmetry::is_symmetric(pose)) {
     return;
   }
-  if (TR.visible()) TR << "         POSE IS SYMMETRIC" << std::endl;
+  if (TR.visible())
+    TR << "         POSE IS SYMMETRIC" << std::endl;
   symmetric_ = true;
-  core::conformation::symmetry::SymmetricConformation const& SymmConf(
-      dynamic_cast<core::conformation::symmetry::SymmetricConformation const&>(
+  core::conformation::symmetry::SymmetricConformation const &SymmConf(
+      dynamic_cast<core::conformation::symmetry::SymmetricConformation const &>(
           pose.conformation()));
   symm_info_ = SymmConf.Symmetry_Info();
   // max_network_size_ = max_network_size_*symm_info_->num_bb_clones();
@@ -3938,7 +3881,7 @@ void HBNet::set_symmetry(Pose& pose) {
   }
 }
 
-Size HBNet::get_ind_res(Pose const& pose, Size const res_i) {
+Size HBNet::get_ind_res(Pose const &pose, Size const res_i) {
   Size resi_ind(res_i);
   if (symmetric_ && res_i > symm_info_->num_independent_residues()) {
     char resi_chain = pose.chain(res_i);
@@ -4004,9 +3947,10 @@ Size HBNet::get_ind_res(Pose const& pose, Size const res_i) {
 //}
 
 void HBNet::write_network_pdb(
-    HBondNetStructOP p)  // better to pass object pointer or reference?
+    HBondNetStructOP p) // better to pass object pointer or reference?
 {
-  if (p->network_pdb_written) return;
+  if (p->network_pdb_written)
+    return;
 
   runtime_assert(p->id != 0);
   Pose ala_copy = *ala_pose_;
@@ -4052,7 +3996,7 @@ void HBNet::write_network_pdb(
 
   // to print csts to pdb info
   core::scoring::constraints::ConstraintSetOP cst_op(
-      ala_copy.constraint_set()->clone());  // get existing csts and add to them
+      ala_copy.constraint_set()->clone()); // get existing csts and add to them
   set_constraints(ala_copy, *cst_op, p, false);
 
   ala_copy.dump_pdb(pdb_tag);
@@ -4095,7 +4039,7 @@ void HBNet::jack_store_network(HBondNetStructOP p, bool native) {
 
 // assumes the network rotamers are already placed onto the pose
 void HBNet::set_constraints(
-    Pose& pose, core::scoring::constraints::ConstraintSet& constraints,
+    Pose &pose, core::scoring::constraints::ConstraintSet &constraints,
     HBondNetStructOP p, bool write_cst_file /* false */) {
   runtime_assert(!(p->hbond_vec.empty()));
 
@@ -4111,9 +4055,8 @@ void HBNet::set_constraints(
     else if (p->is_extended)
       prefix = "extended_";
     cst_fname = get_file_name(p->id, prefix, ".cst");
-    core::pose::add_comment(pose,
-                            "HBNet cst filename for " + prefix + "network_" +
-                                utility::to_string(p->id),
+    core::pose::add_comment(pose, "HBNet cst filename for " + prefix +
+                                      "network_" + utility::to_string(p->id),
                             cst_fname);
     cst_output_stream.open(cst_fname, std::ios_base::out);
     cst_output_stream << "# " << cst_fname << std::endl;
@@ -4135,7 +4078,7 @@ void HBNet::set_constraints(
         pose.residue(arsd).atom(aatm).xyz();
     Real don_acc_dist = don_coordinates.distance(acc_coordinates);
     if (don_acc_dist <= 3.0 && don_acc_dist >= 2.6) {
-      don_acc_dist = 2.8;  // idealized value
+      don_acc_dist = 2.8; // idealized value
     } else if (don_acc_dist > 3.0) {
       don_acc_dist = (don_acc_dist + 2.6) / 2.0;
       xtol = don_acc_dist - 2.6;
@@ -4163,7 +4106,7 @@ void HBNet::set_constraints(
     Real angle_AHD((*i)->get_AHDangle(pose));
     Real angle_BAH((*i)->get_BAHangle(pose));
     Real dist_AH((*i)->get_HAdist(pose));
-    Real hb_energy((*i)->energy());  // unweighted h-bond energy
+    Real hb_energy((*i)->energy()); // unweighted h-bond energy
     std::ostringstream cst_str_stream;
     cst_str_stream << "# angle_AHD = " << angle_AHD
                    << ", angle_BAH = " << angle_BAH << ", dist_AH = " << dist_AH
@@ -4179,9 +4122,9 @@ void HBNet::set_constraints(
       cst_output_stream << cst_str_stream.str();
     }
   }
-  core::pose::add_comment(
-      pose, "HBNet constraints for network_" + utility::to_string(p->id) + ": ",
-      "\n" + comment_str + "\n");
+  core::pose::add_comment(pose, "HBNet constraints for network_" +
+                                    utility::to_string(p->id) + ": ",
+                          "\n" + comment_str + "\n");
   if (write_cst_file && !(p->cst_file_written)) {
     cst_output_stream.close();
     p->cst_file_written = true;
@@ -4216,7 +4159,7 @@ std::string HBNet::get_file_name(Size id, std::string net_prefix,
   return outfile.name();
 }
 
-bool HBNet::water_clashes(Pose const& pose, Vector const water_O) {
+bool HBNet::water_clashes(Pose const &pose, Vector const water_O) {
   Real const acc_cutoff(2.0);
   Real const acc_cutoff_sq(acc_cutoff * acc_cutoff);
 
@@ -4228,7 +4171,7 @@ bool HBNet::water_clashes(Pose const& pose, Vector const water_O) {
     return true;
   for (Size res = 1; res <= pose.total_residue(); ++res) {
     if (water_O.distance_squared(pose.residue(res).nbr_atom_xyz()) >
-        144.0) { /* 12^2 */  // could get by with 10?
+        144.0) { /* 12^2 */ // could get by with 10?
       continue;
     }
     if (water_oxygen_clashes_with_residue(water_O, pose.residue(res))) {
@@ -4245,19 +4188,18 @@ bool HBNet::water_oxygen_clashes_with_residue(Vector const water_oxygen,
   // rotamer_building_functions orient and transform coords onto pose backbone
   if (rotamer_sets_ != nullptr &&
       rotamer_sets_->resid_2_moltenres(resnum) !=
-          0) {  // returns false if res1 not molten (not design/repack-able)
+          0) { // returns false if res1 not molten (not design/repack-able)
     return water_oxygen_clashes_with_residue(
-        water_oxygen,
-        *(rotamer_sets_
-              ->rotamer_set_for_moltenresidue(
-                  rotamer_sets_->resid_2_moltenres(resnum))
-              ->rotamer(rot_state)));
+        water_oxygen, *(rotamer_sets_
+                            ->rotamer_set_for_moltenresidue(
+                                rotamer_sets_->resid_2_moltenres(resnum))
+                            ->rotamer(rot_state)));
   }
   return false;
 }
 
 bool HBNet::water_oxygen_clashes_with_residue(Vector const water_oxygen,
-                                              Residue const& res) {
+                                              Residue const &res) {
   // should hard code these constants
   Real const hpol_cutoff(1.0);
   Real const hpol_cutoff_sq(hpol_cutoff * hpol_cutoff);
@@ -4303,15 +4245,15 @@ pose::PoseOP HBNet::get_additional_output() {
                    ? pose::PoseOP(new Pose(*ala_pose_))
                    : pose::PoseOP(new Pose(*orig_pose_));
   }
-  std::set<Size> net_ids(output_vector_.back());  // back returs ref to back
+  std::set<Size> net_ids(output_vector_.back()); // back returs ref to back
   output_vector_
-      .pop_back();  // pop_back() deletes/removes last, does not return;
+      .pop_back(); // pop_back() deletes/removes last, does not return;
 
   std::string comment_str(print_headers() + this->print_additional_headers());
   if (net_ids.size() > 1 && TR.visible()) {
     TR << std::endl << "combining networks ";
   }
-  for (const auto& net_id : net_ids) {
+  for (const auto &net_id : net_ids) {
     if (net_ids.size() > 1 && TR.visible()) {
       TR << net_id << "  ";
     }
@@ -4328,7 +4270,7 @@ pose::PoseOP HBNet::get_additional_output() {
     // have to do this each time if adding residues (waters)
     core::scoring::constraints::ConstraintSetOP cst_op(
         out_pose->constraint_set()
-            ->clone());  // get existing csts and add to them
+            ->clone()); // get existing csts and add to them
     //        if ( bridging_waters_ ){
     //            //NEED TO SCORE BEFORE get_hbond_atom_pairs()
     //            ( *scorefxn_ )( *out_pose ); // TODO NEED BETTER WAY THAN
@@ -4339,17 +4281,18 @@ pose::PoseOP HBNet::get_additional_output() {
     //        }
     set_constraints(*out_pose, *cst_op, get_network_by_id(net_id),
                     write_cst_files_);
-    out_pose->constraint_set(cst_op);  // add constraints to the pose
+    out_pose->constraint_set(cst_op); // add constraints to the pose
   }
-  if (TR.visible()) TR << std::endl;
-  core::pose::add_comment(
-      *out_pose, "HBNet designed networks: ", "\n" + comment_str + "\n");
+  if (TR.visible())
+    TR << std::endl;
+  core::pose::add_comment(*out_pose, "HBNet designed networks: ",
+                          "\n" + comment_str + "\n");
 
   //(*out_pose).update_residue_neighbors(); // now taken care of in
   // place_rots_on_pose()
-  (*scorefxn_)(*out_pose);  // always want to return a scored pose; and
-                            // set_constraints() clears energies!! so need to
-                            // re-score before calling get_hbond_atom_pairs()
+  (*scorefxn_)(*out_pose); // always want to return a scored pose; and
+                           // set_constraints() clears energies!! so need to
+                           // re-score before calling get_hbond_atom_pairs()
   return out_pose;
 }
 /*
@@ -4381,7 +4324,7 @@ is_repack[r]==1 ) {
         }
 }
 */
-void HBNet::search_IG_for_networks(Pose&) {
+void HBNet::search_IG_for_networks(Pose &) {
   // traverse IG and enumerate all possible h-bond networks given parameters
   if (ig_ != nullptr) {
     if (TR.visible()) {
@@ -4404,7 +4347,7 @@ void HBNet::search_IG_for_networks(Pose&) {
 }
 
 void HBNet::prepare_output() {
-  output_networks(true);  // will add single networks to output vector
+  output_networks(true); // will add single networks to output vector
 }
 
 ////NEED TO MOVE THIS TO IT'S OWN CLASS! //TODO
@@ -4708,18 +4651,20 @@ void HBNet::prepare_output() {
 // }
 //}
 
-Size HBNet::num_core_res(hbond_net_struct const& network) {
+Size HBNet::num_core_res(hbond_net_struct const &network) {
   Size num_core(0);
-  for (const auto& residue : network.residues) {
-    if (res_is_core(residue->resnum)) ++num_core;
+  for (const auto &residue : network.residues) {
+    if (res_is_core(residue->resnum))
+      ++num_core;
   }
   return num_core;
 }
 
-Size HBNet::num_boundary_res(hbond_net_struct const& network) {
+Size HBNet::num_boundary_res(hbond_net_struct const &network) {
   Size num_boundary(0);
-  for (const auto& residue : network.residues) {
-    if (res_is_boundary(residue->resnum)) ++num_boundary;
+  for (const auto &residue : network.residues) {
+    if (res_is_boundary(residue->resnum))
+      ++num_boundary;
   }
   return num_boundary;
 }
@@ -4761,7 +4706,7 @@ void HBNet::select_best_networks() {
     // ADD FUNCTION HERE TO CHECK IF NETWORK CONTAINS SPECIFICIED AA TYPES
 
     // place network residues on background pose for scoring and evaluation
-    Pose ala_copy = *ala_pose_;  // deep copy
+    Pose ala_copy = *ala_pose_; // deep copy
     // place_rots_on_pose( ala_copy, **i, (*i)->is_native, bridging_waters_,
     // pack_waters_before_unsat_check_ );
     place_rots_on_pose(ala_copy, **i, (*i)->is_native);
@@ -4784,8 +4729,8 @@ void HBNet::select_best_networks() {
       if (!ala_copy.energies().energies_updated()) {
         (*scorefxn_)(ala_copy);
       }
-      get_hbond_atom_pairs(**i, ala_copy);  // default sets bb_exclusion to
-                                            // false
+      get_hbond_atom_pairs(**i, ala_copy); // default sets bb_exclusion to
+                                           // false
 
       // if ( (*i)->hbond_vec.empty() || ( bridging_waters_ &&
       // (*i)->has_bridging_wat && (*i)->bridging_water_oxygens.empty() ) ) {
@@ -4799,7 +4744,7 @@ void HBNet::select_best_networks() {
         //  num unsats also applies only to ASU
         find_unsats(
             ala_copy,
-            **i);  // anything < 0.0 considered h-bond during satisfaction check
+            **i); // anything < 0.0 considered h-bond during satisfaction check
 
         // move some of the to meets_criteria NEED TO FIX
         if (!skip_many_filters &&
@@ -4878,16 +4823,16 @@ void HBNet::select_best_networks() {
   }
   TR << "Num networks at the end of select_best_networks: "
      << network_vector_.size() << std::endl;
-}  // select_best_networks()
+} // select_best_networks()
 
-void HBNet::trim_rotamers(Pose& pose) { this->trim_additional_rotamers(pose); }
+void HBNet::trim_rotamers(Pose &pose) { this->trim_additional_rotamers(pose); }
 
-void HBNet::setup_packer_task_and_starting_residues(Pose const& pose) {
+void HBNet::setup_packer_task_and_starting_residues(Pose const &pose) {
   if (task_factory_ == nullptr) {
     task_factory_ = task::TaskFactoryOP(new task::TaskFactory);
   }
   task_ =
-      create_ptask(pose);  // set task (which residues are designable/repackable
+      create_ptask(pose); // set task (which residues are designable/repackable
   if (start_res_vec_.empty()) {
     utility::vector1<bool> is_repack = task_->repacking_residues();
     runtime_assert(is_repack.size() == pose.total_residue());
@@ -4903,7 +4848,7 @@ void HBNet::setup_packer_task_and_starting_residues(Pose const& pose) {
   }
 }
 
-void HBNet::get_native_networks(Pose const& pose) {
+void HBNet::get_native_networks(Pose const &pose) {
   utility::vector1<Size> residues_to_ala(0);
   for (Size r = 1; r <= pose.total_residue(); ++r) {
     if (pose.residue(r).is_ligand() || pose.residue_type(r).name() == "VRT") {
@@ -4916,8 +4861,8 @@ void HBNet::get_native_networks(Pose const& pose) {
   protocols::toolbox::pose_manipulation::construct_poly_XXX_pose(
       "ALA", *ala_pose_, residues_to_ala, 1, 1, 1);
   ala_pose_->update_residue_neighbors();
-  (*scorefxn_)(*ala_pose_);  // score now so we don't have to later; several
-                             // functions require ala_pose_ to be scored
+  (*scorefxn_)(*ala_pose_); // score now so we don't have to later; several
+                            // functions require ala_pose_ to be scored
 
   bool orig_only_native = only_native_;
   only_native_ = true;
@@ -4935,14 +4880,14 @@ void HBNet::get_native_networks(Pose const& pose) {
   if (find_native_) {
     select_best_networks();
   } else {
-    for (auto& native_network : native_networks_) {
+    for (auto &native_network : native_networks_) {
       Pose ala_copy = *ala_pose_;
       // place_rots_on_pose( ala_copy, *native_network,
       // native_network->is_native, bridging_waters_,
       // native_network->waterrots.empty() );
       place_rots_on_pose(ala_copy, *native_network, native_network->is_native);
       if (native_network->hbond_vec.empty()) {
-        (*scorefxn_)(ala_copy);  // NEED TO SCORE BEFORE get_hbond_atom_pairs()
+        (*scorefxn_)(ala_copy); // NEED TO SCORE BEFORE get_hbond_atom_pairs()
         get_hbond_atom_pairs(*native_network, ala_copy);
         find_unsats(ala_copy, *native_network);
         native_network->total_hbonds = native_network->hbond_vec.size();
@@ -4958,7 +4903,7 @@ void HBNet::get_native_networks(Pose const& pose) {
   network_vector_.clear();
 }
 
-void HBNet::setup(Pose const& pose) {
+void HBNet::setup(Pose const &pose) {
   this->setup_packer_task_and_starting_residues(pose);
 
   if (task_->rotamer_links_exist()) {
@@ -5036,8 +4981,8 @@ void HBNet::setup(Pose const& pose) {
         allow_repacked.at(res) = true;
       }
     }
-    task_->restrict_to_residues(allow_repacked);  //"vector boolean is based on
-                                                  // residue position, disables
+    task_->restrict_to_residues(allow_repacked); //"vector boolean is based on
+                                                 // residue position, disables
     // packing at false positions
     // does nothing to true
     // positions.  Cannot turn on
@@ -5053,24 +4998,24 @@ void HBNet::setup(Pose const& pose) {
     // for every position with HBNet info label in input pdb
 
     std::set<core::Size> temp_start_res_vec_ =
-        start_res_vec_;  // save starting residues
+        start_res_vec_; // save starting residues
     if (keep_existing_networks_) {
       start_res_vec_.clear();
     }
     for (Size i = 1; i <= input_hbnet_info_residues_.size(); ++i) {
       if (input_hbnet_info_residues_[i]) {
         if (keep_existing_networks_) {
-          start_res_vec_.insert(i);  // assumes all HBNet InfoLabel residues all
-                                     // in ASU in input pose (always true unless
-                                     // pose manually modified in between HBNet
-                                     // runs)
+          start_res_vec_.insert(i); // assumes all HBNet InfoLabel residues all
+                                    // in ASU in input pose (always true unless
+                                    // pose manually modified in between HBNet
+                                    // runs)
           if (!extend_existing_networks_) {
             task_->nonconst_residue_task(i).prevent_repacking();
           }
         }
         if (extend_existing_networks_) {
           task_->nonconst_residue_task(i)
-              .reset();  // in case previously set to prevent_repacking()
+              .reset(); // in case previously set to prevent_repacking()
           // turning on optH restricts rotamers to only protons flips during
           // packing
           //   this simultaneously allows for
@@ -5089,15 +5034,15 @@ void HBNet::setup(Pose const& pose) {
     if (find_native_) {
       // for each rotamer in native_networks_: set them to not be
       // packable/designable in task_
-      for (auto& native_network : native_networks_) {
-        for (auto& residue : native_network->residues) {
+      for (auto &native_network : native_networks_) {
+        for (auto &residue : native_network->residues) {
           if (keep_existing_networks_ && !extend_existing_networks_) {
             task_->nonconst_residue_task(residue->resnum).prevent_repacking();
           } else if (extend_existing_networks_) {
             // do any of these flip it to packable if task_factory alraedy
             // designates it as prevent_repacking()?
             task_->nonconst_residue_task(residue->resnum)
-                .restrict_to_repacking();  // ensure packable
+                .restrict_to_repacking(); // ensure packable
             task_->nonconst_residue_task(residue->resnum)
                 .or_include_current(true);
             task_->nonconst_residue_task(residue->resnum)
@@ -5110,9 +5055,9 @@ void HBNet::setup(Pose const& pose) {
 
   // keep_start_selector_rotamers_fixed_
   if (keep_start_selector_rotamers_fixed_) {
-    for (const auto& start_res : start_res_vec_) {
+    for (const auto &start_res : start_res_vec_) {
       task_->nonconst_residue_task(start_res)
-          .reset();  // in case previously set to prevent_repacking()
+          .reset(); // in case previously set to prevent_repacking()
       task_->nonconst_residue_task(start_res).or_optimize_h(true);
       task_->nonconst_residue_task(start_res).or_include_current(true);
     }
@@ -5134,22 +5079,22 @@ void HBNet::setup(Pose const& pose) {
   protocols::toolbox::pose_manipulation::construct_poly_XXX_pose(
       "ALA", *ala_pose_, residues_to_ala, 1, 1, 1);
   ala_pose_->update_residue_neighbors();
-  (*scorefxn_)(*ala_pose_);  // score now so we don't have to later; several
-                             // functions require pose to be scored
+  (*scorefxn_)(*ala_pose_); // score now so we don't have to later; several
+                            // functions require pose to be scored
 }
 
-void HBNet::run(Pose& pose) {
+void HBNet::run(Pose &pose) {
   if (only_native_) {
-    return;  // no need to do design
+    return; // no need to do design
   }
   // pose.update_residue_neighbors();
   (*init_scorefxn_)
       .setup_for_packing(pose, task_->repacking_residues(),
                          task_->designing_residues());
   packer_neighbor_graph_ = create_packer_graph(
-      pose, *init_scorefxn_, task_);  // even in symmetric cases, packer graph
-                                      // will have a node for every residue in
-                                      // the pose
+      pose, *init_scorefxn_, task_); // even in symmetric cases, packer graph
+                                     // will have a node for every residue in
+                                     // the pose
 
   if (run_offrot_) {
     TR << "OOPS I DIDN'T IMPLEMENT RUN_OFFROT_ YET!!!" << std::endl;
@@ -5161,9 +5106,9 @@ void HBNet::run(Pose& pose) {
         .setup_for_packing(pose, task_->repacking_residues(),
                            task_->designing_residues());
     packer_neighbor_graph_ = create_packer_graph(
-        pose, *init_scorefxn_, task_);  // even in symmetric cases, packer graph
-                                        // will have a node for every residue in
-                                        // the pose
+        pose, *init_scorefxn_, task_); // even in symmetric cases, packer graph
+                                       // will have a node for every residue in
+                                       // the pose
 
     rotamer_sets_->set_task(task_);
     rotamer_sets_->initialize_pose_for_rotsets_creation(pose);
@@ -5288,8 +5233,8 @@ void HBNet::run(Pose& pose) {
       }
     }
     runtime_assert(!(start_res_vec_.empty()));
-    this->search_IG_for_networks(pose);  // can be overriden for special cases
-                                         // of handling and searching IG
+    this->search_IG_for_networks(pose); // can be overriden for special cases
+                                        // of handling and searching IG
   }
 
   if (TR.visible()) {
@@ -5308,9 +5253,9 @@ void HBNet::run(Pose& pose) {
        << std::endl;
 
   select_best_networks();
-}  // run
+} // run
 
-void HBNet::apply(Pose& pose) {
+void HBNet::apply(Pose &pose) {
 #ifdef DEBUG_TASK_JACK
   Size num_being_designed = 0;
   Size num_being_packed_and_not_designed = 0;
@@ -5339,8 +5284,8 @@ void HBNet::apply(Pose& pose) {
   // need to reset in case apply called multiple times from code with different
   // poses
   network_vector_.clear();
-  rotamer_sets_.reset();  // resets OP to 0
-  ig_.reset();            // resets OP to 0
+  rotamer_sets_.reset(); // resets OP to 0
+  ig_.reset();           // resets OP to 0
 
   // shouldn't ever be NULL
   if (scorefxn_ == nullptr) {
@@ -5371,13 +5316,13 @@ void HBNet::apply(Pose& pose) {
   }
 
   pose.update_residue_neighbors();
-  (*init_scorefxn_)(pose);  // need this?
+  (*init_scorefxn_)(pose); // need this?
 
   TR << "init_scorefxn_: " << init_scorefxn_->get_name() << std::endl;
   TR << "scorefxn_: " << scorefxn_->get_name() << std::endl;
 
-  orig_pose_ = PoseOP(new Pose(pose));  // pose::PoseOP pointing to original
-                                        // pose
+  orig_pose_ = PoseOP(new Pose(pose)); // pose::PoseOP pointing to original
+                                       // pose
   // output_pose_ = pose.get_self_ptr(); //careful need to reset this pointer
   // before apply() returns otherwise will create problems...
 
@@ -5424,9 +5369,9 @@ void HBNet::apply(Pose& pose) {
     core_layer->set_layers(true, false, false);
     // core_layer->set_use_sc_neighbors( true ); // now true by default
     core_layer->set_cutoffs(4.4 /* core */,
-                            2.0 /* surface */);  // default core is 5.2, here we
-                                                 // use 4.4 to be overly
-                                                 // cautious with unsats
+                            2.0 /* surface */); // default core is 5.2, here we
+                                                // use 4.4 to be overly
+                                                // cautious with unsats
     runtime_assert(core_layer->use_sc_neighbors());
     core_residues_ = core_layer->apply(pose);
   }
@@ -5438,9 +5383,9 @@ void HBNet::apply(Pose& pose) {
     boundary_layer->set_layers(false, true, false);
     // boundary_layer->set_use_sc_neighbors( true );
     boundary_layer->set_cutoffs(
-        4.0 /* core */, 2.0 /* surface */);  // default core is 5.2, here we use
-                                             // 4 to be overly cautious with
-                                             // unsats
+        4.0 /* core */, 2.0 /* surface */); // default core is 5.2, here we use
+                                            // 4 to be overly cautious with
+                                            // unsats
     boundary_residues_ = boundary_layer->apply(pose);
   }
   if (verbose_ && TR.visible()) {
@@ -5485,7 +5430,7 @@ void HBNet::apply(Pose& pose) {
       TR << "DID NOT FIND SOLUTIONS THAT MEET YOUR CRITERIA! EXITING"
          << std::endl;
     set_last_move_status(protocols::moves::FAIL_RETRY);
-    ig_.reset();  // resets OP to 0
+    ig_.reset(); // resets OP to 0
     // lkb_.reset();
     packer_neighbor_graph_.reset();
     return;
@@ -5501,16 +5446,17 @@ void HBNet::apply(Pose& pose) {
   std::reverse(output_vector_.begin(), output_vector_.end());
 
   std::set<Size> net_ids(output_vector_.back());
-  output_vector_.pop_back();  // pop_back() removes without returning
+  output_vector_.pop_back(); // pop_back() removes without returning
 
-  Pose ala_copy = *ala_pose_;                        // deep copy
-  if (output_poly_ala_background_) pose = ala_copy;  // "pose" is & ref
+  Pose ala_copy = *ala_pose_; // deep copy
+  if (output_poly_ala_background_)
+    pose = ala_copy; // "pose" is & ref
 
   std::string comment_str(print_headers() + this->print_additional_headers());
   if (net_ids.size() > 1 && TR.visible()) {
     TR << std::endl << "combining networks ";
   }
-  for (const auto& net_id : net_ids) {
+  for (const auto &net_id : net_ids) {
     if (net_ids.size() > 1 && TR.visible()) {
       TR << net_id << "  ";
     }
@@ -5525,7 +5471,7 @@ void HBNet::apply(Pose& pose) {
     // to be done on the fly when adding waters
     comment_str = comment_str + "\n" + (get_network_by_id(net_id))->outstring;
     core::scoring::constraints::ConstraintSetOP cst_op(
-        pose.constraint_set()->clone());  // get existing csts and add to them
+        pose.constraint_set()->clone()); // get existing csts and add to them
 
     //        if ( bridging_waters_ ){
     //            //NEED TO SCORE BEFORE get_hbond_atom_pairs()
@@ -5535,30 +5481,34 @@ void HBNet::apply(Pose& pose) {
     //            // if residues (waters) have been added, need to update
     //        }
     set_constraints(pose, *cst_op, get_network_by_id(net_id), write_cst_files_);
-    pose.constraint_set(cst_op);  // add constraints to the pose
+    pose.constraint_set(cst_op); // add constraints to the pose
   }
-  if (TR.visible()) TR << std::endl;
-  core::pose::add_comment(pose,
-                          "HBNet Design details: ", "\n" + comment_str + "\n");
+  if (TR.visible())
+    TR << std::endl;
+  core::pose::add_comment(pose, "HBNet Design details: ",
+                          "\n" + comment_str + "\n");
 
   // pose.update_residue_neighbors(); //now taken care of in
   // place_rots_on_pose()
   (*scorefxn_)(pose);
 
-  ig_.reset();  // resets OP to 0 / nullptr
+  ig_.reset(); // resets OP to 0 / nullptr
   packer_neighbor_graph_.reset();
-  if (TR.visible()) TR.flush();
-  if (TR.Warning.visible()) TR.Warning.flush();
-  if (TR.Debug.visible()) TR.Debug.flush();
+  if (TR.visible())
+    TR.flush();
+  if (TR.Warning.visible())
+    TR.Warning.flush();
+  if (TR.Debug.visible())
+    TR.Debug.flush();
   // output_pose_.reset(); //If make PoseOP that directly points to original
   // Pose & pose of apply(), need to reset it!
-}  // apply
+} // apply
 
 std::string HBNet::get_name() const { return mover_name(); }
 
 std::string HBNet::mover_name() { return "HBNet"; }
 
-void HBNet::attributes_for_hbnet(utility::tag::AttributeList& attlist) {
+void HBNet::attributes_for_hbnet(utility::tag::AttributeList &attlist) {
   using namespace utility::tag;
   attlist +
       XMLSchemaAttribute::attribute_w_default(
@@ -5824,7 +5774,7 @@ void HBNet::attributes_for_hbnet(utility::tag::AttributeList& attlist) {
   rosetta_scripts::attributes_for_parse_task_operations(attlist);
   rosetta_scripts::attributes_for_parse_score_function(attlist);
 }
-void HBNet::provide_xml_schema(utility::tag::XMLSchemaDefinition& xsd) {
+void HBNet::provide_xml_schema(utility::tag::XMLSchemaDefinition &xsd) {
   using namespace utility::tag;
   AttributeList attlist;
   attributes_for_hbnet(attlist);
@@ -5854,7 +5804,7 @@ protocols::moves::MoverOP HBNetCreator::create_mover() const {
 }
 
 void HBNetCreator::provide_xml_schema(
-    utility::tag::XMLSchemaDefinition& xsd) const {
+    utility::tag::XMLSchemaDefinition &xsd) const {
   HBNet::provide_xml_schema(xsd);
 }
 
@@ -5863,8 +5813,8 @@ void HBNetCreator::provide_xml_schema(
 // numbers. With this we have rotamer variables first. This can be
 // achieved by:
 // cat test.sol|grep 'value="1"'|cut -d"x" -f2|cut -d'"' -f1| sort -n > sol
-void load_ILP_conformation(const std::string& filename, core::Size n_mres,
-                           utility::vector1<core::Size>& rotamer_assignment) {
+void load_ILP_conformation(const std::string &filename, core::Size n_mres,
+                           utility::vector1<core::Size> &rotamer_assignment) {
   std::ifstream in;
   in.open(filename);
 
@@ -5883,14 +5833,14 @@ void load_ILP_conformation(const std::string& filename, core::Size n_mres,
   return;
 }
 
-void load_SAT_conformation(const std::string& filename, core::Size n_mres,
-                           utility::vector1<core::Size>& rotamer_assignment) {
+void load_SAT_conformation(const std::string &filename, core::Size n_mres,
+                           utility::vector1<core::Size> &rotamer_assignment) {
   std::ifstream in;
   in.open(filename);
 
   for (std::string line; std::getline(in, line);) {
     if (line[0] == 'v') {
-      line[0] = ' ';  // remove v
+      line[0] = ' '; // remove v
       std::stringstream iss(line);
       int rotid;
       core::Size nb_res = 0;
@@ -5912,8 +5862,8 @@ void load_SAT_conformation(const std::string& filename, core::Size n_mres,
 }
 
 void load_CFN_conformation(
-    const std::string& filename, core::Size n_mres,
-    utility::vector1<utility::vector1<core::Size>>& rotamer_assignments) {
+    const std::string &filename, core::Size n_mres,
+    utility::vector1<utility::vector1<core::Size>> &rotamer_assignments) {
   std::ifstream inmain;
   inmain.open(filename);
   core::Size rotid;
@@ -5927,7 +5877,8 @@ void load_CFN_conformation(
     while (in >> rotid && rotamer_assignments.back().size() < n_mres) {
       rotamer_assignments.back().push_back(rotid + 1);
     }
-    if (!inmain.good()) break;
+    if (!inmain.good())
+      break;
     ++count;
     if (count >= 1000) {
       std::cout << "truncating " << filename << " at 1000 entries" << std::endl;
@@ -5935,7 +5886,7 @@ void load_CFN_conformation(
   }
   inmain.close();
 
-  rotamer_assignments.pop_back();  // last one is garbage
+  rotamer_assignments.pop_back(); // last one is garbage
   std::cout << "load_CFN_conformation: rotamer_assignments.size() "
             << rotamer_assignments.size() << std::endl;
   for (size_t i = 1; i <= rotamer_assignments.size(); ++i) {
@@ -5982,7 +5933,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
 
   for (core::Size irotassign = 1; irotassign <= rotamer_assignments.size();
        ++irotassign) {
-    auto const& rotamer_assignment = rotamer_assignments[irotassign];
+    auto const &rotamer_assignment = rotamer_assignments[irotassign];
     auto pose = get_orig_pose();
 
     if (rotamer_assignment.size() != rotamer_sets_->nmoltenres()) {
@@ -5993,8 +5944,8 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
       return;
     }
 
-    std::ostringstream out;  // whs: comment this out and the below back in to
-                             // restore Conformation.hb output
+    std::ostringstream out; // whs: comment this out and the below back in to
+                            // restore Conformation.hb output
     // std::ostringstream hbfname;
     // hbfname << "Conformation_" << irotassign << ".hb";
     // std::ofstream out;
@@ -6004,7 +5955,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
     // of its heavy atoms, give the hbonds.
     const core::scoring::hbonds::HBondDatabaseCOP hb_database =
         core::scoring::hbonds::HBondDatabase::get_database();
-    const core::scoring::TenANeighborGraph& tenA_neighbor_graph(
+    const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
         orig_pose_->energies().tenA_neighbor_graph());
     core::Size total_number_Hatoms = 0;
     core::Size total_number_polar = 0;
@@ -6017,10 +5968,11 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
 
     std::vector<
         std::tuple<core::Size, core::Size, core::Size, core::Size, float>>
-        all_hbonds;  // inefficient search later.
-    for (std::list<EdgeBase*>::const_iterator iter = ig_->get_edge_list_begin();
+        all_hbonds; // inefficient search later.
+    for (std::list<EdgeBase *>::const_iterator iter =
+             ig_->get_edge_list_begin();
          iter != ig_->get_edge_list_end(); ++iter) {
-      PDEdge* pdedge = static_cast<PDEdge*>(*iter);
+      PDEdge *pdedge = static_cast<PDEdge *>(*iter);
 
       core::Size const mres_1 = (*iter)->get_first_node_ind();
       core::Size const mres_2 = (*iter)->get_second_node_ind();
@@ -6058,21 +6010,21 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
 
         core::scoring::hbonds::identify_hbonds_1way(
             *hb_database, *rotamer_1, *rotamer_2, nbrs_1, nbrs_2,
-            false,  // bool const evaluate_derivative,
-            false,  // bool const exclude_don_bb,
-            false,  // bool const exclude_don_bsc,
-            false,  // bool const exclude_acc_scb,
-            false,  // bool const exclude_acc_sc,
+            false, // bool const evaluate_derivative,
+            false, // bool const exclude_don_bb,
+            false, // bool const exclude_don_bsc,
+            false, // bool const exclude_acc_scb,
+            false, // bool const exclude_acc_sc,
             // output
             hbond_set);
 
         core::scoring::hbonds::identify_hbonds_1way(
             *hb_database, *rotamer_2, *rotamer_1, nbrs_2, nbrs_1,
-            false,  // bool const evaluate_derivative,
-            false,  // bool const exclude_don_bb,
-            false,  // bool const exclude_don_bsc,
-            false,  // bool const exclude_acc_scb,
-            false,  // bool const exclude_acc_sc,
+            false, // bool const evaluate_derivative,
+            false, // bool const exclude_don_bb,
+            false, // bool const exclude_don_bsc,
+            false, // bool const exclude_acc_scb,
+            false, // bool const exclude_acc_sc,
             // output
             hbond_set);
 
@@ -6177,13 +6129,13 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
             pose.pdb_info()->pose2pdb(rotamer_sets_->moltenres_2_resid(mresid));
         out << PDB_res << rotamer->name1() << ":" << atom << '\t';
 
-        for (const auto& hb : all_hbonds) {
+        for (const auto &hb : all_hbonds) {
           if ((std::get<0>(hb) == mresid) && (std::get<1>(hb) == atom)) {
             char other_name1 =
                 rotamer_sets_->rotamer_set_for_moltenresidue(std::get<2>(hb))
                     ->rotamer(rotamer_assignment[std::get<2>(hb)])
                     ->name1();
-            const std::string& PDB_res = pose.pdb_info()->pose2pdb(
+            const std::string &PDB_res = pose.pdb_info()->pose2pdb(
                 rotamer_sets_->moltenres_2_resid(std::get<2>(hb)));
             out << "[" << PDB_res << other_name1 << ":" << std::get<3>(hb)
                 << " @ " << std::get<4>(hb) << "] ";
@@ -6193,7 +6145,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
                 rotamer_sets_->rotamer_set_for_moltenresidue(std::get<0>(hb))
                     ->rotamer(rotamer_assignment[std::get<0>(hb)])
                     ->name1();
-            const std::string& PDB_res = pose.pdb_info()->pose2pdb(
+            const std::string &PDB_res = pose.pdb_info()->pose2pdb(
                 rotamer_sets_->moltenres_2_resid(std::get<0>(hb)));
             out << "[" << PDB_res << other_name1 << ":" << std::get<1>(hb)
                 << " @ " << std::get<4>(hb) << "] ";
@@ -6219,7 +6171,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
 
     ///////////// dump file ////////////////
     std::string basefname = "HBSAT_";
-    auto const& opt_s =
+    auto const &opt_s =
         basic::options::option[basic::options::OptionKeys::in::file::s]();
     if (opt_s.size() == 1) {
       // the following is a real beauty...
@@ -6236,7 +6188,7 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
     std::cout << "dumping pose: " << fname.str() << std::endl;
     pose.dump_pdb(fname.str());
 
-  }  // end irtoassign
+  } // end irtoassign
 }
 
 void HBNet::print_interaction_graph_to_file(std::string filename) {
@@ -6265,12 +6217,12 @@ void HBNet::print_interaction_graph_to_file(std::string filename) {
 
   const core::scoring::hbonds::HBondDatabaseCOP hb_database =
       core::scoring::hbonds::HBondDatabase::get_database();
-  const core::scoring::TenANeighborGraph& tenA_neighbor_graph(
+  const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
       orig_pose_->energies().tenA_neighbor_graph());
 
-  for (std::list<EdgeBase*>::const_iterator iter = ig_->get_edge_list_begin();
+  for (std::list<EdgeBase *>::const_iterator iter = ig_->get_edge_list_begin();
        iter != ig_->get_edge_list_end(); ++iter) {
-    PDEdge* pdedge = static_cast<PDEdge*>(*iter);
+    PDEdge *pdedge = static_cast<PDEdge *>(*iter);
 
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
@@ -6306,21 +6258,21 @@ void HBNet::print_interaction_graph_to_file(std::string filename) {
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
               // output
               hbond_set);
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_jj, *rotamer_ii, nbrs_2, nbrs_1,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
               // output
               hbond_set);
 
@@ -6368,7 +6320,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
                                     bool pref2polar) {
   std::stringstream buffer;
 
-  const bool comment = true;  // generate comments in the SAT formula
+  const bool comment = true; // generate comments in the SAT formula
   const unsigned int nresid = rotamer_sets_->nmoltenres();
   const core::Size top =
       (prefpolar ? rotamer_sets_->nmoltenres() : 0) +
@@ -6378,7 +6330,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
   // for PWMaxSAT, we cannot violate this amount of weight (full hydrophobic)
 
   bool pwmax_sat =
-      (prefpolar || pref2polar);  // if we have preferences, we must use maxSAT
+      (prefpolar || pref2polar); // if we have preferences, we must use maxSAT
 
   core::Size nb_cnf = 0;
 
@@ -6393,17 +6345,17 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
   // SAT).
 
   const core::Size rot2AA_offset =
-      1;  // offset to the first var that selects AA at a residue
+      1; // offset to the first var that selects AA at a residue
   core::Size rel_hC_offset =
-      rotamer_sets_->nrotamers();  // offset to add to previous offset to access
-                                   // h_C variables
+      rotamer_sets_->nrotamers(); // offset to add to previous offset to access
+                                  // h_C variables
   buffer << "c " << rotamer_sets_->nrotamers() << " rotamers" << std::endl;
 
-  std::vector<std::map<char, core::Size>> mres_AA2var_idx;  // maps a molten
-                                                            // residue number
-                                                            // and designable AA
-                                                            // to a s_i^AA
-                                                            // variable
+  std::vector<std::map<char, core::Size>> mres_AA2var_idx; // maps a molten
+                                                           // residue number
+                                                           // and designable AA
+                                                           // to a s_i^AA
+                                                           // variable
   // for each molten residue, maps AA + polar atom number to a set of rotamers
   // that create a hbond for it (S1)
   std::vector<std::map<std::pair<char, core::Size>, std::set<core::Size>>>
@@ -6428,7 +6380,8 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
       for (core::Size rotid2 = rotid1 + 1;
            rotid2 <= rot_set_for_mres->num_rotamers(); ++rotid2) {
         nb_cnf++;
-        if (pwmax_sat) buffer << top << " ";
+        if (pwmax_sat)
+          buffer << top << " ";
         buffer << "-" << rotamer_sets_->moltenres_rotid_2_rotid(mresid, rotid1)
                << " -" << rotamer_sets_->moltenres_rotid_2_rotid(mresid, rotid2)
                << " 0" << std::endl;
@@ -6440,7 +6393,8 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
       buffer << "c "
              << "ALO clause for residue M" << mresid << "/"
              << rotamer_sets_->moltenres_2_resid(mresid) << std::endl;
-    if (pwmax_sat) buffer << top << " ";
+    if (pwmax_sat)
+      buffer << top << " ";
     for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
          ++rotid) {
       buffer << rotamer_sets_->moltenres_rotid_2_rotid(mresid, rotid) << " ";
@@ -6457,14 +6411,15 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
       if ((rotamer->Hpos_polar_sc().size() != 0) ||
           (rotamer->accpt_pos_sc().size() != 0)) {
         if (AA2var.find(rotamer->name1()) == AA2var.end()) {
-          rel_hC_offset++;  // we need a new variable
+          rel_hC_offset++; // we need a new variable
           AA2var[rotamer->name1()] = rot2AA_offset + rel_hC_offset;
           if (comment)
             buffer << "c variable " << rot2AA_offset + rel_hC_offset << " for M"
                    << mresid << "/" << rotamer_sets_->moltenres_2_resid(mresid)
                    << " (" << rotamer->name1() << ")" << std::endl;
         }
-        if (pwmax_sat) buffer << top << " ";
+        if (pwmax_sat)
+          buffer << top << " ";
         buffer << "-" << rotamer_sets_->moltenres_rotid_2_rotid(mresid, rotid)
                << " " << rot2AA_offset + rel_hC_offset << " 0" << std::endl;
         nb_cnf++;
@@ -6509,7 +6464,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
         }
       }
 
-      if (!is_polar && prefpolar) {  // forbid/penalize hydrophobic rotamers
+      if (!is_polar && prefpolar) { // forbid/penalize hydrophobic rotamers
         if (comment)
           buffer << "c non-polar rotamer for M" << mresid << " undesirable!"
                  << std::endl;
@@ -6540,14 +6495,14 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
   // Clash clauses + filling hbond creation sets
   const core::scoring::hbonds::HBondDatabaseCOP hb_database =
       core::scoring::hbonds::HBondDatabase::get_database();
-  const core::scoring::TenANeighborGraph& tenA_neighbor_graph(
+  const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
       orig_pose_->energies().tenA_neighbor_graph());
   core::Size final_offset =
-      rot2AA_offset + rel_hC_offset;  // where new variables will be created
+      rot2AA_offset + rel_hC_offset; // where new variables will be created
 
-  for (std::list<EdgeBase*>::const_iterator iter = ig_->get_edge_list_begin();
+  for (std::list<EdgeBase *>::const_iterator iter = ig_->get_edge_list_begin();
        iter != ig_->get_edge_list_end(); ++iter) {
-    PDEdge* pdedge = static_cast<PDEdge*>(*iter);
+    PDEdge *pdedge = static_cast<PDEdge *>(*iter);
 
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
@@ -6570,7 +6525,8 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
         core::Size const global_rotamer_jj =
             rotamer_sets_->nrotamer_offset_for_moltenres(mres_2) + jj;
         if (score >= clash_threshold_) {
-          if (pwmax_sat) buffer << top << " ";
+          if (pwmax_sat)
+            buffer << top << " ";
           buffer << "-" << global_rotamer_ii << " -" << global_rotamer_jj
                  << " 0" << std::endl;
           nb_cnf++;
@@ -6602,21 +6558,21 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
               // output
               hbond_set);
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_jj, *rotamer_ii, nbrs_2, nbrs_1,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
               // output
               hbond_set);
 
@@ -6629,7 +6585,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
 
             if ((is_acc_bb && is_don_bb) ||
                 (hbond->energy() > hydrogen_bond_threshold_)) {
-              continue;  // not interested in weak or BB to BB hbonds
+              continue; // not interested in weak or BB to BB hbonds
             }
 
             core::Size const H = hbond->don_hatm();
@@ -6658,7 +6614,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
             char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
             char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
 
-            if (is_don_bb) {  // only record information on acceptor in S1
+            if (is_don_bb) { // only record information on acceptor in S1
               std::pair<char, core::Size> acc_atomid =
                   std::make_pair(acc_AA, acc);
               if (res_pola2hbonding_S1[acc_mres - 1].find(acc_atomid) ==
@@ -6669,7 +6625,7 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
                 res_pola2hbonding_S1[acc_mres - 1][acc_atomid].insert(
                     acc_rotamer);
             }
-            if (is_acc_bb) {  // only record information on donor's parent in S1
+            if (is_acc_bb) { // only record information on donor's parent in S1
               std::pair<char, core::Size> don_atomid =
                   std::make_pair(don_AA, H_parent);
               if (res_pola2hbonding_S1[don_mres - 1].find(don_atomid) ==
@@ -6680,8 +6636,8 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
                 res_pola2hbonding_S1[don_mres - 1][don_atomid].insert(
                     don_rotamer);
             }
-            if (!is_acc_bb && !is_don_bb) {  // record information on donor and
-                                             // acceptor in S2C
+            if (!is_acc_bb && !is_don_bb) { // record information on donor and
+                                            // acceptor in S2C
               std::pair<char, core::Size> don_atomid =
                   std::make_pair(don_AA, H_parent);
               std::pair<char, core::Size> acc_atomid =
@@ -6706,11 +6662,13 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
               else
                 res_pola2hbonding_S2C[don_mres - 1][don_atomid].insert(
                     final_offset);
-              if (pwmax_sat) buffer << top << " ";
+              if (pwmax_sat)
+                buffer << top << " ";
               buffer << don_rotamer << " -" << final_offset << " 0"
                      << std::endl;
               nb_cnf++;
-              if (pwmax_sat) buffer << top << " ";
+              if (pwmax_sat)
+                buffer << top << " ";
               buffer << acc_rotamer << " -" << final_offset << " 0"
                      << std::endl;
               nb_cnf++;
@@ -6728,24 +6686,24 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
   for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
     auto rot_set_for_mres =
         rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-    char AA = '1';  // unused as AA char
+    char AA = '1'; // unused as AA char
     for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
          ++rotid) {
       core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
 
       if (rotamer->name1() == AA)
-        continue;  // skip, all rotamers of a given AA have all the same polar
-                   // atoms
+        continue; // skip, all rotamers of a given AA have all the same polar
+                  // atoms
       AA = rotamer->name1();
       if (comment)
         buffer << "c Considering rotamer " << rotid << " of " << AA
                << " at position " << mresid << std::endl;
 
-      std::set<std::pair<char, core::Size>> selected_polars;  // polar atoms
-                                                              // acting as
-                                                              // acceptor or as
-                                                              // donor through
-                                                              // attached H
+      std::set<std::pair<char, core::Size>> selected_polars; // polar atoms
+                                                             // acting as
+                                                             // acceptor or as
+                                                             // donor through
+                                                             // attached H
       for (core::Size sc_acc : rotamer->accpt_pos_sc()) {
         selected_polars.insert(std::make_pair(AA, sc_acc));
       }
@@ -6754,7 +6712,8 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
       }
 
       for (std::pair<char, core::Size> polar_atomid : selected_polars) {
-        if (pwmax_sat) buffer << top << " ";
+        if (pwmax_sat)
+          buffer << top << " ";
         buffer << "-" << mres_AA2var_idx[mresid - 1][AA] << " ";
         for (core::Size rot1 : res_pola2hbonding_S1[mresid - 1][polar_atomid]) {
           buffer << rot1 << " ";
@@ -6773,7 +6732,8 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
   out.open(filename);
   out << "p " << (pwmax_sat ? "wcnf " : "cnf ") << final_offset << " "
       << nb_cnf;
-  if (pwmax_sat) out << " " << top;
+  if (pwmax_sat)
+    out << " " << top;
   out << std::endl << buffer.rdbuf();
   out.close();
 }
@@ -6781,21 +6741,21 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
 void HBNet::print_ILP_model_to_file(std::string filename) {
   std::ofstream out;
   out.open(filename);
-  const bool comment = true;  // generate comments in the SAT formula
+  const bool comment = true; // generate comments in the SAT formula
 
   // core::Size top = rotamer_sets_->nmoltenres() +
   // 1;  // for ILP, we cannot violate this amount of weight
   const core::Size rot2AA_offset =
-      1;  // offset to the first var that selects AA at a residue
+      1; // offset to the first var that selects AA at a residue
   core::Size rel_hC_offset =
-      rotamer_sets_->nrotamers();  // offset to add to previous offset to access
-                                   // h_C variables
+      rotamer_sets_->nrotamers(); // offset to add to previous offset to access
+                                  // h_C variables
 
-  std::vector<std::map<char, core::Size>> mres_AA2var_idx;  // maps a molten
-                                                            // residue number
-                                                            // and designable AA
-                                                            // to a s_i^AA
-                                                            // variable
+  std::vector<std::map<char, core::Size>> mres_AA2var_idx; // maps a molten
+                                                           // residue number
+                                                           // and designable AA
+                                                           // to a s_i^AA
+                                                           // variable
   // for each molten residue, maps AA + polar atom number to a set of rotamers
   // that create a hbond for it (S1)
   std::vector<std::map<std::pair<char, core::Size>, std::set<core::Size>>>
@@ -6840,7 +6800,7 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
          ++rotid) {
       core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
       if (AA2var.find(rotamer->name1()) == AA2var.end()) {
-        rel_hC_offset++;  // we need a new variable
+        rel_hC_offset++; // we need a new variable
         AA2var[rotamer->name1()] = rot2AA_offset + rel_hC_offset;
         if (comment)
           out << "\\ Variable x" << rot2AA_offset + rel_hC_offset << " for M"
@@ -6891,14 +6851,14 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
   // Clash clauses + filling hbond creation sets
   const core::scoring::hbonds::HBondDatabaseCOP hb_database =
       core::scoring::hbonds::HBondDatabase::get_database();
-  const core::scoring::TenANeighborGraph& tenA_neighbor_graph(
+  const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
       orig_pose_->energies().tenA_neighbor_graph());
   core::Size final_offset =
-      rot2AA_offset + rel_hC_offset;  // where new variables will be created
+      rot2AA_offset + rel_hC_offset; // where new variables will be created
 
-  for (std::list<EdgeBase*>::const_iterator iter = ig_->get_edge_list_begin();
+  for (std::list<EdgeBase *>::const_iterator iter = ig_->get_edge_list_begin();
        iter != ig_->get_edge_list_end(); ++iter) {
-    PDEdge* pdedge = static_cast<PDEdge*>(*iter);
+    PDEdge *pdedge = static_cast<PDEdge *>(*iter);
 
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
@@ -6951,21 +6911,21 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
               // output
               hbond_set);
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_jj, *rotamer_ii, nbrs_2, nbrs_1,
-              false,  // bool const evaluate_derivative,
-              false,  // bool const exclude_don_bb,
-              false,  // bool const exclude_don_bsc,
-              false,  // bool const exclude_acc_scb,
-              false,  // bool const exclude_acc_sc,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
               // output
               hbond_set);
 
@@ -6978,7 +6938,7 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
 
             if ((is_acc_bb && is_don_bb) ||
                 (hbond->energy() > hydrogen_bond_threshold_)) {
-              continue;  // not interested in weak or BB to BB hbonds
+              continue; // not interested in weak or BB to BB hbonds
             }
 
             core::Size const H = hbond->don_hatm();
@@ -7007,7 +6967,7 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
             char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
             char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
 
-            if (is_don_bb) {  // only record information on acceptor in S1
+            if (is_don_bb) { // only record information on acceptor in S1
               std::pair<char, core::Size> acc_atomid =
                   std::make_pair(acc_AA, acc);
               if (res_pola2hbonding_S1[acc_mres - 1].find(acc_atomid) ==
@@ -7019,7 +6979,7 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
                     acc_rotamer);
             }
 
-            if (is_acc_bb) {  // only record information on donor's parent in S1
+            if (is_acc_bb) { // only record information on donor's parent in S1
               std::pair<char, core::Size> don_atomid =
                   std::make_pair(don_AA, H_parent);
               if (res_pola2hbonding_S1[don_mres - 1].find(don_atomid) ==
@@ -7031,13 +6991,13 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
                     don_rotamer);
             }
 
-            if (!is_acc_bb && !is_don_bb) {  // record information on donor and
-                                             // acceptor in S2C
+            if (!is_acc_bb && !is_don_bb) { // record information on donor and
+                                            // acceptor in S2C
               std::pair<char, core::Size> don_atomid =
                   std::make_pair(don_AA, H_parent);
               std::pair<char, core::Size> acc_atomid =
                   std::make_pair(acc_AA, acc);
-              final_offset++;  // we need a new variable
+              final_offset++; // we need a new variable
               if (comment)
                 out << "\\ Variable x" << final_offset << " for hbond "
                     << don_mres << don_AA << "_" << H_parent << "-" << H << ":"
@@ -7075,23 +7035,23 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
   for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
     auto rot_set_for_mres =
         rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-    char AA = '1';  // unused as AA char
+    char AA = '1'; // unused as AA char
     for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
          ++rotid) {
       core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
       if (rotamer->name1() == AA)
-        continue;  // skip, all rotamers of a given AA have all the same polar
-                   // atoms
+        continue; // skip, all rotamers of a given AA have all the same polar
+                  // atoms
       AA = rotamer->name1();
       if (comment)
         out << "\\ Considering rotamer " << rotid << " of " << AA
             << " at position " << mresid << std::endl;
 
-      std::set<std::pair<char, core::Size>> selected_polars;  // polar atoms
-                                                              // acting as
-                                                              // acceptor or as
-                                                              // donor through
-                                                              // attached H
+      std::set<std::pair<char, core::Size>> selected_polars; // polar atoms
+                                                             // acting as
+                                                             // acceptor or as
+                                                             // donor through
+                                                             // attached H
       for (core::Size sc_acc : rotamer->accpt_pos_sc()) {
         selected_polars.insert(std::make_pair(AA, sc_acc));
       }
@@ -7123,10 +7083,10 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
 void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
                                     bool pref2polar) {
   std::ofstream out;
-  out.open( filename );
-  
+  out.open(filename);
+
   // Second version.
-  
+
   // The "all polar atoms must be satisfied constraint" can be
   // translated into an automata with manually decomposed ternary
   // regular like constraints that take care of each atom
@@ -7137,7 +7097,7 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   // position of the regular, we accept else we shift to the non
   // accepting state of the rotamer and next position.  Problem: there
   // will up to n²d boolean state variables (but probably far less).
-  
+
   // Another possibility is to use the clause constraint in tb2.
   // Directly, this requires to channel the domains to nd booleans
   // (and constraints). Binary constraints (AA level) are encoded as
@@ -7146,206 +7106,220 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   // single variable (binary case Ok). The clause constraint is built
   // automatically from table constraints with non zero cost on one
   // tuple.
-  
+
   // Another one is to define a new anti-Horn (or direct encoding)
   // clause constraint that will work directly on non necessarily
   // boolean variables. The code needs to be defined and a new syntax
   // too.
-  
+
   // Yet another would be to better handle non binary CF. With the
   // huge domains, having a ternary with a table would be impractical
   // at this point.
-  
+
   // Trying option 2 for now.
-  
-  const core::Size top = 1000000000;// TODO: adjust to something less lousy (as in PWMaxSAT).
+
+  const core::Size top =
+      1000000000; // TODO: adjust to something less lousy (as in PWMaxSAT).
   core::Size polar2_penalty = 0;
-  const core::Size polar1_penalty = (pref2polar ? rotamer_sets_->nmoltenres() : 0);
-  const core::Size apolar_penalty = (prefpolar ? polar1_penalty + 1 : polar1_penalty);
-  
+  const core::Size polar1_penalty =
+      (pref2polar ? rotamer_sets_->nmoltenres() : 0);
+  const core::Size apolar_penalty =
+      (prefpolar ? polar1_penalty + 1 : polar1_penalty);
+
   // Initialize Hbond data structure
-  std::vector< std::map< core::Size, std::set<core::Size >>> rot_atom2rotidset;
-  
+  std::vector<std::map<core::Size, std::set<core::Size>>> rot_atom2rotidset;
+
   // Fill the vector with maps
-  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
+  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
     std::map<core::Size, std::set<core::Size>> init_map;
     rot_atom2rotidset.push_back(init_map);
   }
-  
+
   // Fill the maps with sets
-  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ) {
+  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
     // For each global rotamer and each polar atom of the AA, it will
     // hold a set of rotids that satisfy the atom (rotid 0 is the
     // backbone).
-    auto rot_set_for_mres = rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-    
-    for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers(); ++rotid ) {
-      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer( rotid );
-      core::Size global_rotamer = rotamer_sets_->nrotamer_offset_for_moltenres( mresid ) + rotid;
-      
+    auto rot_set_for_mres =
+        rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
+
+    for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
+         ++rotid) {
+      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
+      core::Size global_rotamer =
+          rotamer_sets_->nrotamer_offset_for_moltenres(mresid) + rotid;
+
       // For each rotamer, we have a set of acceptor and donor atoms
-      for( core::Size sc_acc : rotamer->accpt_pos_sc() ){
-	std::set<core::Size> myemptyset;
-	rot_atom2rotidset[global_rotamer-1][sc_acc] = myemptyset;
+      for (core::Size sc_acc : rotamer->accpt_pos_sc()) {
+        std::set<core::Size> myemptyset;
+        rot_atom2rotidset[global_rotamer - 1][sc_acc] = myemptyset;
       }
-      
-      for( core::Size polar_H : rotamer->Hpos_polar_sc() ){
-	core::Size H_parent = rotamer->atom_base( polar_H );
-	std::set<core::Size> myemptyset;
-	rot_atom2rotidset[global_rotamer-1][H_parent] = myemptyset;
+
+      for (core::Size polar_H : rotamer->Hpos_polar_sc()) {
+        core::Size H_parent = rotamer->atom_base(polar_H);
+        std::set<core::Size> myemptyset;
+        rot_atom2rotidset[global_rotamer - 1][H_parent] = myemptyset;
       }
     }
   }
-  
-  // Extracting hbond info.
-  const core::scoring::hbonds::HBondDatabaseCOP hb_database = core::scoring::hbonds::HBondDatabase::get_database();
-  const core::scoring::TenANeighborGraph& tenA_neighbor_graph( orig_pose_->energies().tenA_neighbor_graph() );
 
-  for( std::list< EdgeBase* >::const_iterator iter = ig_->get_edge_list_begin(); iter != ig_->get_edge_list_end(); ++iter ){
-    
-    PDEdge * pdedge =  static_cast< PDEdge * >( *iter );
-    
+  // Extracting hbond info.
+  const core::scoring::hbonds::HBondDatabaseCOP hb_database =
+      core::scoring::hbonds::HBondDatabase::get_database();
+  const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
+      orig_pose_->energies().tenA_neighbor_graph());
+
+  for (std::list<EdgeBase *>::const_iterator iter = ig_->get_edge_list_begin();
+       iter != ig_->get_edge_list_end(); ++iter) {
+
+    PDEdge *pdedge = static_cast<PDEdge *>(*iter);
+
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
-    
-    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid( mres_1 );
-    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid( mres_2 );
-    
-    const core::Size si = rotamer_sets_->nrotamers_for_moltenres( mres_1 );
-    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres( mres_2 );
-    
-    const core::Size nbrs_1 = tenA_neighbor_graph.get_node( resid_1 )->num_neighbors_counting_self_static();
-    const core::Size nbrs_2 = tenA_neighbor_graph.get_node( resid_2 )->num_neighbors_counting_self_static();
-    
-    for( core::Size ii = 1; ii <= si; ++ii ){
-      for( core::Size jj = 1; jj <= sj; ++jj ){
-	core::Real const score = pdedge->get_two_body_energy(ii, jj);
-	core::Size const global_rotamer_ii = rotamer_sets_->nrotamer_offset_for_moltenres( mres_1 ) + ii;
-	core::Size const global_rotamer_jj = rotamer_sets_->nrotamer_offset_for_moltenres( mres_2 ) + jj;
-	
-	if( score < 0 ) {
-	  core::conformation::ResidueCOP rotamer_ii = rotamer_sets_->rotamer( global_rotamer_ii );
-	  core::conformation::ResidueCOP rotamer_jj = rotamer_sets_->rotamer( global_rotamer_jj );
-	  
-	  core::scoring::hbonds::HBondSet hbond_set;
-	  
-	  core::scoring::hbonds::identify_hbonds_1way(
-						      * hb_database,
-						      * rotamer_ii,
-						      * rotamer_jj,
-						      nbrs_1,
-						      nbrs_2,
-						      false, //bool const evaluate_derivative,
-						      false, //bool const exclude_don_bb,
-						      false, //bool const exclude_don_bsc,
-						      false, //bool const exclude_acc_scb,
-						      false, //bool const exclude_acc_sc,
-						      // output
-						      hbond_set
-						      );
-	  
-	  core::scoring::hbonds::identify_hbonds_1way(
-						      * hb_database,
-						      * rotamer_jj,
-						      * rotamer_ii,
-						      nbrs_2,
-						      nbrs_1,
-						      false, //bool const evaluate_derivative,
-						      false, //bool const exclude_don_bb,
-						      false, //bool const exclude_don_bsc,
-						      false, //bool const exclude_acc_scb,
-						      false, //bool const exclude_acc_sc,
-						      // output
-						      hbond_set
-						      );
-	  
-	  for( core::Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); ++hbond_id ){
-	    core::scoring::hbonds::HBondCOP hbond = hbond_set.hbond_cop( hbond_id );
-	    bool is_don_bb = hbond->don_hatm_is_backbone();
-	    bool is_acc_bb = hbond->acc_atm_is_backbone();
-	    
-	    if( (is_acc_bb && is_don_bb) || (hbond->energy() > hydrogen_bond_threshold_)) {
-	      continue; // not interested in weak or BB to BB hbonds
-	    }
-	    
-	    core::Size const H = hbond->don_hatm();
-	    core::Size const acc = hbond->acc_atm();
-	    core::Size H_parent;
-	    
-	    core::Size don_rotamer;
-	    core::Size acc_rotamer;
-	    
-	    if( hbond->don_res() == resid_1 ){
-	      don_rotamer = global_rotamer_ii;
-	      H_parent = rotamer_ii->atom_base( hbond->don_hatm() );
-	      acc_rotamer = global_rotamer_jj;
-	    } else {
-	      don_rotamer = global_rotamer_jj;
-	      H_parent = rotamer_jj->atom_base( hbond->don_hatm() );
-	      acc_rotamer = global_rotamer_ii;
-	    }
-	    
-	    char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
-	    char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
-	    
-	    if (is_don_bb) { // We have a self sat acceptor atom for the rotamer here
-	      rot_atom2rotidset[acc_rotamer-1][acc].clear();
-	      rot_atom2rotidset[acc_rotamer-1][acc].insert(0);
-	    }
-	    if (is_acc_bb) { // We have a self sat donor atom for the rotamer here
-	      rot_atom2rotidset[don_rotamer-1][H_parent].clear();
-	      rot_atom2rotidset[don_rotamer-1][H_parent].insert(0);
-	    }
-	    if (!is_acc_bb && !is_don_bb) { // the polar partners both come from side-chains
-	      if (rot_atom2rotidset[acc_rotamer-1][acc].count(0) == 0)
-		rot_atom2rotidset[acc_rotamer-1][acc].insert(don_rotamer);
-	      if (rot_atom2rotidset[don_rotamer-1][H_parent].count(0) == 0)
-		rot_atom2rotidset[don_rotamer-1][H_parent].insert(acc_rotamer);
-	    }
-	  }
-	}
+
+    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid(mres_1);
+    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid(mres_2);
+
+    const core::Size si = rotamer_sets_->nrotamers_for_moltenres(mres_1);
+    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres(mres_2);
+
+    const core::Size nbrs_1 = tenA_neighbor_graph.get_node(resid_1)
+                                  ->num_neighbors_counting_self_static();
+    const core::Size nbrs_2 = tenA_neighbor_graph.get_node(resid_2)
+                                  ->num_neighbors_counting_self_static();
+
+    for (core::Size ii = 1; ii <= si; ++ii) {
+      for (core::Size jj = 1; jj <= sj; ++jj) {
+        core::Real const score = pdedge->get_two_body_energy(ii, jj);
+        core::Size const global_rotamer_ii =
+            rotamer_sets_->nrotamer_offset_for_moltenres(mres_1) + ii;
+        core::Size const global_rotamer_jj =
+            rotamer_sets_->nrotamer_offset_for_moltenres(mres_2) + jj;
+
+        if (score < 0) {
+          core::conformation::ResidueCOP rotamer_ii =
+              rotamer_sets_->rotamer(global_rotamer_ii);
+          core::conformation::ResidueCOP rotamer_jj =
+              rotamer_sets_->rotamer(global_rotamer_jj);
+
+          core::scoring::hbonds::HBondSet hbond_set;
+
+          core::scoring::hbonds::identify_hbonds_1way(
+              *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
+              // output
+              hbond_set);
+
+          core::scoring::hbonds::identify_hbonds_1way(
+              *hb_database, *rotamer_jj, *rotamer_ii, nbrs_2, nbrs_1,
+              false, // bool const evaluate_derivative,
+              false, // bool const exclude_don_bb,
+              false, // bool const exclude_don_bsc,
+              false, // bool const exclude_acc_scb,
+              false, // bool const exclude_acc_sc,
+              // output
+              hbond_set);
+
+          for (core::Size hbond_id = 1; hbond_id <= hbond_set.nhbonds();
+               ++hbond_id) {
+            core::scoring::hbonds::HBondCOP hbond =
+                hbond_set.hbond_cop(hbond_id);
+            bool is_don_bb = hbond->don_hatm_is_backbone();
+            bool is_acc_bb = hbond->acc_atm_is_backbone();
+
+            if ((is_acc_bb && is_don_bb) ||
+                (hbond->energy() > hydrogen_bond_threshold_)) {
+              continue; // not interested in weak or BB to BB hbonds
+            }
+
+            core::Size const H = hbond->don_hatm();
+            core::Size const acc = hbond->acc_atm();
+            core::Size H_parent;
+
+            core::Size don_rotamer;
+            core::Size acc_rotamer;
+
+            if (hbond->don_res() == resid_1) {
+              don_rotamer = global_rotamer_ii;
+              H_parent = rotamer_ii->atom_base(hbond->don_hatm());
+              acc_rotamer = global_rotamer_jj;
+            } else {
+              don_rotamer = global_rotamer_jj;
+              H_parent = rotamer_jj->atom_base(hbond->don_hatm());
+              acc_rotamer = global_rotamer_ii;
+            }
+
+            char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
+            char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
+
+            if (is_don_bb) { // We have a self sat acceptor atom for the rotamer
+                             // here
+              rot_atom2rotidset[acc_rotamer - 1][acc].clear();
+              rot_atom2rotidset[acc_rotamer - 1][acc].insert(0);
+            }
+            if (is_acc_bb) { // We have a self sat donor atom for the rotamer
+                             // here
+              rot_atom2rotidset[don_rotamer - 1][H_parent].clear();
+              rot_atom2rotidset[don_rotamer - 1][H_parent].insert(0);
+            }
+            if (!is_acc_bb &&
+                !is_don_bb) { // the polar partners both come from side-chains
+              if (rot_atom2rotidset[acc_rotamer - 1][acc].count(0) == 0)
+                rot_atom2rotidset[acc_rotamer - 1][acc].insert(don_rotamer);
+              if (rot_atom2rotidset[don_rotamer - 1][H_parent].count(0) == 0)
+                rot_atom2rotidset[don_rotamer - 1][H_parent].insert(
+                    acc_rotamer);
+            }
+          }
+        }
       }
     }
   }
-  
-  //UP Stage: enforce unit propagation on the anti-horn clauses. This
+
+  // UP Stage: enforce unit propagation on the anti-horn clauses. This
   // will lower the number of non unit/binary clauses and channeling
   // clauses and vars.  For the moment, this is done naively, using an
   // AC1 like loop even if linear time.
-  std::map< core::Size, bool > deletedrot;
-  
+  std::map<core::Size, bool> deletedrot;
+
   // look for unit anti-horn clauses (rotamers to delete)
-  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
-    for( const auto& a_set_pair : rot_atom2rotidset[rotid-1] ){
-      if (a_set_pair.second.empty()){
-	deletedrot[rotid] = true;
-	break;
+  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
+    for (const auto &a_set_pair : rot_atom2rotidset[rotid - 1]) {
+      if (a_set_pair.second.empty()) {
+        deletedrot[rotid] = true;
+        break;
       }
     }
   }
-  
+
   bool new_unit;
   do {
     new_unit = false;
-    for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
-      for( auto& a_set_pair : rot_atom2rotidset[rotid-1] ) {
-	if (!a_set_pair.second.empty() && a_set_pair.second.count(0) == 0){// no BB support, not empty
-	  for( auto it_rot = a_set_pair.second.begin(); it_rot != a_set_pair.second.end(); ){
-	    if (deletedrot[*it_rot]){
-	      it_rot = a_set_pair.second.erase(it_rot);
-	    }
-	    else { ++it_rot;  }
-	  }
-	  if ( a_set_pair.second.empty()) {
-	    new_unit = true;
-	    deletedrot[rotid] = true;
-	  }
-	}
+    for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
+      for (auto &a_set_pair : rot_atom2rotidset[rotid - 1]) {
+        if (!a_set_pair.second.empty() &&
+            a_set_pair.second.count(0) == 0) { // no BB support, not empty
+          for (auto it_rot = a_set_pair.second.begin();
+               it_rot != a_set_pair.second.end();) {
+            if (deletedrot[*it_rot]) {
+              it_rot = a_set_pair.second.erase(it_rot);
+            } else {
+              ++it_rot;
+            }
+          }
+          if (a_set_pair.second.empty()) {
+            new_unit = true;
+            deletedrot[rotid] = true;
+          }
+        }
       }
     }
-  }
-  while (new_unit);
-  
+  } while (new_unit);
+
   // Generate the CFN
   // Header - assumes one CF per IG-edge. Suboptimal as some may be
   // empty but toulbar2 will remove Additional variables needed for
@@ -7357,205 +7331,225 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   core::Size ndeletions = 0;
   core::Size nclauses = 0;
   core::Size chan_var_idx = rotamer_sets_->nmoltenres();
-  std::map< core::Size, core::Size > rot2chanvaridx;
-  
+  std::map<core::Size, core::Size> rot2chanvaridx;
+
   // We need to channel only the rotamer that appear in clauses and
   // are not deleted
-  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
+  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
     bool needs_chan = false;
-    
-    if (deletedrot[rotid]){
+
+    if (deletedrot[rotid]) {
       ndeletions++;
-    }
-    else {
-      for( const auto& a_set_pair : rot_atom2rotidset[rotid-1] ){
-	if ( a_set_pair.second.count(0) == 0 ) {
-	  nclauses++;  // a clause
-	}
+    } else {
+      for (const auto &a_set_pair : rot_atom2rotidset[rotid - 1]) {
+        if (a_set_pair.second.count(0) == 0) {
+          nclauses++; // a clause
+        }
       }
       rot2chanvaridx[rotid] = chan_var_idx++;
       nchancf++;
       nchanvar++;
     }
   }
-  
-  out << "Max_HB_stable" << " " << rotamer_sets_->nmoltenres() + nchanvar << " ";
+
+  out << "Max_HB_stable"
+      << " " << rotamer_sets_->nmoltenres() + nchanvar << " ";
   core::Size max_domain_size = 2;
-  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ){
-    max_domain_size = std::max(max_domain_size, rotamer_sets_->nrotamers_for_moltenres(mresid));
+  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
+    max_domain_size = std::max(max_domain_size,
+                               rotamer_sets_->nrotamers_for_moltenres(mresid));
   }
-  // we need one channeling constraint per channeled variable + deletion of rotamers with no support.
-  out << max_domain_size << " " << ig_->get_num_edges() + ig_->get_num_nodes()
-    + nchancf + nclauses + ndeletions << " " << top << std::endl;
-  
+  // we need one channeling constraint per channeled variable + deletion of
+  // rotamers with no support.
+  out << max_domain_size << " "
+      << ig_->get_num_edges() + ig_->get_num_nodes() + nchancf + nclauses +
+             ndeletions
+      << " " << top << std::endl;
+
   // Domain sizes
-  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ){
+  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
     out << rotamer_sets_->nrotamers_for_moltenres(mresid) << " ";
   }
   // Channeling variables domains
-  for( core::Size vidx = 1; vidx <= nchanvar; vidx++){
+  for (core::Size vidx = 1; vidx <= nchanvar; vidx++) {
     out << "2 ";
   }
   out << std::endl;
-  
+
   // Unary cost functions that favor heavy polar atoms
-  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ) {
-    auto rot_set_for_mres = rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-    out << "1 " << mresid-1 << " 0 " << rot_set_for_mres->num_rotamers() << std::endl;
-    
+  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
+    auto rot_set_for_mres =
+        rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
+    out << "1 " << mresid - 1 << " 0 " << rot_set_for_mres->num_rotamers()
+        << std::endl;
+
     // could be optimized by counting just once par amino-acid type
-    for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers(); ++rotid ) {
-      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer( rotid );
-      bool is_polar = ((rotamer->Hpos_polar_sc().size() != 0 ) || (rotamer->accpt_pos_sc().size() != 0));
+    for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
+         ++rotid) {
+      core::conformation::ResidueCOP rotamer = rot_set_for_mres->rotamer(rotid);
+      bool is_polar = ((rotamer->Hpos_polar_sc().size() != 0) ||
+                       (rotamer->accpt_pos_sc().size() != 0));
       bool is_2polar = (rotamer->accpt_pos_sc().size() > 1);
-      
-      out << rotid - 1 << " " ;
+
+      out << rotid - 1 << " ";
       if (!is_polar)
-	out << apolar_penalty;
+        out << apolar_penalty;
       else if (!is_2polar)
-	out << polar1_penalty;
+        out << polar1_penalty;
       else
-	out << polar2_penalty;
+        out << polar2_penalty;
       out << std::endl;
     }
   }
-  
+
   // Channeling constraints.
-  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++){
+  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
     core::Size mresid = rotamer_sets_->moltenres_for_rotamer(rotid);
     core::Size l_rot = rotamer_sets_->rotid_on_moltenresidue(rotid);
-    
+
     if (deletedrot[rotid]) {
-      out << "1 " << mresid-1 << " 0 1" << std::endl;
-      out << l_rot-1 << " " << top << std::endl;
-    }
-    else {
-      out << "2 " << rot2chanvaridx[rotid] << " " << mresid - 1 << " " << top << " ";
+      out << "1 " << mresid - 1 << " 0 1" << std::endl;
+      out << l_rot - 1 << " " << top << std::endl;
+    } else {
+      out << "2 " << rot2chanvaridx[rotid] << " " << mresid - 1 << " " << top
+          << " ";
       out << rotamer_sets_->nrotamers_for_moltenres(mresid) << std::endl;
       out << "1 " << l_rot - 1 << " 0" << std::endl;
-      for( core::Size false_rot = 1; false_rot <= rotamer_sets_->nrotamers_for_moltenres(mresid); false_rot++ ){
-	if (false_rot !=  l_rot){
-	  out << "0 " << false_rot - 1 << " 0" << std::endl;
-	}
+      for (core::Size false_rot = 1;
+           false_rot <= rotamer_sets_->nrotamers_for_moltenres(mresid);
+           false_rot++) {
+        if (false_rot != l_rot) {
+          out << "0 " << false_rot - 1 << " 0" << std::endl;
+        }
       }
     }
   }
-  
+
   // Binary cost functions (clashes)
-  for( std::list< EdgeBase* >::const_iterator iter = ig_->get_edge_list_begin(); iter != ig_->get_edge_list_end(); ++iter ){
-    
-    PDEdge * pdedge =  static_cast< PDEdge * >( *iter );
-    
+  for (std::list<EdgeBase *>::const_iterator iter = ig_->get_edge_list_begin();
+       iter != ig_->get_edge_list_end(); ++iter) {
+
+    PDEdge *pdedge = static_cast<PDEdge *>(*iter);
+
     core::Size const mres_1 = (*iter)->get_first_node_ind();
     core::Size const mres_2 = (*iter)->get_second_node_ind();
-    
-    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid( mres_1 );
-    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid( mres_2 );
-    
-    const core::Size si = rotamer_sets_->nrotamers_for_moltenres( mres_1 );
-    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres( mres_2 );
-    
+
+    core::Size const resid_1 = rotamer_sets_->moltenres_2_resid(mres_1);
+    core::Size const resid_2 = rotamer_sets_->moltenres_2_resid(mres_2);
+
+    const core::Size si = rotamer_sets_->nrotamers_for_moltenres(mres_1);
+    const core::Size sj = rotamer_sets_->nrotamers_for_moltenres(mres_2);
+
     // Filling in hbond creation info
-    const core::Size nbrs_1 = tenA_neighbor_graph.get_node( resid_1 )->num_neighbors_counting_self_static();
-    const core::Size nbrs_2 = tenA_neighbor_graph.get_node( resid_2 )->num_neighbors_counting_self_static();
-    
+    const core::Size nbrs_1 = tenA_neighbor_graph.get_node(resid_1)
+                                  ->num_neighbors_counting_self_static();
+    const core::Size nbrs_2 = tenA_neighbor_graph.get_node(resid_2)
+                                  ->num_neighbors_counting_self_static();
+
     std::vector<std::vector<int>> pairs;
     core::Size nb_non_zero = 0;
-    
-    for( core::Size ii = 1; ii <= si; ++ii ){
+
+    for (core::Size ii = 1; ii <= si; ++ii) {
       std::vector<int> row;
-      for( core::Size jj = 1; jj <= sj; ++jj ){
-	core::Real const score = pdedge->get_two_body_energy(ii, jj);
-	core::Size const global_rotamer_ii = rotamer_sets_->nrotamer_offset_for_moltenres( mres_1 ) + ii;
-	core::Size const global_rotamer_jj = rotamer_sets_->nrotamer_offset_for_moltenres( mres_2 ) + jj;
-	if( score > clash_threshold_ ){
-	  row.push_back(top);
-	  nb_non_zero++;
-	}
-	else {
-	  row.push_back(0);
-	}
+      for (core::Size jj = 1; jj <= sj; ++jj) {
+        core::Real const score = pdedge->get_two_body_energy(ii, jj);
+        core::Size const global_rotamer_ii =
+            rotamer_sets_->nrotamer_offset_for_moltenres(mres_1) + ii;
+        core::Size const global_rotamer_jj =
+            rotamer_sets_->nrotamer_offset_for_moltenres(mres_2) + jj;
+        if (score > clash_threshold_) {
+          row.push_back(top);
+          nb_non_zero++;
+        } else {
+          row.push_back(0);
+        }
       }
       pairs.push_back(row);
     }
-    
+
     const core::Size default_cost = 0;
-    out << "2 " << mres_1 - 1 << " " << mres_2 - 1 << " " << default_cost << " " << nb_non_zero << std::endl;
-    for ( core::Size i = 0; i < pairs.size(); i++ ){
-      for ( core::Size j = 0; j < pairs[i].size(); j++ ){
-	core::Size cost = pairs[i][j];
-	if ( cost != default_cost) {
-	  out << i << " " << j << " " << cost << std::endl;
-	}
+    out << "2 " << mres_1 - 1 << " " << mres_2 - 1 << " " << default_cost << " "
+        << nb_non_zero << std::endl;
+    for (core::Size i = 0; i < pairs.size(); i++) {
+      for (core::Size j = 0; j < pairs[i].size(); j++) {
+        core::Size cost = pairs[i][j];
+        if (cost != default_cost) {
+          out << i << " " << j << " " << cost << std::endl;
+        }
       }
     }
   }
-  
-  // Now, the clauses. They are described by a single tuple over the boolean channeling variables.
+
+  // Now, the clauses. They are described by a single tuple over the boolean
+  // channeling variables.
   // Binary clauses are represented as binary cost functions.
   std::map<core::Size, core::Size> histo;
-  for ( core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++ ){
+  for (core::Size rotid = 1; rotid <= rotamer_sets_->nrotamers(); rotid++) {
     core::Size mresid = rotamer_sets_->moltenres_for_rotamer(rotid);
     core::Size l_rot = rotamer_sets_->rotid_on_moltenresidue(rotid);
-    
+
     if (!deletedrot[rotid]) {
-      for( const auto& a_set_pair : rot_atom2rotidset[rotid-1] ){
-	if (a_set_pair.second.count(0) == 0){
-	  std::set<core::Size> vars;
-	  for(const auto &rot_hb : a_set_pair.second){
-	    vars.insert(rotamer_sets_->moltenres_for_rotamer(rot_hb));
-	  }
-	  histo[vars.size()+1]++;
-	  if (vars.size() == 1){// binary constraint
-	    core::Size other_res = *vars.begin();
-	    core::Size nrot =  rotamer_sets_->nrotamers_for_moltenres(other_res);
-	    out << "2 " << mresid-1 << " " << other_res-1 << " 0 " << nrot - a_set_pair.second.size() << std::endl;
-	    for (core::Size tup = 0; tup < nrot; tup++){
-	      core::Size gtup = rotamer_sets_->nrotamer_offset_for_moltenres(other_res)+1+tup;
-	      if (a_set_pair.second.count(gtup) == 0)
-		out << l_rot - 1 << " " <<  tup << " " << top << std::endl;
-	    }
-	  }
-	  else {
-	    // Arity, scope, def cost, tuples
-	    out << a_set_pair.second.size()+1 << " " << rot2chanvaridx[rotid] << " ";
-	    for(const auto &rot_hb : a_set_pair.second){
-	      if (rot2chanvaridx.find(rot_hb) != rot2chanvaridx.end()){
-		out << rot2chanvaridx[rot_hb] << " ";
-	      }
-	      else
-		{
-		  TR << "----------- ERROR: no channeling var for " <<  rot_hb << "deletion status " << deletedrot[rot_hb] << std::endl;
-		}
-	      vars.insert(rotamer_sets_->res_for_rotamer(rot_hb));
-	    }
-	    out << "0 1" << std::endl;
-	    
-	    // The forbidden tuple (negation of the litterals in the clause)
-	    out << "1";
-	    for(const auto &rot_hb : a_set_pair.second){
-	      out << " 0";
-	    }
-	    out << " " << top << std::endl;
-	  }
-	}
+      for (const auto &a_set_pair : rot_atom2rotidset[rotid - 1]) {
+        if (a_set_pair.second.count(0) == 0) {
+          std::set<core::Size> vars;
+          for (const auto &rot_hb : a_set_pair.second) {
+            vars.insert(rotamer_sets_->moltenres_for_rotamer(rot_hb));
+          }
+          histo[vars.size() + 1]++;
+          if (vars.size() == 1) { // binary constraint
+            core::Size other_res = *vars.begin();
+            core::Size nrot = rotamer_sets_->nrotamers_for_moltenres(other_res);
+            out << "2 " << mresid - 1 << " " << other_res - 1 << " 0 "
+                << nrot - a_set_pair.second.size() << std::endl;
+            for (core::Size tup = 0; tup < nrot; tup++) {
+              core::Size gtup =
+                  rotamer_sets_->nrotamer_offset_for_moltenres(other_res) + 1 +
+                  tup;
+              if (a_set_pair.second.count(gtup) == 0)
+                out << l_rot - 1 << " " << tup << " " << top << std::endl;
+            }
+          } else {
+            // Arity, scope, def cost, tuples
+            out << a_set_pair.second.size() + 1 << " " << rot2chanvaridx[rotid]
+                << " ";
+            for (const auto &rot_hb : a_set_pair.second) {
+              if (rot2chanvaridx.find(rot_hb) != rot2chanvaridx.end()) {
+                out << rot2chanvaridx[rot_hb] << " ";
+              } else {
+                TR << "----------- ERROR: no channeling var for " << rot_hb
+                   << "deletion status " << deletedrot[rot_hb] << std::endl;
+              }
+              vars.insert(rotamer_sets_->res_for_rotamer(rot_hb));
+            }
+            out << "0 1" << std::endl;
+
+            // The forbidden tuple (negation of the litterals in the clause)
+            out << "1";
+            for (const auto &rot_hb : a_set_pair.second) {
+              out << " 0";
+            }
+            out << " " << top << std::endl;
+          }
+        }
       }
     }
   }
-  for (const auto& fp : histo)
+  for (const auto &fp : histo)
     TR << "Arity " << fp.first << " occurrences " << fp.second << std::endl;
   // Write the corresponding amino acids for printing sequences in
   // toulbar2 directly For true rotamer variables, we print he AA
   // name. For the channeling variables, let's use 'A'
-  for( core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid ){
-    auto rot_set_for_mres = rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
-    for( core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers(); ++rotid ) {
+  for (core::Size mresid = 1; mresid <= rotamer_sets_->nmoltenres(); ++mresid) {
+    auto rot_set_for_mres =
+        rotamer_sets_->rotamer_set_for_moltenresidue(mresid);
+    for (core::Size rotid = 1; rotid <= rot_set_for_mres->num_rotamers();
+         ++rotid) {
       out << rot_set_for_mres->rotamer(rotid)->name1() << " ";
     }
     out << std::endl;
   }
-  
-  for( core::Size cv = 1; cv <= nchanvar; ++cv ){
+
+  for (core::Size cv = 1; cv <= nchanvar; ++cv) {
     out << "A A" << std::endl;
   }
   out.close();
@@ -7616,6 +7610,5 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   TR << "predicted file size: " << num_bytes << " bytes" << std::endl;
         }*/
 
-}  // hbnet
-}  // protocols
-
+} // hbnet
+} // protocols
