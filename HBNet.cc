@@ -7550,7 +7550,7 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   }
 
   for (core::Size cv = 1; cv <= nchanvar; ++cv) {
-    out << "A A" << std::endl;
+    out << "* *" << std::endl;
   }
   out.close();
 }
