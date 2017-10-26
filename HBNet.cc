@@ -145,6 +145,12 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 
+#include <core/scoring/lkball/LK_BallInfo.hh>
+
+using core::scoring::lkball::LKB_ResidueInfo;
+
+#include <numeric/xyz.io.hh>
+
 using namespace core;
 using namespace pose;
 using namespace pack;
@@ -155,6 +161,26 @@ using namespace scoring::hbonds;
 
 namespace protocols {
 namespace hbnet {
+
+// #include <scheme/objective/voxel/VoxelArray.hh>
+// using namespace scheme::objective::voxel;
+
+// VoxelArray<3, float> make_solvation_estimate(Pose const &pose) {
+//   numeric::xyzVector<float> lb = pose.residue(1).xyz(1), ub;
+//   ub = lb;
+//   for (size_t ir = 1; ir <= pose.size(); ++ir) {
+//     for (size_t ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia) {
+//       lb.min(pose.residue(ir).xyz(ia));
+//       ub.max(pose.residue(ir).xyz(ia));
+//     }
+//   }
+//   VoxelArray<3, float> solv(lb, ub, numeric::xyzVector<float>(1, 1, 1));
+//   std::cout << lb << std::endl;
+//   std::cout << ub << std::endl;
+//   std::cout << solv.size() << std::endl;
+
+//   return solv;
+// }
 
 static THREAD_LOCAL basic::Tracer TR("protocols.hbnet.HBNet");
 
@@ -4895,9 +4921,7 @@ void HBNet::setup_packer_task_and_starting_residues(Pose const &pose) {
     // unit for symmetric cases by this point
     for (Size r = 1; r <= pose.total_residue(); ++r) {
       if (pose.residue(r).is_protein()) {
-        std::cout << __LINE__ << std::endl;
         if (task_->design_residue((int)r) || is_repack[r] == 1) {
-          std::cout << __LINE__ << std::endl;
           start_res_vec_.insert(r);
         }
       }
@@ -7122,6 +7146,14 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
   out.close();
 }
 
+int num_8A_nbsr(numeric::xyzVector<double> solv_xyz,
+                std::vector<numeric::xyzVector<float>> const &nbr_coords) {
+  int num_nbr = 0;
+  for (auto xyz : nbr_coords)
+    if (xyz.distance_squared(solv_xyz) < 8.0 * 8.0) ++num_nbr;
+  return num_nbr;
+}
+
 void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
                                     bool pref2polar) {
   std::ofstream out;
@@ -7173,6 +7205,56 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
       core::scoring::hbonds::HBondDatabase::get_database();
   const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
       orig_pose_->energies().tenA_neighbor_graph());
+
+  const int nnbr_solv_cut = 8;
+
+  // whs: loop over all sidechain polar heavy atoms, mark solvated
+  std::set<std::pair<core::Size, core::Size>> atom_is_solvated;
+  utility::vector1<bool> rotamer_is_solvated(rotamer_sets_->nrotamers());
+  {
+    std::cout << "begin solv calc..." << std::endl;
+    std::vector<numeric::xyzVector<float>> nbr_coords;
+    {
+      for (size_t ir = 1; ir <= orig_pose_->size(); ++ir) {
+        if (orig_pose_->residue(ir).has("CB"))
+          nbr_coords.push_back(orig_pose_->residue(ir).xyz("CB"));
+        else if (orig_pose_->residue(ir).has("CA"))
+          nbr_coords.push_back(orig_pose_->residue(ir).xyz("CA"));
+      }
+    }
+    int num_solv_rotamers = 0, max_nnbrs = 0;
+    for (core::Size irot = 1; irot <= rotamer_sets_->nrotamers(); ++irot) {
+      auto rotamer = rotamer_sets_->rotamer(irot);
+      bool all_polar_solv = true;
+      for (core::Size sc_acc : rotamer->accpt_pos_sc()) {
+        int num_nbr = 999999999;
+        for (auto lkxyz : LKB_ResidueInfo(*rotamer).waters()[sc_acc]) {
+          num_nbr = std::min(num_nbr, num_8A_nbsr(lkxyz, nbr_coords));
+        }
+        max_nnbrs = std::max(max_nnbrs, num_nbr);
+        if (num_nbr <= nnbr_solv_cut)
+          atom_is_solvated.insert(std::make_pair(irot, sc_acc));
+        else
+          all_polar_solv = false;
+      }
+      for (core::Size polar_H : rotamer->Hpos_polar_sc()) {
+        core::Size H_parent = rotamer->atom_base(polar_H);
+        int num_nbr = 999999999;
+        for (auto lkxyz : LKB_ResidueInfo(*rotamer).waters()[H_parent]) {
+          num_nbr = std::min(num_nbr, num_8A_nbsr(lkxyz, nbr_coords));
+        }
+        max_nnbrs = std::max(max_nnbrs, num_nbr);
+        if (num_nbr <= nnbr_solv_cut)
+          atom_is_solvated.insert(std::make_pair(irot, H_parent));
+        else
+          all_polar_solv = false;
+      }
+      rotamer_is_solvated[irot] = all_polar_solv;
+      if (all_polar_solv) ++num_solv_rotamers;
+    }
+    std::cout << "max polar atom neighbors: " << max_nnbrs << std::endl;
+    std::cout << "num fully solv rotamers:  " << num_solv_rotamers << std::endl;
+  }
 
   // Initialize Hbond data structure
   std::vector<std::map<core::Size, std::set<core::Size>>> rot_atom2rotidset;
@@ -7286,7 +7368,6 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
 
               core::Size don_rotamer;
               core::Size acc_rotamer;
-
               if (hbond->don_res() == resid_1) {
                 don_rotamer = global_rotamer_ii;
                 H_parent = rotamer_ii->atom_base(hbond->don_hatm());
@@ -7297,19 +7378,18 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
                 acc_rotamer = global_rotamer_ii;
               }
 
-              char don_AA = rotamer_sets_->rotamer(don_rotamer)->name1();
-              char acc_AA = rotamer_sets_->rotamer(acc_rotamer)->name1();
+              bool don_solvated = false;
+              // atom_is_solvated.count(std::make_pair(don_rotamer, H_parent));
+              bool acc_solvated = false;
+              // atom_is_solvated.count(std::make_pair(acc_rotamer, acc));
 
-              // !!!!!!!!!!!!!!!!!! sheffler !!!!!!!!!!!!!!!!!!!!!!!!
-              // this is how to mark atoms as satisfied
-              // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              if (is_don_bb) {  // We have a self sat acceptor atom for the
-                                // rotamer here
+              // We have a self sat acceptor atom for the rotamer here
+              if (is_don_bb || acc_solvated) {
                 rot_atom2rotidset[acc_rotamer - 1][acc].clear();
                 rot_atom2rotidset[acc_rotamer - 1][acc].insert(0);
               }
-              if (is_acc_bb) {  // We have a self sat donor atom for the rotamer
-                                // here
+              // We have a self sat donor atom for the rotamer here
+              if (is_acc_bb || don_solvated) {
                 rot_atom2rotidset[don_rotamer - 1][H_parent].clear();
                 rot_atom2rotidset[don_rotamer - 1][H_parent].insert(0);
               }
@@ -7344,6 +7424,12 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
       }
     }
 
+    // whs: also delete any "fully solvated" rotamers
+    // TODO: what about polars these rotamers satisfy?!?!
+    // for (size_t irot = 1; irot <= rotamer_is_solvated.size(); ++irot) {
+    // if (rotamer_is_solvated[irot]) deletedrot[irot] = true;
+    // }
+
     bool new_unit;
     do {
       new_unit = false;
@@ -7367,6 +7453,13 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
         }
       }
     } while (new_unit);
+
+    int ndel = 0;
+    for (auto del : deletedrot) {
+      if (del.second) ++ndel;
+    }
+    std::cout << "total deleted rots: " << ndel << " of "
+              << rotamer_sets_->nrotamers() << std::endl;
   }
 
   // Generate the CFN
