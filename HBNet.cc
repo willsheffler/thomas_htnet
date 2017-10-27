@@ -162,6 +162,8 @@ using namespace scoring::hbonds;
 namespace protocols {
 namespace hbnet {
 
+// whs: started to do something more complicated...
+// decided against it.
 // #include <scheme/objective/voxel/VoxelArray.hh>
 // using namespace scheme::objective::voxel;
 
@@ -7146,8 +7148,8 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
   out.close();
 }
 
-int num_8A_nbsr(numeric::xyzVector<double> solv_xyz,
-                std::vector<numeric::xyzVector<float>> const &nbr_coords) {
+int calc_num_nbrs(numeric::xyzVector<double> solv_xyz,
+                  std::vector<numeric::xyzVector<float>> const &nbr_coords) {
   int num_nbr = 0;
   for (auto xyz : nbr_coords)
     if (xyz.distance_squared(solv_xyz) < 8.0 * 8.0) ++num_nbr;
@@ -7206,11 +7208,14 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   const core::scoring::TenANeighborGraph &tenA_neighbor_graph(
       orig_pose_->energies().tenA_neighbor_graph());
 
-  const int nnbr_solv_cut = 8;
+  const int num_nbr_solv_cut = 10;
 
   // whs: loop over all sidechain polar heavy atoms, mark solvated
+  // define solvation as the most exposed LKBall group of the polar
+  // atom. where 'exposed' means number of CB/CA atoms within 8A is
+  // less than num_nbr_solv_cut
   std::set<std::pair<core::Size, core::Size>> atom_is_solvated;
-  utility::vector1<bool> rotamer_is_solvated(rotamer_sets_->nrotamers());
+  utility::vector1<bool> rotamer_is_fully_solvated(rotamer_sets_->nrotamers());
   {
     std::cout << "begin solv calc..." << std::endl;
     std::vector<numeric::xyzVector<float>> nbr_coords;
@@ -7223,38 +7228,58 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
       }
     }
     int num_solv_rotamers = 0, max_nnbrs = 0;
-    for (core::Size irot = 1; irot <= rotamer_sets_->nrotamers(); ++irot) {
-      auto rotamer = rotamer_sets_->rotamer(irot);
-      bool all_polar_solv = true;
-      for (core::Size sc_acc : rotamer->accpt_pos_sc()) {
-        int num_nbr = 999999999;
-        for (auto lkxyz : LKB_ResidueInfo(*rotamer).waters()[sc_acc]) {
-          num_nbr = std::min(num_nbr, num_8A_nbsr(lkxyz, nbr_coords));
+    // for (core::Size irot = 1; irot <= rotamer_sets_->nrotamers(); ++irot) {
+    for (size_t ir = 1; ir <= rotamer_sets_->nmoltenres(); ++ir) {
+      auto res_rots = rotamer_sets_->rotamer_set_for_moltenresidue(ir);
+      for (size_t mirot = 1; mirot <= res_rots->num_rotamers(); ++mirot) {
+        ResidueCOP rotamer = res_rots->rotamer(mirot);
+        size_t irot = rotamer_sets_->nrotamer_offset_for_moltenres(ir) + mirot;
+        bool all_polar_solv = true;
+        // oops! an hour of confustion becasue I eliminated the only
+        // option for non-polar residues! no solutions indeed.
+        if (rotamer->name3() == "GLY") all_polar_solv = false;
+        auto waters = LKB_ResidueInfo(*rotamer).waters();
+        for (size_t sc_acc : rotamer->accpt_pos_sc()) {
+          int num_nbr = 999999999;
+          for (numeric::xyzVector<double> lkxyz : waters[sc_acc]) {
+            num_nbr = std::min(num_nbr, calc_num_nbrs(lkxyz, nbr_coords));
+            // if (num_nbr == 0) {
+            // std::cout << "WTF!!! " << lkxyz << std::endl;
+            // core::pose::Pose pose;
+            // pose.append_residue_by_jump(*rotamer, 1);
+            // pose.dump_pdb("test.pdb");
+            // std::exit(0);
+            // }
+          }
+          // std::cout << num_nbr << std::endl;
+          max_nnbrs = std::max(max_nnbrs, num_nbr);
+          if (num_nbr <= num_nbr_solv_cut)
+            atom_is_solvated.insert(std::make_pair(irot, sc_acc));
+          else
+            all_polar_solv = false;
         }
-        max_nnbrs = std::max(max_nnbrs, num_nbr);
-        if (num_nbr <= nnbr_solv_cut)
-          atom_is_solvated.insert(std::make_pair(irot, sc_acc));
-        else
-          all_polar_solv = false;
-      }
-      for (core::Size polar_H : rotamer->Hpos_polar_sc()) {
-        core::Size H_parent = rotamer->atom_base(polar_H);
-        int num_nbr = 999999999;
-        for (auto lkxyz : LKB_ResidueInfo(*rotamer).waters()[H_parent]) {
-          num_nbr = std::min(num_nbr, num_8A_nbsr(lkxyz, nbr_coords));
+        for (core::Size polar_H : rotamer->Hpos_polar_sc()) {
+          core::Size H_parent = rotamer->atom_base(polar_H);
+          int num_nbr = 999999999;
+          for (auto lkxyz : waters[H_parent]) {
+            num_nbr = std::min(num_nbr, calc_num_nbrs(lkxyz, nbr_coords));
+          }
+          // std::cout << num_nbr << std::endl;
+          max_nnbrs = std::max(max_nnbrs, num_nbr);
+          if (num_nbr <= num_nbr_solv_cut)
+            atom_is_solvated.insert(std::make_pair(irot, H_parent));
+          else
+            all_polar_solv = false;
         }
-        max_nnbrs = std::max(max_nnbrs, num_nbr);
-        if (num_nbr <= nnbr_solv_cut)
-          atom_is_solvated.insert(std::make_pair(irot, H_parent));
-        else
-          all_polar_solv = false;
+        rotamer_is_fully_solvated[irot] = all_polar_solv;
+        if (all_polar_solv) ++num_solv_rotamers;
       }
-      rotamer_is_solvated[irot] = all_polar_solv;
-      if (all_polar_solv) ++num_solv_rotamers;
     }
     std::cout << "max polar atom neighbors: " << max_nnbrs << std::endl;
-    std::cout << "num fully solv rotamers:  " << num_solv_rotamers << std::endl;
+    std::cout << "num fully solv rotamers:  " << num_solv_rotamers << " of "
+              << rotamer_sets_->nrotamers() << std::endl;
   }
+  // end whs
 
   // Initialize Hbond data structure
   std::vector<std::map<core::Size, std::set<core::Size>>> rot_atom2rotidset;
@@ -7321,7 +7346,9 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
               rotamer_sets_->nrotamer_offset_for_moltenres(mres_1) + ii;
           core::Size const global_rotamer_jj =
               rotamer_sets_->nrotamer_offset_for_moltenres(mres_2) + jj;
-
+          // whs: skip if either is 'fully' solvated
+          if (rotamer_is_fully_solvated[global_rotamer_ii]) continue;
+          if (rotamer_is_fully_solvated[global_rotamer_jj]) continue;
           if (score < 0) {
             core::conformation::ResidueCOP rotamer_ii =
                 rotamer_sets_->rotamer(global_rotamer_ii);
@@ -7378,23 +7405,28 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
                 acc_rotamer = global_rotamer_ii;
               }
 
-              bool don_solvated = false;
-              // atom_is_solvated.count(std::make_pair(don_rotamer, H_parent));
-              bool acc_solvated = false;
-              // atom_is_solvated.count(std::make_pair(acc_rotamer, acc));
+              // whs: basically, just pretend the solvated groups are
+              // satisfed by the backbone...
+              bool don_sat =
+                  is_acc_bb ||
+                  atom_is_solvated.count(std::make_pair(don_rotamer, H_parent));
+              bool acc_sat =
+                  is_don_bb ||
+                  atom_is_solvated.count(std::make_pair(acc_rotamer, acc));
 
               // We have a self sat acceptor atom for the rotamer here
-              if (is_don_bb || acc_solvated) {
+              if (acc_sat) {
                 rot_atom2rotidset[acc_rotamer - 1][acc].clear();
                 rot_atom2rotidset[acc_rotamer - 1][acc].insert(0);
               }
               // We have a self sat donor atom for the rotamer here
-              if (is_acc_bb || don_solvated) {
+              if (don_sat) {
                 rot_atom2rotidset[don_rotamer - 1][H_parent].clear();
                 rot_atom2rotidset[don_rotamer - 1][H_parent].insert(0);
               }
-              if (!is_acc_bb && !is_don_bb) {  // the polar partners both come
-                                               // from side-chains
+              if (!don_sat && !acc_sat) {  // the polar partners both come
+                                           // from side-chains
+                                           // whs: and need to be satisfied
                 if (rot_atom2rotidset[acc_rotamer - 1][acc].count(0) == 0)
                   rot_atom2rotidset[acc_rotamer - 1][acc].insert(don_rotamer);
                 if (rot_atom2rotidset[don_rotamer - 1][H_parent].count(0) == 0)
@@ -7426,9 +7458,9 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
 
     // whs: also delete any "fully solvated" rotamers
     // TODO: what about polars these rotamers satisfy?!?!
-    // for (size_t irot = 1; irot <= rotamer_is_solvated.size(); ++irot) {
-    // if (rotamer_is_solvated[irot]) deletedrot[irot] = true;
-    // }
+    for (size_t irot = 1; irot <= rotamer_is_fully_solvated.size(); ++irot) {
+      if (rotamer_is_fully_solvated[irot]) deletedrot[irot] = true;
+    }
 
     bool new_unit;
     do {
@@ -7697,7 +7729,8 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
 }
 
 /*void HBNet::print_interaction_graph_to_binary_file( std::string filename ){
-  unsigned long num_bytes = 0;//keep count of how large we expect the file to be
+  unsigned long num_bytes = 0;//keep count of how large we expect the file to
+  be
 
         std::ofstream out( filename, std::ios::binary );
 
@@ -7712,13 +7745,15 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   sizeof( int ) );
     num_bytes += sizeof( int );
 
-    int const chain = int( orig_pose_->chain( rotamer_sets_->moltenres_2_resid(
+    int const chain = int( orig_pose_->chain(
+  rotamer_sets_->moltenres_2_resid(
   ii ) ) );
     out.write( reinterpret_cast <const char*> ( &chain ), sizeof( int ) );
     num_bytes += sizeof( int );
   }
 
-  for( std::list< EdgeBase* >::const_iterator iter = ig_->get_edge_list_begin();
+  for( std::list< EdgeBase* >::const_iterator iter =
+  ig_->get_edge_list_begin();
        iter != ig_->get_edge_list_end(); ++iter ){
     int const i = int( (*iter)->get_first_node_ind() );
     int const j = int( (*iter)->get_second_node_ind() );
@@ -7737,7 +7772,8 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
       for( core::Size jj = 1; jj <= sj; ++jj ){
                                 float energy = pdedge->get_two_body_energy(ii,
   jj);
-                                out.write( reinterpret_cast <char*> ( &energy ),
+                                out.write( reinterpret_cast <char*> ( &energy
+  ),
   sizeof( float ) );
       }
     }
