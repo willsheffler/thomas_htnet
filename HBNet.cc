@@ -253,7 +253,9 @@ HBNet::HBNet()
           core::scoring::ScoreFunctionFactory::create_score_function("HBNet")),
       scorefxn_(/* NULL */),
       rotamer_sets_(/* NULL */),
+      rotamer_sets_full_(/* NULL */),
       ig_(/* NULL */),
+      ig_full_(/* NULL */),
       rotamer_links_(0),
       store_subnetworks_(0),
       secondary_search_(0),
@@ -341,7 +343,9 @@ HBNet::HBNet(std::string const name)
           core::scoring::ScoreFunctionFactory::create_score_function("HBNet")),
       scorefxn_(/* NULL */),
       rotamer_sets_(/* NULL */),
+      rotamer_sets_full_(),
       ig_(/* NULL */),
+      ig_full_(),
       rotamer_links_(0),
       store_subnetworks_(0),
       secondary_search_(0),
@@ -381,7 +385,7 @@ HBNet::HBNet(core::scoring::ScoreFunctionCOP scorefxn, Size max_unsat,
              Real hb_threshold,        /* -0.75 */
              Size max_network_size,    /* 15 */
              std::string des_residues, /* "STRKHYWNQDE" */
-             bool find_native,         /*false*/
+             bool find_native,         /*ro*/
              bool only_native,         /*false*/
              bool keep_existing,       /*false*/
              bool extend_existing,     /*false*/
@@ -439,7 +443,9 @@ HBNet::HBNet(core::scoring::ScoreFunctionCOP scorefxn, Size max_unsat,
           core::scoring::ScoreFunctionFactory::create_score_function("HBNet")),
       scorefxn_(scorefxn->clone()),
       rotamer_sets_(/* NULL */),
+      rotamer_sets_full_(),
       ig_(/* NULL */),
+      ig_full_(),
       rotamer_links_(0),
       store_subnetworks_(0),
       secondary_search_(0),
@@ -776,14 +782,18 @@ void HBNet::rec_trav_native(Pose const &pose, Size new_res, Size prev_res,
                             Real const hb_threshold) {}
 
 bool HBNet::no_clash(Size moltenres1, Size state1, Size moltenres2,
-                     Size state2) {}
+                     Size state2) {
+  return true;
+}
 
 ///@details Check if a new rotamer state clashes with any rotamer states already
 /// in a given h-bond network
 ///    return of true = it clashes, false = no clashes
 bool HBNet::check_clash(utility::vector1<HBondResStructCOP> const &residues,
                         platform::uint new_node_ind, Size newstate, Size newres,
-                        Real &init_score, bool &cycle) {}  // check_clash
+                        Real &init_score, bool &cycle) {
+  return true;
+}  // check_clash
 
 ///@details Function to check whether two h-bond networks clash with eachother
 ///    return of true = they clash, false = no clashes (networks i and j are
@@ -802,7 +812,9 @@ bool HBNet::net_clash(utility::vector1<HBondResStructCOP> const &residues_i,
 
 bool HBNet::network_already_stored(
     utility::vector1<HBondResStructCOP> &residues,
-    utility::vector1<HBondResStructCOP> &i_residues) {}
+    utility::vector1<HBondResStructCOP> &i_residues) {
+  return true;
+}
 
 void HBNet::store_network(utility::vector1<HBondResStructCOP> residues,
                           Real init_score, bool term_w_start, bool term_w_cycle,
@@ -827,7 +839,9 @@ void HBNet::merge_branched_networks(core::Size merged_vec_index,
 
 // consider Ser and Thr idential for benchmarking purposes
 bool HBNet::networks_identical_aa_sequence(hbond_net_struct const &i,
-                                           hbond_net_struct const &j) {}
+                                           hbond_net_struct const &j) {
+  return true;
+}
 
 bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
                             utility::vector1<HBondResStructCOP> &residues2) {
@@ -840,7 +854,9 @@ bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
 ///  std::includes() returns false if 2 vectors are identical
 bool HBNet::is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
                             utility::vector1<HBondResStructCOP> &residues2,
-                            bool &branch, bool true_if_identical /* true */) {}
+                            bool &branch, bool true_if_identical /* true */) {
+  return true;
+}
 
 ///@details Critical function to HBNet; because of depth-frist traversal, need
 /// to combine branched cases, e.g. ASN that can make multiple h-bonds
@@ -867,7 +883,9 @@ void HBNet::monte_carlo_branching_trajectory(
     core::Size seed_index, std::set<unsigned long> &clashes,
     std::vector<utility::vector1<core::Size>> &overlapping_nets) {}
 
-core::Real HBNet::get_twobody(HBondResStructCOP i, HBondResStructCOP j) {}
+core::Real HBNet::get_twobody(HBondResStructCOP i, HBondResStructCOP j) {
+  return -1.0;
+}
 
 // used by branch_overlapping() to efficiently search for all combinations of
 // compatible networks that can be merged
@@ -880,17 +898,23 @@ void HBNet::place_rots_on_pose(pose::Pose &pose, hbond_net_struct &i,
 // to very quickly eliminate networks with 1 or more unsatisfied heavy-atom
 // donors or acceptors
 bool HBNet::quick_and_dirty_network_has_heavy_atom_unsat(
-    Pose const &pose, hbond_net_struct const &network) {}
+    Pose const &pose, hbond_net_struct const &network) {
+  return true;
+}
 
 // to very quickly eliminate networks with 1 or more unsatisfied heavy-atom
 // donors or acceptors
 bool HBNet::quick_and_dirty_heavy_atom_is_unsat(Pose const &pose,
-                                                id::AtomID const at_id) {}
+                                                id::AtomID const at_id) {
+  return true;
+}
 
 // hacky check based on distance for cases where we only have water O (not
 // explicit H's)
 bool HBNet::atom_hbonds_to_bridging_water(Pose const &pose,
-                                          id::AtomID const at_id) {}
+                                          id::AtomID const at_id) {
+  return true;
+}
 
 void HBNet::update_core_and_boundary_residues(core::pose::Pose const &pose) {}
 
@@ -902,20 +926,26 @@ void HBNet::find_unsats(Pose const &pose, hbond_net_struct &network) {
 // consider Ser and Thr identical
 bool HBNet::residues_identical(utility::vector1<HBondResStructCOP> &residues1,
                                utility::vector1<HBondResStructCOP> &residues2) {
-
+  return true;
 }
 
 bool HBNet::all_residue_chis_are_close(
     utility::vector1<HBondResStructCOP> &residues1,
-    utility::vector1<HBondResStructCOP> &residues2) {}
+    utility::vector1<HBondResStructCOP> &residues2) {
+  return true;
+}
 
 bool HBNet::residues_not_unique(
     utility::vector1<HBondResStructCOP> &residues1,
-    utility::vector1<HBondResStructCOP> &residues2) {}
+    utility::vector1<HBondResStructCOP> &residues2) {
+  return true;
+}
 
 bool HBNet::networks_unique(hbond_net_struct const &i,
                             hbond_net_struct const &j,
-                            bool no_surface /* true */) {}
+                            bool no_surface /* true */) {
+  return true;
+}
 
 // 02/28/15 changing behavior, will only keep 1 network with unique resnum/aa
 // identity; networks with same resnum/aa seq but unique rotamers
@@ -926,11 +956,15 @@ void HBNet::remove_replicate_networks(Size same_max /*=1*/) {
 
 Size HBNet::get_num_native_rot(
     Pose &pose, utility::vector1<HBondResStructCOP> const &residues,
-    Real sc_rmsd_cut, bool super) {}
+    Real sc_rmsd_cut, bool super) {
+  return 0;
+}
 
 Size HBNet::get_num_native_seq(
     core::pose::Pose &pose,
-    utility::vector1<HBondResStructCOP> const &residues) {}
+    utility::vector1<HBondResStructCOP> const &residues) {
+  return 0;
+}
 
 void HBNet::output_networks(bool finalize) {}  // output_networks
 
@@ -1016,16 +1050,22 @@ std::string HBNet::get_file_name(Size id, std::string net_prefix,
   return outfile.name();
 }
 
-bool HBNet::water_clashes(Pose const &pose, Vector const water_O) {}
+bool HBNet::water_clashes(Pose const &pose, Vector const water_O) {
+  return true;
+}
 
 bool HBNet::water_oxygen_clashes_with_residue(Vector const water_oxygen,
                                               Size const resnum,
-                                              int const rot_state) {}
+                                              int const rot_state) {
+  return true;
+}
 
 bool HBNet::water_oxygen_clashes_with_residue(Vector const water_oxygen,
-                                              Residue const &res) {}
+                                              Residue const &res) {
+  return true;
+}
 
-pose::PoseOP HBNet::get_additional_output() {}
+pose::PoseOP HBNet::get_additional_output() { return nullptr; }
 
 void HBNet::search_IG_for_networks(Pose &) {
   // traverse IG and enumerate all possible h-bond networks given parameters
@@ -1126,6 +1166,7 @@ void HBNet::setup(Pose const &pose) {
   }
   // Setup IG ig_:
   { rotamer_sets_ = RotamerSetsOP(new rotamer_set::RotamerSets()); }
+  { rotamer_sets_full_ = RotamerSetsOP(new rotamer_set::RotamerSets()); }
 
   utility::vector1<Size> residues_to_ala(0);
   utility::vector1<bool> is_repack = task_->repacking_residues();
@@ -1189,11 +1230,42 @@ void HBNet::run(Pose &pose) {
         utility::pointer::dynamic_pointer_cast<
             PrecomputedPairEnergiesInteractionGraph>(ig_));
     runtime_assert(pig);
-
     // precompute_two_body_energies() now vitural and dervied; no longer need to
     // cast to SymmetricRotamerSets first
     rotamer_sets_->precompute_two_body_energies(
         pose, *init_scorefxn_, packer_neighbor_graph_, pig, true);
+
+    // ===================================== whs ===========================
+    // rotamer_sets_full_ *should* be identical to rotamer_sets_
+    //  (no clone method, grrr...)
+    rotamer_sets_full_->set_task(task_);
+    rotamer_sets_full_->initialize_pose_for_rotsets_creation(pose);
+    // use init_scorefxn_ NOT full_scorefxn so rots same
+    rotamer_sets_full_->build_rotamers(pose, *init_scorefxn_,
+                                       packer_neighbor_graph_);
+    core::scoring::ScoreFunctionOP full_scorefxn =
+        core::scoring::ScoreFunctionFactory::create_score_function(
+            "HBNet_beta_all");
+    rotamer_sets_full_->prepare_sets_for_packing(pose, *full_scorefxn);
+    ig_full_ = InteractionGraphFactory::create_interaction_graph(
+        *task_, *rotamer_sets_full_, pose, *full_scorefxn,
+        *packer_neighbor_graph_);
+    ig_full_->initialize(*rotamer_sets_full_);
+    PrecomputedPairEnergiesInteractionGraphOP pig_full(
+        utility::pointer::dynamic_pointer_cast<
+            PrecomputedPairEnergiesInteractionGraph>(ig_full_));
+    runtime_assert(pig_full);
+    // precompute_two_body_energies() now vitural and dervied; no longer need to
+    // cast to SymmetricRotamerSets first
+    rotamer_sets_full_->precompute_two_body_energies(
+        pose, *full_scorefxn, packer_neighbor_graph_, pig_full, true);
+    std::cout << "ig_      " << ig_->get_num_edges() << " "
+              << ig_->get_num_nodes() << std::endl;
+    std::cout << "ig_full " << ig_full_->get_num_edges() << " "
+              << ig_full_->get_num_nodes() << std::endl;
+
+    // ============================= end whs=============================
+
     if (TR.visible()) {
       TR << " built " << rotamer_sets_->nrotamers() << " rotamers at "
          << rotamer_sets_->nmoltenres() << " positions." << std::endl;
@@ -1985,7 +2057,21 @@ void HBNet::load_conformation_and_dump_pose(std::string filename) {
         core::conformation::ResidueCOP rotamer_2 =
             rotamer_sets_->rotamer(global_rotid_2);
 
-        core::scoring::hbonds::HBondSet hbond_set;
+        HBondSet temp_hbond_set;
+        core::scoring::hbonds::HBondOptions new_options(
+            temp_hbond_set.hbond_options());
+        new_options.use_hb_env_dep(false);
+        // shouldn't affect which h-bonds are detected, but needed to make
+        // sure h-bond energies added to e totals
+        new_options.decompose_bb_hb_into_pair_energies(false);
+        // // don't use bb exclusion logic when penalizing unsatisfied --
+        // // ideally would only eclude N-H donors and not exclude C=O with
+        // // only 1 h-bond
+        // new_options.bb_donor_acceptor_check(bb_exclusion);
+        // we want to count this for unsat calc, by default they are
+        // excluded
+        new_options.exclude_intra_res_protein(false);
+        HBondSet hbond_set(new_options);
 
         core::scoring::hbonds::identify_hbonds_1way(
             *hb_database, *rotamer_1, *rotamer_2, nbrs_1, nbrs_2,
@@ -2233,7 +2319,21 @@ void HBNet::print_interaction_graph_to_file(std::string filename) {
           core::conformation::ResidueCOP rotamer_jj =
               rotamer_sets_->rotamer(global_rotamer_jj);
 
-          core::scoring::hbonds::HBondSet hbond_set;
+          HBondSet temp_hbond_set;
+          core::scoring::hbonds::HBondOptions new_options(
+              temp_hbond_set.hbond_options());
+          new_options.use_hb_env_dep(false);
+          // shouldn't affect which h-bonds are detected, but needed to make
+          // sure h-bond energies added to e totals
+          new_options.decompose_bb_hb_into_pair_energies(false);
+          // // don't use bb exclusion logic when penalizing unsatisfied --
+          // // ideally would only eclude N-H donors and not exclude C=O with
+          // // only 1 h-bond
+          // new_options.bb_donor_acceptor_check(bb_exclusion);
+          // we want to count this for unsat calc, by default they are
+          // excluded
+          new_options.exclude_intra_res_protein(false);
+          HBondSet hbond_set(new_options);
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
@@ -2529,7 +2629,21 @@ void HBNet::print_SAT_model_to_file(std::string filename, bool prefpolar,
           core::conformation::ResidueCOP rotamer_jj =
               rotamer_sets_->rotamer(global_rotamer_jj);
 
-          core::scoring::hbonds::HBondSet hbond_set;
+          HBondSet temp_hbond_set;
+          core::scoring::hbonds::HBondOptions new_options(
+              temp_hbond_set.hbond_options());
+          new_options.use_hb_env_dep(false);
+          // shouldn't affect which h-bonds are detected, but needed to make
+          // sure h-bond energies added to e totals
+          new_options.decompose_bb_hb_into_pair_energies(false);
+          // // don't use bb exclusion logic when penalizing unsatisfied --
+          // // ideally would only eclude N-H donors and not exclude C=O with
+          // // only 1 h-bond
+          // new_options.bb_donor_acceptor_check(bb_exclusion);
+          // we want to count this for unsat calc, by default they are
+          // excluded
+          new_options.exclude_intra_res_protein(false);
+          HBondSet hbond_set(new_options);
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
@@ -2878,7 +2992,21 @@ void HBNet::print_ILP_model_to_file(std::string filename) {
           core::conformation::ResidueCOP rotamer_jj =
               rotamer_sets_->rotamer(global_rotamer_jj);
 
-          core::scoring::hbonds::HBondSet hbond_set;
+          HBondSet temp_hbond_set;
+          core::scoring::hbonds::HBondOptions new_options(
+              temp_hbond_set.hbond_options());
+          new_options.use_hb_env_dep(false);
+          // shouldn't affect which h-bonds are detected, but needed to make
+          // sure h-bond energies added to e totals
+          new_options.decompose_bb_hb_into_pair_energies(false);
+          // // don't use bb exclusion logic when penalizing unsatisfied --
+          // // ideally would only eclude N-H donors and not exclude C=O with
+          // // only 1 h-bond
+          // new_options.bb_donor_acceptor_check(bb_exclusion);
+          // we want to count this for unsat calc, by default they are
+          // excluded
+          new_options.exclude_intra_res_protein(false);
+          HBondSet hbond_set(new_options);
 
           core::scoring::hbonds::identify_hbonds_1way(
               *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
@@ -3192,6 +3320,40 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
 
   // Trying option 2 for now.
 
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  // THOMAS: use ig_full_ for the full -beta energies! the current .wcsp files
+  // generated (the hbsat part) with ig_full_ instead of ig_ generate no
+  // solutions. ig_/ig_full_ should ues the same rotamers, and be otherwise
+  // 'sane.' BUT we are a bit in uncharted rosetta terratory here... different
+  // scores for the same rotamers was clearly not an intended use case.  you
+  // must call 'RotamerSets::build_rotamers' with one sfxn and then
+  // 'RotamerSets::prepare_sets_for_packing with a different
+  // one... dunno if there will be some 'punishment' for that but it seems to
+  // work. as ALF would put it, this kind of code has not been exercised much.
+  // (software without tests gains trust over time, I suppose)
+
+  // I had to add one file to the rosetta database, which you can get most
+  // easily by pulling the rosetta branch "sheffler/hbsat". This branch also has
+  // my changes to HBNet.hh/cc. The latest HBNet.hh/cc is also in our shared
+  // github repo on branch sheffler/devel.
+
+  // To get hydrophobic rotamers, change your rosetta_scripts xml so
+  // design_residues has the apolar ones, the interaction graph scott sets up
+  // will include these. for example
+
+  //      <HBNet name="hbnet" scorefxn="beta_nov15_cart_sfxn"
+  //      task_operations="ifc,core" design_residues="STHYWNQDGAFILMV"
+  //      secondary_search="false" />
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   const core::Size top =
       1000000000;  // TODO: adjust to something less lousy (as in PWMaxSAT).
   core::Size polar2_penalty = 0;
@@ -3259,6 +3421,7 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
       }
     }
 
+    // use ig_ here for fa_rep/hbond_sc only scores
     for (std::list<EdgeBase *>::const_iterator iter =
              ig_->get_edge_list_begin();
          iter != ig_->get_edge_list_end(); ++iter) {
@@ -3288,13 +3451,27 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
           // whs: skip if either is 'fully' solvated
           if (rotamer_is_fully_solvated[global_rotamer_ii]) continue;
           if (rotamer_is_fully_solvated[global_rotamer_jj]) continue;
-          if (score < 0) {
+          if (score < 10) {
             core::conformation::ResidueCOP rotamer_ii =
                 rotamer_sets_->rotamer(global_rotamer_ii);
             core::conformation::ResidueCOP rotamer_jj =
                 rotamer_sets_->rotamer(global_rotamer_jj);
 
-            core::scoring::hbonds::HBondSet hbond_set;
+            HBondSet temp_hbond_set;
+            core::scoring::hbonds::HBondOptions new_options(
+                temp_hbond_set.hbond_options());
+            new_options.use_hb_env_dep(false);
+            // shouldn't affect which h-bonds are detected, but needed to make
+            // sure h-bond energies added to e totals
+            new_options.decompose_bb_hb_into_pair_energies(false);
+            // // don't use bb exclusion logic when penalizing unsatisfied --
+            // // ideally would only eclude N-H donors and not exclude C=O with
+            // // only 1 h-bond
+            // new_options.bb_donor_acceptor_check(bb_exclusion);
+            // we want to count this for unsat calc, by default they are
+            // excluded
+            new_options.exclude_intra_res_protein(false);
+            HBondSet hbond_set(new_options);
 
             core::scoring::hbonds::identify_hbonds_1way(
                 *hb_database, *rotamer_ii, *rotamer_jj, nbrs_1, nbrs_2,
@@ -3433,6 +3610,24 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
               << rotamer_sets_->nrotamers() << std::endl;
   }
 
+  // whs verify rotamer sets 'the same'
+  runtime_assert(rotamer_sets_->nrotamers() == rotamer_sets_full_->nrotamers());
+  for (size_t i = 1; i <= rotamer_sets_->nmoltenres(); ++i) {
+    runtime_assert(
+        rotamer_sets_->rotamer_set_for_moltenresidue(i)->num_rotamers() ==
+        rotamer_sets_full_->rotamer_set_for_moltenresidue(i)->num_rotamers());
+  }
+  for (size_t i = 1; i <= rotamer_sets_->nrotamers(); ++i) {
+    Residue const &res1 = *(rotamer_sets_->rotamer(i));
+    Residue const &res2 = *(rotamer_sets_full_->rotamer(i));
+    runtime_assert(res1.aa() == res2.aa());
+    runtime_assert(res1.chi() == res2.chi());
+    for (size_t ia = 1; ia <= res1.natoms(); ++ia) {
+      runtime_assert(res1.xyz(ia) == res2.xyz(ia));
+    }
+  }
+  std::cout << "rotamer_sets_ and rotamer_sets_full_ same" << std::endl;
+
   // Generate the CFN
   // Header - assumes one CF per IG-edge. Suboptimal as some may be
   // empty but toulbar2 will remove Additional variables needed for
@@ -3472,6 +3667,7 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
     max_domain_size = std::max(max_domain_size,
                                rotamer_sets_->nrotamers_for_moltenres(mresid));
   }
+
   // we need one channeling constraint per channeled variable + deletion of
   // rotamers with no support.
   out << max_domain_size << " "

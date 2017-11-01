@@ -107,8 +107,12 @@ struct hbond_res_struct : public utility::pointer::ReferenceCount {
                    char const c, bool const prot, bool const solv,
                    bool const lig)
       : resnum(res),
-        rot_index(rot), // needed for quick look-ups in ig_ and rotamer_sets_
-        aa(a), chainid(c), is_protein(prot), is_solvent(solv), is_ligand(lig) {}
+        rot_index(rot),  // needed for quick look-ups in ig_ and rotamer_sets_
+        aa(a),
+        chainid(c),
+        is_protein(prot),
+        is_solvent(solv),
+        is_ligand(lig) {}
 
   bool operator<(hbond_res_struct const &a) const { return resnum < a.resnum; }
   bool operator==(hbond_res_struct const &a) const {
@@ -118,7 +122,7 @@ struct hbond_res_struct : public utility::pointer::ReferenceCount {
 
 // Owning pointers to hbond_res_struct
 typedef utility::pointer::shared_ptr<hbond_res_struct>
-    HBondResStructOP; // get rid of typedefs for c++11?
+    HBondResStructOP;  // get rid of typedefs for c++11?
 typedef utility::pointer::shared_ptr<hbond_res_struct const> HBondResStructCOP;
 
 // compare function for sorting vectors of HBondResStructOP's, by Res # and AA
@@ -157,53 +161,55 @@ struct compare_hbond_resnums
 struct hbond_net_struct : public utility::pointer::ReferenceCount {
   bool is_native;
   bool is_extended;
-  bool term_w_bb;               // network terminates with sc_bb h-bond
-  bool term_w_start;            // network cycles to starting res (e.g. ligand)
-  bool term_w_cycle;            // network has a cycle
-  bool scored;                  // has network been scored?
-  bool sort_first_by_tot_unsat; // if true, will sort first by total #unsat
-                                // polar atoms
-  bool sort_by_connectivity; // if true, will sort next by % connectivity
+  bool term_w_bb;                // network terminates with sc_bb h-bond
+  bool term_w_start;             // network cycles to starting res (e.g. ligand)
+  bool term_w_cycle;             // network has a cycle
+  bool scored;                   // has network been scored?
+  bool sort_first_by_tot_unsat;  // if true, will sort first by total #unsat
+                                 // polar atoms
+  bool sort_by_connectivity;     // if true, will sort next by % connectivity
   bool cst_file_written;
   bool network_pdb_written;
   bool pml_file_written;
   std::string outstring;
   core::Size id;
-  core::Size total_hbonds; // total h-bonds in the network
+  core::Size total_hbonds;  // total h-bonds in the network
   core::Size total_polar_atoms;
-  core::Size num_intermolecular_hbs; // number of interface h-bonds
-  core::Size num_unsat;       // # unsatisfied polar atoms in the entire network
-                              // (excluding the ligand if ligand_)
-  core::Size num_heavy_unsat; // how many heavy atoms unsatisfied in network
-  core::Size lig_num_unsatisfied; // for ligand_, # unsatisfied polar atoms on
-                                  // the ligand
+  core::Size num_intermolecular_hbs;  // number of interface h-bonds
+  core::Size num_unsat;  // # unsatisfied polar atoms in the entire network
+                         // (excluding the ligand if ligand_)
+  core::Size num_heavy_unsat;  // how many heavy atoms unsatisfied in network
+  core::Size lig_num_unsatisfied;  // for ligand_, # unsatisfied polar atoms on
+                                   // the ligand
   core::Size num_core_residues;
   core::Size num_boundary_residues;
-  core::Real connectivity; // % of polar atoms that participate in h-bonds
-  core::Real score;        // energy score of the network
+  core::Real connectivity;  // % of polar atoms that participate in h-bonds
+  core::Real score;         // energy score of the network
   utility::vector1<HBondResStructCOP>
-      residues; // list of residues in the network
-  utility::vector1<HBondResStructCOP> asymm_residues; // asymmetric residue list
-                                                      // to accurately score
-                                                      // networks in symmetric
-                                                      // cases (find networks
-                                                      // that span entire
-                                                      // interface)
-  utility::vector1<core::id::AtomID> unsat_Hpols; // buried unsatisfied polar
-                                                  // H's
-  utility::vector1<core::id::AtomID> unsat_accs; // buried unsatisfied acceptors
+      residues;  // list of residues in the network
+  utility::vector1<HBondResStructCOP>
+      asymm_residues;                              // asymmetric residue list
+                                                   // to accurately score
+                                                   // networks in symmetric
+                                                   // cases (find networks
+                                                   // that span entire
+                                                   // interface)
+  utility::vector1<core::id::AtomID> unsat_Hpols;  // buried unsatisfied polar
+                                                   // H's
+  utility::vector1<core::id::AtomID>
+      unsat_accs;  // buried unsatisfied acceptors
   utility::vector1<core::scoring::hbonds::HBondCOP>
-      hbond_vec; // all h-bonds in the pose using Rosetta's HBond Object's
-  core::scoring::hbonds::HBondSetOP hbond_set; // HBondSet of all hbonds in the
-                                               // network; HBondSet has useful
-                                               // machinery for searching and
-                                               // unsat checks
-  std::vector<platform::uint> lig_state_list; // rotamer states of other ligand
-                                              // rots compatible with this
-                                              // network
-  std::vector<core::Size> net_indices; // network_vector_ indices of other
-                                       // h-bond networks that are compatible
-                                       // with this one
+      hbond_vec;  // all h-bonds in the pose using Rosetta's HBond Object's
+  core::scoring::hbonds::HBondSetOP hbond_set;  // HBondSet of all hbonds in the
+                                                // network; HBondSet has useful
+                                                // machinery for searching and
+                                                // unsat checks
+  std::vector<platform::uint> lig_state_list;  // rotamer states of other ligand
+                                               // rots compatible with this
+                                               // network
+  std::vector<core::Size> net_indices;  // network_vector_ indices of other
+                                        // h-bond networks that are compatible
+                                        // with this one
   // SkipList< core::Size > jack_compat_net_indices;
   // //network_vector_ indices of other h-bond networks that are compatible with
   // this one
@@ -217,42 +223,75 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
   // core::conformation::ResidueOP > > waterrots;
 
   hbond_net_struct()
-      : is_native(false), is_extended(false), term_w_bb(false),
-        term_w_start(false), term_w_cycle(false), scored(false),
-        sort_first_by_tot_unsat(true), sort_by_connectivity(true),
-        cst_file_written(false), network_pdb_written(false),
-        pml_file_written(false), outstring(""), id(0), total_hbonds(0),
-        total_polar_atoms(0), num_intermolecular_hbs(0), num_unsat(0),
-        num_heavy_unsat(0), lig_num_unsatisfied(0), num_core_residues(0),
-        num_boundary_residues(0), connectivity(0.0), score(0.0), residues(0),
-        asymm_residues(0), unsat_Hpols(0), unsat_accs(0), hbond_vec(0),
-        hbond_set(0), lig_state_list(0), net_indices(0), rotamers(0)
+      : is_native(false),
+        is_extended(false),
+        term_w_bb(false),
+        term_w_start(false),
+        term_w_cycle(false),
+        scored(false),
+        sort_first_by_tot_unsat(true),
+        sort_by_connectivity(true),
+        cst_file_written(false),
+        network_pdb_written(false),
+        pml_file_written(false),
+        outstring(""),
+        id(0),
+        total_hbonds(0),
+        total_polar_atoms(0),
+        num_intermolecular_hbs(0),
+        num_unsat(0),
+        num_heavy_unsat(0),
+        lig_num_unsatisfied(0),
+        num_core_residues(0),
+        num_boundary_residues(0),
+        connectivity(0.0),
+        score(0.0),
+        residues(0),
+        asymm_residues(0),
+        unsat_Hpols(0),
+        unsat_accs(0),
+        hbond_vec(0),
+        hbond_set(0),
+        lig_state_list(0),
+        net_indices(0),
+        rotamers(0)
         // waterrots(0)
         // network()
         {};
 
   // copy constructor
   hbond_net_struct(hbond_net_struct const &hbns)
-      : is_native(hbns.is_native), is_extended(hbns.is_extended),
-        term_w_bb(hbns.term_w_bb), term_w_start(hbns.term_w_start),
-        term_w_cycle(hbns.term_w_cycle), scored(hbns.scored),
+      : is_native(hbns.is_native),
+        is_extended(hbns.is_extended),
+        term_w_bb(hbns.term_w_bb),
+        term_w_start(hbns.term_w_start),
+        term_w_cycle(hbns.term_w_cycle),
+        scored(hbns.scored),
         sort_first_by_tot_unsat(hbns.sort_first_by_tot_unsat),
         sort_by_connectivity(hbns.sort_by_connectivity),
         cst_file_written(hbns.cst_file_written),
         network_pdb_written(hbns.network_pdb_written),
-        pml_file_written(hbns.pml_file_written), outstring(hbns.outstring),
-        id(0), total_hbonds(hbns.total_hbonds),
+        pml_file_written(hbns.pml_file_written),
+        outstring(hbns.outstring),
+        id(0),
+        total_hbonds(hbns.total_hbonds),
         total_polar_atoms(hbns.total_polar_atoms),
         num_intermolecular_hbs(hbns.num_intermolecular_hbs),
-        num_unsat(hbns.num_unsat), num_heavy_unsat(hbns.num_heavy_unsat),
+        num_unsat(hbns.num_unsat),
+        num_heavy_unsat(hbns.num_heavy_unsat),
         lig_num_unsatisfied(hbns.lig_num_unsatisfied),
         num_core_residues(hbns.num_core_residues),
         num_boundary_residues(hbns.num_boundary_residues),
-        connectivity(hbns.connectivity), score(hbns.score),
-        residues(hbns.residues), asymm_residues(hbns.asymm_residues),
-        unsat_Hpols(hbns.unsat_Hpols), unsat_accs(hbns.unsat_accs),
-        hbond_vec(hbns.hbond_vec), hbond_set(hbns.hbond_set),
-        lig_state_list(hbns.lig_state_list), net_indices(hbns.net_indices),
+        connectivity(hbns.connectivity),
+        score(hbns.score),
+        residues(hbns.residues),
+        asymm_residues(hbns.asymm_residues),
+        unsat_Hpols(hbns.unsat_Hpols),
+        unsat_accs(hbns.unsat_accs),
+        hbond_vec(hbns.hbond_vec),
+        hbond_set(hbns.hbond_set),
+        lig_state_list(hbns.lig_state_list),
+        net_indices(hbns.net_indices),
         rotamers(hbns.rotamers)
         // waterrots(hbns.waterrots)
         // network()
@@ -261,22 +300,22 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
   bool operator<(hbond_net_struct const &a) const {
     if (sort_first_by_tot_unsat) {
       if (!(lig_num_unsatisfied ==
-            a.lig_num_unsatisfied)) { // only happens in ligand case
+            a.lig_num_unsatisfied)) {  // only happens in ligand case
         return lig_num_unsatisfied <
-               a.lig_num_unsatisfied; // want lowest number of unsats
+               a.lig_num_unsatisfied;  // want lowest number of unsats
       } else if (num_unsat == a.num_unsat) {
         if (sort_by_connectivity && connectivity != a.connectivity) {
-          return connectivity > a.connectivity; // want higher connectivity
+          return connectivity > a.connectivity;  // want higher connectivity
         } else {
           return score < a.score;
         }
       } else {
-        return num_unsat < a.num_unsat; // want lowest number of unsats
+        return num_unsat < a.num_unsat;  // want lowest number of unsats
       }
     } else if (sort_by_connectivity && connectivity != a.connectivity) {
       return connectivity > a.connectivity;
     } else {
-      return score < a.score; // want lowest score
+      return score < a.score;  // want lowest score
     }
   }
 };
@@ -303,7 +342,7 @@ struct compare_net_vec
       return (a->is_extended && !b->is_extended);
     } else if (a->sort_first_by_tot_unsat || b->sort_first_by_tot_unsat) {
       if (!(a->lig_num_unsatisfied ==
-            b->lig_num_unsatisfied)) { // only happens in ligand case
+            b->lig_num_unsatisfied)) {  // only happens in ligand case
         return a->lig_num_unsatisfied < b->lig_num_unsatisfied;
       } else if (a->num_unsat == b->num_unsat) {
         if ((a->sort_by_connectivity || b->sort_by_connectivity) &&
@@ -346,7 +385,7 @@ struct NetworkState {
                core::pack::hbnet::HBondGraphOP hbond_graph) {
     initialization_state = init_state;
     full_twobody_energy = init_state->energy();
-    score = 0; // TODO this is open to interpretation
+    score = 0;  // TODO this is open to interpretation
     edges.push_back(init_state);
 
     NetworkResidue const first(static_cast<core::pack::hbnet::HBondNode *>(
@@ -374,7 +413,7 @@ struct NetworkState {
 #endif
 
 class HBNet : public protocols::moves::Mover {
-public:
+ public:
   // constructors
   HBNet();
   HBNet(std::string const name);
@@ -402,8 +441,8 @@ public:
   void apply(core::pose::Pose &pose) override;
 
   // optional virtuals that can be derived from HBNet to control behavior
-  virtual void
-  setup_packer_task_and_starting_residues(core::pose::Pose const &pose);
+  virtual void setup_packer_task_and_starting_residues(
+      core::pose::Pose const &pose);
   virtual void trim_additional_rotamers(core::pose::Pose &) {}
   virtual void search_IG_for_networks(core::pose::Pose &pose);
   virtual void prepare_output();
@@ -445,8 +484,8 @@ public:
   core::conformation::symmetry::SymmetryInfoCOP get_symm_info() const {
     return symm_info_;
   }
-  void
-  set_symm_info(core::conformation::symmetry::SymmetryInfoCOP const symminfo) {
+  void set_symm_info(
+      core::conformation::symmetry::SymmetryInfoCOP const symminfo) {
     symm_info_ = symminfo;
   }
   bool multi_component() const { return multi_component_; }
@@ -501,18 +540,20 @@ public:
     upweight_twobody_ = upweight_factor;
   }
   ///@brief return all hbond networks, sorted with best networks at the front,
-  ///THIS SHOULD RETURN A POINTER (OP)
-  std::vector<HBondNetStructOP> &get_net_vec() // don't want COP here because of
-                                               // sorting / compare; use
-                                               // const_iterator
+  /// THIS SHOULD RETURN A POINTER (OP)
+  std::vector<HBondNetStructOP>
+      &get_net_vec()  // don't want COP here because of
+                      // sorting / compare; use
+                      // const_iterator
   {
     std::sort(network_vector_.begin(), network_vector_.end(),
               compare_net_vec());
     return network_vector_;
   }
-  std::vector<HBondNetStructOP> &get_native_vec() // don't want COP here because
-                                                  // of sorting / compare; use
-                                                  // const_iterator
+  std::vector<HBondNetStructOP>
+      &get_native_vec()  // don't want COP here because
+                         // of sorting / compare; use
+                         // const_iterator
   {
     std::sort(native_networks_.begin(), native_networks_.end(),
               compare_net_vec());
@@ -526,10 +567,9 @@ public:
   // if call this, be sure to check that id exists and nullptr was not returned
   HBondNetStructOP get_network_by_id(core::Size id) {
     for (auto &net : network_vector_) {
-      if (net->id == id)
-        return net;
+      if (net->id == id) return net;
     }
-    return nullptr; // if id does not exist
+    return nullptr;  // if id does not exist
   }
 
   core::pose::Pose const &get_orig_pose() { return *orig_pose_; }
@@ -602,9 +642,8 @@ public:
 
   core::Size get_ind_res(core::pose::Pose const &pose, core::Size const res_i);
 
-  bool
-  quick_and_dirty_network_has_heavy_atom_unsat(core::pose::Pose const &pose,
-                                               hbond_net_struct const &network);
+  bool quick_and_dirty_network_has_heavy_atom_unsat(
+      core::pose::Pose const &pose, hbond_net_struct const &network);
   bool quick_and_dirty_heavy_atom_is_unsat(core::pose::Pose const &pose,
                                            core::id::AtomID const at_id);
   bool atom_hbonds_to_bridging_water(core::pose::Pose const &pose,
@@ -614,19 +653,19 @@ public:
   // bool atom_is_buried( core::pose::Pose const & pose, core::id::AtomID id );
 
   ///@brief places the rotamers of the provided h-bond network onto the provided
-  ///pose
+  /// pose
   void place_rots_on_pose(core::pose::Pose &pose, hbond_net_struct &residues,
                           bool use_pose = false);
 
   ///@brief return the number of rotamers in a network that are identical in seq
-  ///or rot to the original input pose:
-  core::Size
-  get_num_native_rot(core::pose::Pose &pose,
-                     utility::vector1<HBondResStructCOP> const &residues,
-                     core::Real sc_rmsd_cut = 0.25, bool super = true);
-  core::Size
-  get_num_native_seq(core::pose::Pose &pose,
-                     utility::vector1<HBondResStructCOP> const &residues);
+  /// or rot to the original input pose:
+  core::Size get_num_native_rot(
+      core::pose::Pose &pose,
+      utility::vector1<HBondResStructCOP> const &residues,
+      core::Real sc_rmsd_cut = 0.25, bool super = true);
+  core::Size get_num_native_seq(
+      core::pose::Pose &pose,
+      utility::vector1<HBondResStructCOP> const &residues);
 
   // bool
   // water_clashes(
@@ -654,12 +693,11 @@ public:
   bool water_oxygen_clashes_with_residue(core::Vector const water_oxygen,
                                          core::Size const resnum,
                                          int const rot_state);
-  bool
-  water_oxygen_clashes_with_residue(core::Vector const water_oxygen,
-                                    core::conformation::Residue const &res);
+  bool water_oxygen_clashes_with_residue(
+      core::Vector const water_oxygen, core::conformation::Residue const &res);
 
   ///@brief used by the job distributor to return multiple poses and branch the
-  ///RosettaScripts protocol;
+  /// RosettaScripts protocol;
   /// returns networks in order of score: places rotamers on the pose to be
   /// returned and automatically turns on constraints
   core::pose::PoseOP get_additional_output() override;
@@ -695,15 +733,15 @@ public:
     init_rotset_from_monte_carlo_packrot_ = setting;
   }
 
-protected:
+ protected:
   ///@brief sets up rotamer_sets and makes preparations for populating the IG
-  ///based on task_ops
+  /// based on task_ops
   void setup(core::pose::Pose const &pose);
 
   void get_native_networks(core::pose::Pose const &pose);
 
   ///@brief run common steps universal to all HBNet, e.g. finalize rotamer sets
-  ///and scoring then populate and search IG for networks.
+  /// and scoring then populate and search IG for networks.
   void run(core::pose::Pose &pose);
   void benchmark_run(core::pose::Pose &pose);
 
@@ -712,7 +750,7 @@ protected:
   // tracker, core::Size num_residues );
 
   ///@brief remove unwanted rotamers from rotamer_sets_ before IG is populated
-  ///and searched.
+  /// and searched.
   ///  calls virtual trim_additional_rotamers() that can be overriden by
   ///  specialized HBNet classes to remove additional rotmaers
   void trim_rotamers(core::pose::Pose &pose);
@@ -728,7 +766,7 @@ protected:
                        core::Real const hb_threshold);
 
   ///@brief Recursively traverse the Interaction Graph ig_, and find all
-  ///possible h-bond networks,
+  /// possible h-bond networks,
   /// given the parameters that have been set.
   virtual void traverse_IG(core::Real const hb_threshold);
   void recursive_traverse(int const new_node_ind, int const newstate,
@@ -746,13 +784,13 @@ protected:
       core::Real init_sc, utility::vector1<HBondResStructCOP> &residues);
 
   void greedy_traverse_IG(core::Real const hb_threshold);
-  bool
-  greedy_recursive_traverse(core::Real const hb_threshold, Size moltenres,
-                            utility::vector1<core::Size> &state_for_moltenres,
-                            core::pose::PoseOP &network_pose);
+  bool greedy_recursive_traverse(
+      core::Real const hb_threshold, Size moltenres,
+      utility::vector1<core::Size> &state_for_moltenres,
+      core::pose::PoseOP &network_pose);
 
   ///@breif for efficiency, makes sure that an equivalent network has not
-  ///already been stored
+  /// already been stored
   bool network_already_stored(utility::vector1<HBondResStructCOP> &residues,
                               utility::vector1<HBondResStructCOP> &i_residues);
 
@@ -772,20 +810,20 @@ protected:
                 core::Size state2);
 
   ///@brief check if a residue clashes with other reisdues in the network before
-  ///adding it to the h-bond network.  true = clashes
+  /// adding it to the h-bond network.  true = clashes
   bool check_clash(utility::vector1<HBondResStructCOP> const &residues,
                    platform::uint my_node_ind, core::Size mystate,
                    core::Size myres, core::Real &init_score, bool &cycle);
 
   ///@breif used by net_clash( hbond_net_struct & i, hbond_net_struct & j ),
-  ///should not be called externally!
+  /// should not be called externally!
   bool net_clash(utility::vector1<HBondResStructCOP> const &residues_i,
                  utility::vector1<HBondResStructCOP> const &residues_j);
 
   bool rotamer_state_compatible(HBondResStructCOP i, HBondResStructCOP j);
 
   ///@brief This function finds all networks that share a common rotamer, and
-  ///then for ones that do not clash, branches them together in
+  /// then for ones that do not clash, branches them together in
   ///   all possible combination to find all possible networks.
   virtual void branch_overlapping_networks();
   void branch_overlapping_networks_monte_carlo();
@@ -796,7 +834,7 @@ protected:
 
   void finalize_branching();
   ///@brief used by branch_overlapping() to efficiently search for all
-  ///combinations of compatible networks that can be merged
+  /// combinations of compatible networks that can be merged
   void rec_set_intersection(std::vector<core::Size> add_index_vec,
                             std::vector<core::Size> next_index_list,
                             core::Size pos);
@@ -824,15 +862,15 @@ protected:
                                       hbond_net_struct const &j);
   bool residues_identical(utility::vector1<HBondResStructCOP> &residues1,
                           utility::vector1<HBondResStructCOP> &residues2);
-  bool
-  all_residue_chis_are_close(utility::vector1<HBondResStructCOP> &residues1,
-                             utility::vector1<HBondResStructCOP> &residues2);
+  bool all_residue_chis_are_close(
+      utility::vector1<HBondResStructCOP> &residues1,
+      utility::vector1<HBondResStructCOP> &residues2);
   bool residues_not_unique(utility::vector1<HBondResStructCOP> &residues1,
                            utility::vector1<HBondResStructCOP> &residues2);
   void benchmark_with_native(core::pose::Pose &pose);
 
   ///@brief Returns true if a network is a subset of another; it's symmetric,
-  ///i.e. returns true if i is subset of j, or if j is a subset of i
+  /// i.e. returns true if i is subset of j, or if j is a subset of i
   bool is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
                        utility::vector1<HBondResStructCOP> &residues2);
   bool is_sub_residues(utility::vector1<HBondResStructCOP> &residues1,
@@ -852,14 +890,13 @@ protected:
   // max_unsat=1 );
 
   ///@brief Writes h-bond networks out to TR, and stores them in output_net_vec_
-  ///if finalize=true
+  /// if finalize=true
   /// so they can be returned by get_additional_output().
   void output_networks(bool finalize = false);
 
   // for setting up task_operations
-  core::pack::task::PackerTaskOP
-  create_ptask(core::pose::Pose const &pose,
-               bool initialize_from_commandline = false);
+  core::pack::task::PackerTaskOP create_ptask(
+      core::pose::Pose const &pose, bool initialize_from_commandline = false);
   bool task_is_valid(core::pose::Pose const &pose) const;
 
   // // writes out enzdes .cst constraint file for the h-bond network
@@ -879,10 +916,10 @@ protected:
   virtual void consider_network_as_branch_seed(HBondNetStructOP net,
                                                core::Size network_vector_index);
 
-public:
+ public:
   void set_monte_carlo_branch(bool setting) { monte_carlo_branch_ = setting; }
 
-protected:
+ protected:
   inline utility::vector1<core::Size> &branch_seed_network_vector() {
     return branch_seed_network_vector_;
   }
@@ -901,12 +938,12 @@ protected:
     return orig_pose_->chain(rotamer_sets_->moltenres_2_resid(mres));
   }
 
-  inline core::select::residue_selector::ResidueSubset const &
-  core_residues() const {
+  inline core::select::residue_selector::ResidueSubset const &core_residues()
+      const {
     return core_residues_;
   }
 
-private:
+ private:
   core::pose::Pose &nonconst_get_orig_pose() { return *orig_pose_; }
   void load_conformation_and_dump_pose(std::string filename);
   void print_interaction_graph_to_file(std::string filename);
@@ -916,20 +953,20 @@ private:
   void print_CFN_model_to_file(std::string filename, bool prefpolar,
                                bool pref2polar);
 
-private:
+ private:
   // bool use_enzdes_cst_;
-  bool benchmark_;          // write out benchmarking statistics
-  bool write_network_pdbs_; // write .pdb's of the h-bond networks on Poly-Ala
-                            // for easy visualization
+  bool benchmark_;           // write out benchmarking statistics
+  bool write_network_pdbs_;  // write .pdb's of the h-bond networks on Poly-Ala
+                             // for easy visualization
   bool jack_store_networks_;
   bool write_cst_files_;
   bool output_poly_ala_background_;
   bool find_native_;
-  bool only_native_; // only search for native networks in a static pose
+  bool only_native_;  // only search for native networks in a static pose
   bool keep_existing_networks_;
   bool extend_existing_networks_;
   bool only_extend_existing_;
-  bool verbose_; // print details of mover actions
+  bool verbose_;  // print details of mover actions
   bool symmetric_;
   bool multi_component_;
   bool show_task_;
@@ -948,8 +985,9 @@ private:
   core::Size min_boundary_res_;
   core::Size max_unsat_;
   core::Size max_lig_unsat_;
-  core::Size max_rep_; // maximum replicates allowed; default is 1 (no replicate
-                       // networks)
+  core::Size
+      max_rep_;  // maximum replicates allowed; default is 1 (no replicate
+                 // networks)
   core::Size max_replicates_before_branch_;
   core::Size max_replicates_before_unsat_check_;
   std::string const allaas_;
@@ -957,45 +995,45 @@ private:
   std::string const hbond_disallow_default_;
   std::string hbond_disallow_;
   std::string des_residues_;
-  std::set<core::Size> start_res_vec_; // starting residues for IG traversal;
-                                       // all interface residues if interface_
+  std::set<core::Size> start_res_vec_;  // starting residues for IG traversal;
+                                        // all interface residues if interface_
   std::vector<HBondNetStructOP>
-      network_vector_; // VECTOR OF ALL STORED H-BOND NETWORKS
+      network_vector_;  // VECTOR OF ALL STORED H-BOND NETWORKS
   std::vector<HBondNetStructOP> native_networks_;
   // utility::vector1< HBondNetStructOP > branch_seed_network_vector_;
   // //starting points for branching
-  utility::vector1<core::Size> branch_seed_network_vector_; // starting points
-                                                            // for branching,
-                                                            // values are
-                                                            // network_vector_
-                                                            // indices
+  utility::vector1<core::Size> branch_seed_network_vector_;  // starting points
+                                                             // for branching,
+                                                             // values are
+                                                             // network_vector_
+                                                             // indices
   std::vector<std::vector<core::Size>> merged_vecs_;
   std::vector<std::set<core::Size>> output_vector_;
-  core::Real pore_radius_; // for SASA calculations
+  core::Real pore_radius_;  // for SASA calculations
   std::map<char, std::pair<core::Size, core::Size>> chain_bounds_;
   core::Real atom_burial_cutoff_;
   core::Real
-      hydrogen_bond_threshold_; // 2-body cutoff; if < means we found h-bond
-  core::Real
-      onebody_hb_threshold_; // 1-body cutoff for symmetric one-residue networks
+      hydrogen_bond_threshold_;  // 2-body cutoff; if < means we found h-bond
+  core::Real onebody_hb_threshold_;  // 1-body cutoff for symmetric one-residue
+                                     // networks
   core::Real charge_charge_rep_cutoff_;
-  core::PackerEnergy clash_threshold_; // cutoff; if > then we count as a clash
+  core::PackerEnergy clash_threshold_;  // cutoff; if > then we count as a clash
   core::Real upper_score_limit_;
   core::Real min_connectivity_;
   core::pose::PoseOP
-      ala_pose_; // OP to Poly-Ala design/repack shell pose (keeps PRO/GLY/CYS)
-  core::pose::PoseOP orig_pose_; // OP to original pose
+      ala_pose_;  // OP to Poly-Ala design/repack shell pose (keeps PRO/GLY/CYS)
+  core::pose::PoseOP orig_pose_;  // OP to original pose
   core::pack::task::PackerTaskOP task_;
   core::pack::task::TaskFactoryOP task_factory_;
-  core::scoring::ScoreFunctionOP init_scorefxn_; // for IG traversal
-  core::scoring::ScoreFunctionOP scorefxn_;      // for scoring h-bond networks
+  core::scoring::ScoreFunctionOP init_scorefxn_;  // for IG traversal
+  core::scoring::ScoreFunctionOP scorefxn_;       // for scoring h-bond networks
   core::scoring::ScoreFunctionOP bw_sfxn_;
-  core::pack::rotamer_set::RotamerSetsOP rotamer_sets_;
-  core::pack::interaction_graph::InteractionGraphBaseOP ig_;
+  core::pack::rotamer_set::RotamerSetsOP rotamer_sets_, rotamer_sets_full_;
+  core::pack::interaction_graph::InteractionGraphBaseOP ig_, ig_full_;
   core::conformation::symmetry::SymmetryInfoCOP symm_info_;
   core::pack::rotamer_set::RotamerLinksCOP rotamer_links_;
-  bool store_subnetworks_; // store all subnetworks of detected networks as
-                           // independent networks to be considered
+  bool store_subnetworks_;  // store all subnetworks of detected networks as
+                            // independent networks to be considered
   bool secondary_search_;
   core::Real secondary_threshold_;
   core::Real upweight_twobody_;
@@ -1025,7 +1063,7 @@ private:
 // bool single_greed_;
 
 #ifdef MONTE_CARLO
-public:
+ public:
   void MC_traverse_IG(core::Real const hb_threshold);
 
   void MC_branch_overlapping_networks();
@@ -1038,35 +1076,35 @@ public:
     return only_consider_finite_initialization_states_per_ig_edge_;
   }
 
-  static bool
-  node_is_compatible(NetworkState &current_state,
-                     core::pack::hbnet::HBondNode const *node_being_added);
+  static bool node_is_compatible(
+      NetworkState &current_state,
+      core::pack::hbnet::HBondNode const *node_being_added);
 
-protected:
-  inline core::pack::hbnet::HBondEdge *
-  register_hbond(core::Size rotamerA, core::Size rotamerB, core::Real score);
+ protected:
+  inline core::pack::hbnet::HBondEdge *register_hbond(core::Size rotamerA,
+                                                      core::Size rotamerB,
+                                                      core::Real score);
   inline void register_clash(core::Size rotamerA, core::Size rotamerB);
   // core::Real twobody_energy( core::pack::hbnet::HBondNode *,
   // core::pack::hbnet::HBondNode * ) const;
-  static core::Real
-  twobody_energy(core::pack::interaction_graph::NodeBase const &ig_node,
-                 core::Size first_node_state,
-                 core::pack::hbnet::HBondNode *hbond_node);
+  static core::Real twobody_energy(
+      core::pack::interaction_graph::NodeBase const &ig_node,
+      core::Size first_node_state, core::pack::hbnet::HBondNode *hbond_node);
 
   virtual inline bool edge_can_yield_initialization_state(
       core::pack::interaction_graph::EdgeBase *) {
     return true;
   }
 
-  core::pack::hbnet::HBondNode *
-  get_next_node(NetworkState &current_state, core::Real temperature,
-                std::set<core::Size> &node_ids_to_never_consider);
+  core::pack::hbnet::HBondNode *get_next_node(
+      NetworkState &current_state, core::Real temperature,
+      std::set<core::Size> &node_ids_to_never_consider);
   core::pack::hbnet::HBondNode *get_next_node_weighted_by_path_potential(
       NetworkState &current_state,
       std::set<core::Size> &node_ids_to_never_consider) const;
 
-  bool
-  initialization_state_is_dead_end(core::pack::hbnet::HBondEdge *init_state);
+  bool initialization_state_is_dead_end(
+      core::pack::hbnet::HBondEdge *init_state);
 
   bool addition_results_in_unsatisfiable_dead_end(
       NetworkState &current_state,
@@ -1074,14 +1112,14 @@ protected:
 
   void append_to_network_vector(std::list<NetworkState> &designed_networks);
 
-private:
+ private:
   inline void set_data_to_default();
 
   void initialize_hbond_graph();
 
   // inline void fill_out_satisfaction_map();
 
-private: // data
+ private:  // data
   // settings
   bool only_consider_finite_initialization_states_per_ig_edge_;
   bool calculate_two_body_energy_;
@@ -1096,7 +1134,7 @@ private: // data
 };
 // end HBNet
 
-} // hbnet
-} // protocols
+}  // hbnet
+}  // protocols
 
 #endif
