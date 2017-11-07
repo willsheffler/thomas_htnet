@@ -20,7 +20,7 @@
 #define fa_rep_for_native true
 #define jack_benchmark false
 
-#define JACK_DEBUG_GREEDY true
+#define JACK_DEBUG_GREEDY false
 #include <chrono>
 //#define DEBUG_TASK_JACK
 
