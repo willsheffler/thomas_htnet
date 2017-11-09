@@ -200,6 +200,15 @@ namespace hbnet {
 //   return solv;
 // }
 
+using Cost = uint64_t;
+
+static const Cost fixed_point_precision = 6;
+
+Cost tb2_energy2cost(double energy, double min_energy) {
+  return std::round(std::pow(10, fixed_point_precision) *
+                    (energy - min_energy));
+}
+
 static THREAD_LOCAL basic::Tracer TR("protocols.hbnet.HBNet");
 
 HBNet::HBNet()
@@ -3354,14 +3363,6 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  const core::Size top =
-      1000000000;  // TODO: adjust to something less lousy (as in PWMaxSAT).
-  core::Size polar2_penalty = 0;
-  const core::Size polar1_penalty =
-      (pref2polar ? rotamer_sets_->nmoltenres() : 0);
-  const core::Size apolar_penalty =
-      (prefpolar ? polar1_penalty + 1 : polar1_penalty);
-
   // Extracting hbond info.
   const core::scoring::hbonds::HBondDatabaseCOP hb_database =
       core::scoring::hbonds::HBondDatabase::get_database();
@@ -3628,6 +3629,30 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
   }
   std::cout << "rotamer_sets_ and rotamer_sets_full_ same" << std::endl;
 
+  //////// weighting ////////
+  core::Real shift = 0.0, ub = 0.0;
+  for (int ir = 1; ir <= ig_->get_num_nodes(); ++ir) {  // num_nodes same
+    core::Real min_energy = 9e9, max_energy = -9e9;
+    auto Nro = rotamer_sets_->rotamer_set_for_moltenresidue(ir)->num_rotamers();
+    for (size_t irot = 1; irot <= Nro; ++irot) {
+      core::Real e = ig_full_->get_one_body_energy_for_node_state(ir, irot);
+      min_energy = std::min(min_energy, e);
+      max_energy = std::max(max_energy, e);
+    }
+    ub += max_energy;
+    shift += min_energy;
+  }
+  // TODO: adjust to something less lousy (as in PWMaxSAT).
+  Cost hbsat_cst_scale = 1000000000;  // 1ull << 32;
+  Cost top = std::numeric_limits<Cost>::max() >> 20;
+  Cost polar2_penalty = 0;
+  Cost polar1_penalty = (pref2polar ? rotamer_sets_->nmoltenres() : 0);
+  Cost apolar_penalty = (prefpolar ? polar1_penalty + 1 : polar1_penalty);
+  polar1_penalty *= hbsat_cst_scale;
+  polar2_penalty *= hbsat_cst_scale;
+  apolar_penalty *= hbsat_cst_scale;
+  ///////////////////////////
+
   // Generate the CFN
   // Header - assumes one CF per IG-edge. Suboptimal as some may be
   // empty but toulbar2 will remove Additional variables needed for
@@ -3754,11 +3779,11 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
     const core::Size nbrs_2 = tenA_neighbor_graph.get_node(resid_2)
                                   ->num_neighbors_counting_self_static();
 
-    std::vector<std::vector<int>> pairs;
+    std::vector<std::vector<Cost>> pairs;
     core::Size nb_non_zero = 0;
 
     for (core::Size ii = 1; ii <= si; ++ii) {
-      std::vector<int> row;
+      std::vector<Cost> row;
       for (core::Size jj = 1; jj <= sj; ++jj) {
         core::Real const score = pdedge->get_two_body_energy(ii, jj);
         core::Size const global_rotamer_ii =
