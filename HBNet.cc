@@ -1244,34 +1244,35 @@ void HBNet::run(Pose &pose) {
     rotamer_sets_->precompute_two_body_energies(
         pose, *init_scorefxn_, packer_neighbor_graph_, pig, true);
 
-    // ===================================== whs ===========================
-    // rotamer_sets_full_ *should* be identical to rotamer_sets_
-    //  (no clone method, grrr...)
-    rotamer_sets_full_->set_task(task_);
-    rotamer_sets_full_->initialize_pose_for_rotsets_creation(pose);
-    // use init_scorefxn_ NOT full_scorefxn so rots same
-    rotamer_sets_full_->build_rotamers(pose, *init_scorefxn_,
-                                       packer_neighbor_graph_);
-    core::scoring::ScoreFunctionOP full_scorefxn =
-        core::scoring::ScoreFunctionFactory::create_score_function(
-            "HBNet_beta_all");
-    rotamer_sets_full_->prepare_sets_for_packing(pose, *full_scorefxn);
-    ig_full_ = InteractionGraphFactory::create_interaction_graph(
-        *task_, *rotamer_sets_full_, pose, *full_scorefxn,
-        *packer_neighbor_graph_);
-    ig_full_->initialize(*rotamer_sets_full_);
-    PrecomputedPairEnergiesInteractionGraphOP pig_full(
-        utility::pointer::dynamic_pointer_cast<
-            PrecomputedPairEnergiesInteractionGraph>(ig_full_));
-    runtime_assert(pig_full);
-    // precompute_two_body_energies() now vitural and dervied; no longer need to
-    // cast to SymmetricRotamerSets first
-    rotamer_sets_full_->precompute_two_body_energies(
-        pose, *full_scorefxn, packer_neighbor_graph_, pig_full, true);
-    std::cout << "ig_      " << ig_->get_num_edges() << " "
-              << ig_->get_num_nodes() << std::endl;
-    std::cout << "ig_full " << ig_full_->get_num_edges() << " "
-              << ig_full_->get_num_nodes() << std::endl;
+    // // ===================================== whs ===========================
+    // // rotamer_sets_full_ *should* be identical to rotamer_sets_
+    // //  (no clone method, grrr...)
+    // rotamer_sets_full_->set_task(task_);
+    // rotamer_sets_full_->initialize_pose_for_rotsets_creation(pose);
+    // // use init_scorefxn_ NOT full_scorefxn so rots same
+    // rotamer_sets_full_->build_rotamers(pose, *init_scorefxn_,
+    //                                    packer_neighbor_graph_);
+    // core::scoring::ScoreFunctionOP full_scorefxn =
+    //     core::scoring::ScoreFunctionFactory::create_score_function(
+    //         "HBNet_beta_all");
+    // rotamer_sets_full_->prepare_sets_for_packing(pose, *full_scorefxn);
+    // ig_full_ = InteractionGraphFactory::create_interaction_graph(
+    //     *task_, *rotamer_sets_full_, pose, *full_scorefxn,
+    //     *packer_neighbor_graph_);
+    // ig_full_->initialize(*rotamer_sets_full_);
+    // PrecomputedPairEnergiesInteractionGraphOP pig_full(
+    //     utility::pointer::dynamic_pointer_cast<
+    //         PrecomputedPairEnergiesInteractionGraph>(ig_full_));
+    // runtime_assert(pig_full);
+    // // precompute_two_body_energies() now vitural and dervied; no longer need
+    // to
+    // // cast to SymmetricRotamerSets first
+    // rotamer_sets_full_->precompute_two_body_energies(
+    //     pose, *full_scorefxn, packer_neighbor_graph_, pig_full, true);
+    // std::cout << "ig_      " << ig_->get_num_edges() << " "
+    //           << ig_->get_num_nodes() << std::endl;
+    // std::cout << "ig_full " << ig_full_->get_num_edges() << " "
+    //           << ig_full_->get_num_nodes() << std::endl;
 
     // ============================= end whs=============================
 
@@ -3611,23 +3612,24 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
               << rotamer_sets_->nrotamers() << std::endl;
   }
 
-  // whs verify rotamer sets 'the same'
-  runtime_assert(rotamer_sets_->nrotamers() == rotamer_sets_full_->nrotamers());
-  for (size_t i = 1; i <= rotamer_sets_->nmoltenres(); ++i) {
-    runtime_assert(
-        rotamer_sets_->rotamer_set_for_moltenresidue(i)->num_rotamers() ==
-        rotamer_sets_full_->rotamer_set_for_moltenresidue(i)->num_rotamers());
-  }
-  for (size_t i = 1; i <= rotamer_sets_->nrotamers(); ++i) {
-    Residue const &res1 = *(rotamer_sets_->rotamer(i));
-    Residue const &res2 = *(rotamer_sets_full_->rotamer(i));
-    runtime_assert(res1.aa() == res2.aa());
-    runtime_assert(res1.chi() == res2.chi());
-    for (size_t ia = 1; ia <= res1.natoms(); ++ia) {
-      runtime_assert(res1.xyz(ia) == res2.xyz(ia));
-    }
-  }
-  std::cout << "rotamer_sets_ and rotamer_sets_full_ same" << std::endl;
+  // // whs verify rotamer sets 'the same'
+  // runtime_assert(rotamer_sets_->nrotamers() ==
+  // rotamer_sets_full_->nrotamers());
+  // for (size_t i = 1; i <= rotamer_sets_->nmoltenres(); ++i) {
+  //   runtime_assert(
+  //       rotamer_sets_->rotamer_set_for_moltenresidue(i)->num_rotamers() ==
+  //       rotamer_sets_full_->rotamer_set_for_moltenresidue(i)->num_rotamers());
+  // }
+  // for (size_t i = 1; i <= rotamer_sets_->nrotamers(); ++i) {
+  //   Residue const &res1 = *(rotamer_sets_->rotamer(i));
+  //   Residue const &res2 = *(rotamer_sets_full_->rotamer(i));
+  //   runtime_assert(res1.aa() == res2.aa());
+  //   runtime_assert(res1.chi() == res2.chi());
+  //   for (size_t ia = 1; ia <= res1.natoms(); ++ia) {
+  //     runtime_assert(res1.xyz(ia) == res2.xyz(ia));
+  //   }
+  // }
+  // std::cout << "rotamer_sets_ and rotamer_sets_full_ same" << std::endl;
 
   //////// weighting ////////
   core::Real shift = 0.0, ub = 0.0;
@@ -3635,22 +3637,36 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
     core::Real min_energy = 9e9, max_energy = -9e9;
     auto Nro = rotamer_sets_->rotamer_set_for_moltenresidue(ir)->num_rotamers();
     for (size_t irot = 1; irot <= Nro; ++irot) {
-      core::Real e = ig_full_->get_one_body_energy_for_node_state(ir, irot);
+      // core::Real e = ig_full_->get_one_body_energy_for_node_state(ir, irot);
+      core::Real e = ig_->get_one_body_energy_for_node_state(ir, irot);
       min_energy = std::min(min_energy, e);
       max_energy = std::max(max_energy, e);
     }
     ub += max_energy;
     shift += min_energy;
   }
-  // TODO: adjust to something less lousy (as in PWMaxSAT).
-  Cost hbsat_cst_scale = 1000000000;  // 1ull << 32;
-  Cost top = std::numeric_limits<Cost>::max() >> 20;
-  Cost polar2_penalty = 0;
-  Cost polar1_penalty = (pref2polar ? rotamer_sets_->nmoltenres() : 0);
-  Cost apolar_penalty = (prefpolar ? polar1_penalty + 1 : polar1_penalty);
-  polar1_penalty *= hbsat_cst_scale;
-  polar2_penalty *= hbsat_cst_scale;
-  apolar_penalty *= hbsat_cst_scale;
+
+  // scale to give -beta score some wiggle room
+  // Cost hbsat_cst_scale = 1000000000;  // 1ull << 32;
+  // Cost hbsat_cst_scale = 1;
+  // Cost top = std::numeric_limits<Cost>::max() >> 20;
+  // Cost polar2_penalty = 0;
+  // Cost polar1_penalty = (pref2polar ? rotamer_sets_->nmoltenres() : 0);
+  // Cost apolar_penalty = (prefpolar ? polar1_penalty + 1 : polar1_penalty);
+  // polar1_penalty *= hbsat_cst_scale;
+  // polar2_penalty *= hbsat_cst_scale;
+  // apolar_penalty *= hbsat_cst_scale;
+
+  const core::Size top =
+      1000000000;  // TODO: adjust to something less lousy (as in PWMaxSAT).
+  core::Size polar2_penalty = 0;
+  const core::Size polar1_penalty =
+      (pref2polar ? rotamer_sets_->nmoltenres() : 0);
+  const core::Size apolar_penalty =
+      (prefpolar ? polar1_penalty + 1 : polar1_penalty);
+  std::cout << "APOLAR_PENALTY = " << apolar_penalty << std::endl;
+  std::cout << "POLAR1_PENALTY = " << polar1_penalty << std::endl;
+  std::cout << "POLAR2_PENALTY = " << polar2_penalty << std::endl;
   ///////////////////////////
 
   // Generate the CFN
@@ -3724,6 +3740,12 @@ void HBNet::print_CFN_model_to_file(std::string filename, bool prefpolar,
       bool is_polar = ((rotamer->Hpos_polar_sc().size() != 0) ||
                        (rotamer->accpt_pos_sc().size() != 0));
       bool is_2polar = (rotamer->accpt_pos_sc().size() > 1);
+      if (rotamer->name3() == "ASN") is_2polar = true;
+      if (rotamer->name3() == "GLN") is_2polar = true;
+      if (rotamer->name3() == "GLU") is_2polar = true;
+      if (rotamer->name3() == "ASP") is_2polar = true;
+      if (rotamer->name3() == "ARG") is_2polar = true;
+      if (rotamer->name3() == "HIS") is_2polar = true;
 
       out << rotid - 1 << " ";
       if (!is_polar)
